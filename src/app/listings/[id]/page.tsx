@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { SAMPLE_LISTINGS } from "@/lib/data";
+import { fetchListingById, fetchListings } from "@/lib/db";
 import { TierBadge } from "@/components/TierBadge";
 import { formatKRW, formatRelativeDate } from "@/lib/format";
 import { UrgentCard } from "@/components/ListingCard";
@@ -14,7 +14,7 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const listing = SAMPLE_LISTINGS.find((l) => l.id === Number(id));
+  const listing = await fetchListingById(Number(id));
   if (!listing) return { title: "매물을 찾을 수 없습니다" };
   return {
     title: `${listing.title} - ${listing.region} ${listing.category}`,
@@ -28,12 +28,11 @@ export default async function ListingDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const listing = SAMPLE_LISTINGS.find((l) => l.id === Number(id));
+  const listing = await fetchListingById(Number(id));
   if (!listing) notFound();
 
-  const related = SAMPLE_LISTINGS.filter(
-    (l) => l.id !== listing.id && l.category === listing.category
-  ).slice(0, 4);
+  const relatedAll = await fetchListings({ category: listing.category, limit: 5 });
+  const related = relatedAll.filter((l) => l.id !== listing.id).slice(0, 4);
 
   return (
     <div className="container-custom py-4 lg:py-6">

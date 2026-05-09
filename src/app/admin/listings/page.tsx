@@ -1,14 +1,12 @@
-import { SAMPLE_LISTINGS } from "@/lib/data";
+import { fetchListings } from "@/lib/db";
 import { TierBadge } from "@/components/TierBadge";
 import { formatRelativeDate } from "@/lib/format";
+import { RowActions } from "./RowActions";
 
 export const metadata = { title: "매물 승인", robots: "noindex" };
 
-export default function AdminListingsPage() {
-  const pending = SAMPLE_LISTINGS.slice(0, 12).map((l) => ({
-    ...l,
-    status: "pending" as const,
-  }));
+export default async function AdminListingsPage() {
+  const pending = await fetchListings({ status: "pending", limit: 100 });
 
   return (
     <div className="space-y-3">
@@ -48,6 +46,11 @@ export default function AdminListingsPage() {
           <div>광고기간</div>
           <div className="text-center">처리</div>
         </div>
+        {pending.length === 0 && (
+          <div className="p-8 text-center text-sm text-muted">
+            승인 대기 중인 매물이 없습니다.
+          </div>
+        )}
         <ul className="divide-y divide-border">
           {pending.map((l) => (
             <li key={l.id} className="px-3 py-3 grid grid-cols-1 lg:grid-cols-[40px_80px_1fr_120px_100px_100px_180px] gap-2 items-center text-sm">
@@ -73,11 +76,7 @@ export default function AdminListingsPage() {
                   {l.tier === "free" ? "무료 10일" : "결제완료"}
                 </span>
               </div>
-              <div className="grid grid-cols-3 gap-1">
-                <button type="button" className="py-1.5 text-xs font-bold bg-foreground text-white rounded">승인</button>
-                <button type="button" className="py-1.5 text-xs font-bold border border-urgent text-urgent rounded">반려</button>
-                <button type="button" className="py-1.5 text-xs font-bold border border-border rounded">상세</button>
-              </div>
+              <RowActions id={l.id} />
             </li>
           ))}
         </ul>

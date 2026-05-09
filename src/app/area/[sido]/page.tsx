@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { SAMPLE_LISTINGS, REGIONS, CATEGORIES } from "@/lib/data";
+import { REGIONS, CATEGORIES } from "@/lib/data";
+import { fetchListings } from "@/lib/db";
 import { UrgentCard, NormalRow } from "@/components/ListingCard";
 import { Icon } from "@/components/Icon";
 
@@ -23,7 +24,7 @@ export default async function SidoAreaPage({ params }: { params: Promise<{ sido:
   const sido = decodeURIComponent(rawSido);
   if (!REGIONS[sido as keyof typeof REGIONS]) notFound();
 
-  const listings = SAMPLE_LISTINGS.filter((l) => l.sido === sido);
+  const listings = await fetchListings({ sido });
   const urgent = listings.filter((l) => l.tier === "urgent" || l.tier === "premium").slice(0, 6);
   const others = listings.filter((l) => l.tier !== "urgent" && l.tier !== "premium");
 

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { SAMPLE_NOTICES } from "@/lib/data";
+import { fetchNotices } from "@/lib/db";
 import { formatDate } from "@/lib/format";
 import { Icon } from "@/components/Icon";
 
@@ -8,12 +8,8 @@ export const metadata = {
   description: "샵대장 공지사항",
 };
 
-export default function NoticePage() {
-  const notices = [...SAMPLE_NOTICES].sort(
-    (a, b) =>
-      Number(b.isPinned) - Number(a.isPinned) ||
-      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-  );
+export default async function NoticePage() {
+  const notices = await fetchNotices();
 
   return (
     <div className="container-custom py-4 lg:py-6 max-w-4xl">

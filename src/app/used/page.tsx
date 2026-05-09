@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { SAMPLE_USED_GOODS } from "@/lib/data";
+import { fetchUsedGoods } from "@/lib/db";
 import { formatRelativeDate, formatPrice } from "@/lib/format";
 import { Icon } from "@/components/Icon";
 
@@ -13,13 +13,10 @@ type SP = Promise<{ category?: string; status?: string }>;
 
 export default async function UsedPage({ searchParams }: { searchParams: SP }) {
   const sp = await searchParams;
-  let items = [...SAMPLE_USED_GOODS];
-  if (sp.category && sp.category !== "all") {
-    items = items.filter((i) => i.category === sp.category);
-  }
-  if (sp.status === "active") {
-    items = items.filter((i) => !i.isCompleted);
-  }
+  const items = await fetchUsedGoods({
+    category: sp.category && sp.category !== "all" ? sp.category : undefined,
+    activeOnly: sp.status === "active",
+  });
 
   const TABS = [
     { v: "all", l: "전체" },

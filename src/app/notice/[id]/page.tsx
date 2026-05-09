@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { SAMPLE_NOTICES } from "@/lib/data";
+import { fetchNoticeById, fetchNotices } from "@/lib/db";
 import { formatDate } from "@/lib/format";
 import { Icon } from "@/components/Icon";
 
@@ -10,12 +10,13 @@ export default async function NoticeDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const notice = SAMPLE_NOTICES.find((n) => n.id === Number(id));
+  const notice = await fetchNoticeById(Number(id));
   if (!notice) notFound();
 
-  const idx = SAMPLE_NOTICES.findIndex((n) => n.id === Number(id));
-  const prev = idx > 0 ? SAMPLE_NOTICES[idx - 1] : null;
-  const next = idx < SAMPLE_NOTICES.length - 1 ? SAMPLE_NOTICES[idx + 1] : null;
+  const all = await fetchNotices();
+  const idx = all.findIndex((n) => n.id === Number(id));
+  const prev = idx > 0 ? all[idx - 1] : null;
+  const next = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 
   return (
     <div className="container-custom py-4 lg:py-6 max-w-3xl">
@@ -38,9 +39,6 @@ export default async function NoticeDetailPage({
         </div>
         <div className="px-4 lg:px-6 py-6 text-sm leading-relaxed whitespace-pre-line min-h-50">
           {notice.content}
-          {"\n\n"}
-          상세 내용은 운영진의 검토 후 갱신될 수 있습니다.
-          관련 문의는 고객센터(1588-0000) 또는 카카오톡 채널로 연락 부탁드립니다.
         </div>
       </article>
 

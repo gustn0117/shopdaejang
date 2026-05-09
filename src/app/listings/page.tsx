@@ -1,8 +1,10 @@
 import Link from "next/link";
-import { SAMPLE_LISTINGS, REGIONS, CATEGORIES } from "@/lib/data";
+import { REGIONS, CATEGORIES } from "@/lib/data";
+import { fetchListings } from "@/lib/db";
 import { UrgentCard, PremiumCard, NormalRow } from "@/components/ListingCard";
 import { ListingsFilter } from "@/components/ListingsFilter";
 import { Icon } from "@/components/Icon";
+import type { Listing } from "@/lib/types";
 
 type SP = Promise<{
   sido?: string;
@@ -21,42 +23,22 @@ type SP = Promise<{
 
 export default async function ListingsPage({ searchParams }: { searchParams: SP }) {
   const sp = await searchParams;
-  let filtered = [...SAMPLE_LISTINGS];
+  const tier = (sp.tier as Listing["tier"] | undefined) ?? undefined;
 
-  if (sp.sido) filtered = filtered.filter((l) => l.sido === sp.sido);
-  if (sp.sigungu) filtered = filtered.filter((l) => l.sigungu === sp.sigungu);
-  if (sp.category) filtered = filtered.filter((l) => l.category === sp.category);
-  if (sp.tier) filtered = filtered.filter((l) => l.tier === sp.tier);
-  if (sp.q) {
-    const q = sp.q.toLowerCase();
-    filtered = filtered.filter(
-      (l) =>
-        l.title.toLowerCase().includes(q) ||
-        l.description.toLowerCase().includes(q) ||
-        l.region.toLowerCase().includes(q)
-    );
-  }
-  if (sp.depositMin) filtered = filtered.filter((l) => l.deposit >= Number(sp.depositMin));
-  if (sp.depositMax) filtered = filtered.filter((l) => l.deposit <= Number(sp.depositMax));
-  if (sp.rentMin) filtered = filtered.filter((l) => l.monthlyRent >= Number(sp.rentMin));
-  if (sp.rentMax) filtered = filtered.filter((l) => l.monthlyRent <= Number(sp.rentMax));
-  if (sp.premiumMin) filtered = filtered.filter((l) => l.premium >= Number(sp.premiumMin));
-  if (sp.premiumMax) filtered = filtered.filter((l) => l.premium <= Number(sp.premiumMax));
-
-  // sort
-  const sort = sp.sort ?? "default";
-  if (sort === "newest") filtered.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-  if (sort === "views") filtered.sort((a, b) => b.views - a.views);
-  if (sort === "price-low") filtered.sort((a, b) => a.deposit + a.premium - b.deposit - b.premium);
-  if (sort === "price-high") filtered.sort((a, b) => b.deposit + b.premium - a.deposit - a.premium);
-  if (sort === "default") {
-    const tierOrder: Record<string, number> = { urgent: 0, premium: 1, normal: 2, free: 3 };
-    filtered.sort((a, b) => {
-      const t = tierOrder[a.tier] - tierOrder[b.tier];
-      if (t !== 0) return t;
-      return new Date(b.bumpedAt).getTime() - new Date(a.bumpedAt).getTime();
-    });
-  }
+  const filtered = await fetchListings({
+    tier,
+    sido: sp.sido,
+    sigungu: sp.sigungu,
+    category: sp.category,
+    q: sp.q,
+    depositMin: sp.depositMin ? Number(sp.depositMin) : undefined,
+    depositMax: sp.depositMax ? Number(sp.depositMax) : undefined,
+    rentMin: sp.rentMin ? Number(sp.rentMin) : undefined,
+    rentMax: sp.rentMax ? Number(sp.rentMax) : undefined,
+    premiumMin: sp.premiumMin ? Number(sp.premiumMin) : undefined,
+    premiumMax: sp.premiumMax ? Number(sp.premiumMax) : undefined,
+    sort: sp.sort,
+  });
 
   const urgent = filtered.filter((l) => l.tier === "urgent");
   const premium = filtered.filter((l) => l.tier === "premium");

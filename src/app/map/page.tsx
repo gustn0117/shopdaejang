@@ -1,4 +1,4 @@
-import { SAMPLE_LISTINGS } from "@/lib/data";
+import { fetchListings } from "@/lib/db";
 import { MapView } from "@/components/MapView";
 
 export const metadata = {
@@ -6,8 +6,8 @@ export const metadata = {
   description: "지도에서 마사지샵 매물을 찾아보세요",
 };
 
-export default function MapPage() {
-  const listings = SAMPLE_LISTINGS.slice(0, 30);
+export default async function MapPage() {
+  const listings = await fetchListings({ limit: 30 });
   return (
     <div className="container-custom py-4 lg:py-6">
       <div className="mb-3">

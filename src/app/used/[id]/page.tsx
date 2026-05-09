@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { SAMPLE_USED_GOODS } from "@/lib/data";
+import { fetchUsedGoodById } from "@/lib/db";
 import { formatPrice, formatRelativeDate } from "@/lib/format";
 import { Icon } from "@/components/Icon";
 
@@ -11,7 +11,7 @@ export default async function UsedDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const item = SAMPLE_USED_GOODS.find((i) => i.id === Number(id));
+  const item = await fetchUsedGoodById(Number(id));
   if (!item) notFound();
 
   return (

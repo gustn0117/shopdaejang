@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { ShopCategory, AdTier, AdPricing } from "@/lib/types";
 import { Icon } from "./Icon";
+import { createClient } from "@/lib/supabase/client";
+import { createListing } from "@/app/mypage/register/actions";
 
 type Step = 1 | 2 | 3 | 4;
 
@@ -43,6 +45,8 @@ export function RegisterForm({
   const [isPublic, setIsPublic] = useState(true);
   const [agreement, setAgreement] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const sigunguList = sido ? regions[sido] ?? [] : [];
 
@@ -96,13 +100,74 @@ export function RegisterForm({
     if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!agreement) {
       alert("이용약관에 동의해주세요");
       return;
     }
-    setSubmitted(true);
+    setSubmitting(true);
+    setSubmitError(null);
+    try {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        setSubmitError("로그인이 필요합니다.");
+        setSubmitting(false);
+        return;
+      }
+
+      const uploaded: string[] = [];
+      for (const file of images) {
+        const ext = file.name.split(".").pop() ?? "jpg";
+        const path = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+        const { error } = await supabase.storage
+          .from("shopdaejang-listings")
+          .upload(path, file, { contentType: file.type, upsert: false });
+        if (error) {
+          setSubmitError(`이미지 업로드 실패: ${error.message}`);
+          setSubmitting(false);
+          return;
+        }
+        const { data: pub } = supabase.storage.from("shopdaejang-listings").getPublicUrl(path);
+        uploaded.push(pub.publicUrl);
+      }
+
+      const result = await createListing({
+        title: title.trim(),
+        description: shopStructure || undefined,
+        shop_structure: shopStructure || undefined,
+        commercial: commercial || undefined,
+        etc: etc || undefined,
+        sido,
+        sigungu,
+        dong: dong || undefined,
+        detail_address: detailAddress || undefined,
+        is_address_public: isAddressPublic,
+        category: category as string,
+        area: Number(area),
+        deposit: Number(deposit || 0),
+        monthly_rent: Number(monthlyRent || 0),
+        premium: Number(premium || 0),
+        tier: tier as AdTier,
+        ad_period: period,
+        thumbnail: uploaded[0],
+        images: uploaded,
+        phone,
+        use_secret_number: useSecretNumber,
+        is_public: isPublic,
+      });
+
+      if (!result.ok) {
+        setSubmitError(result.error);
+        setSubmitting(false);
+        return;
+      }
+      setSubmitted(true);
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : "알 수 없는 오류");
+      setSubmitting(false);
+    }
   }
 
   const selectedTier = adPricing.find((p) => p.tier === tier);
@@ -534,12 +599,16 @@ export function RegisterForm({
       )}
 
       {/* Buttons */}
+      {submitError && (
+        <p className="text-xs text-urgent bg-zinc-50 border border-urgent rounded p-2">{submitError}</p>
+      )}
       <div className="flex gap-2">
         {step > 1 && (
           <button
             type="button"
             onClick={prev}
-            className="flex-1 lg:flex-none inline-flex items-center justify-center gap-1.5 px-6 py-3 border border-border font-bold rounded hover:bg-zinc-50"
+            disabled={submitting}
+            className="flex-1 lg:flex-none inline-flex items-center justify-center gap-1.5 px-6 py-3 border border-border font-bold rounded hover:bg-zinc-50 disabled:opacity-50"
           >
             <Icon.ChevronLeft size={14} strokeWidth={2.2} />
             이전
@@ -557,10 +626,10 @@ export function RegisterForm({
         ) : (
           <button
             type="submit"
-            disabled={!agreement}
+            disabled={!agreement || submitting}
             className="flex-1 px-6 py-3 bg-foreground text-white font-bold rounded hover:bg-foreground/90 disabled:bg-zinc-300 disabled:cursor-not-allowed"
           >
-            {selectedPeriod?.price === 0 ? "무료 등록 완료" : "결제하고 등록하기"}
+            {submitting ? "등록 중..." : selectedPeriod?.price === 0 ? "무료 등록 완료" : "결제하고 등록하기"}
           </button>
         )}
       </div>

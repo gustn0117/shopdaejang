@@ -1,10 +1,11 @@
-import { SAMPLE_NOTICES } from "@/lib/data";
+import { fetchNotices } from "@/lib/db";
 import { Icon } from "@/components/Icon";
 import { formatDate } from "@/lib/format";
 
 export const metadata = { title: "공지 관리", robots: "noindex" };
 
-export default function AdminNoticesPage() {
+export default async function AdminNoticesPage() {
+  const notices = await fetchNotices();
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
@@ -25,9 +26,9 @@ export default function AdminNoticesPage() {
           <div className="text-center">처리</div>
         </div>
         <ul className="divide-y divide-border">
-          {SAMPLE_NOTICES.map((n, i) => (
+          {notices.map((n, i) => (
             <li key={n.id} className="grid grid-cols-1 md:grid-cols-[60px_60px_1fr_120px_80px_140px] gap-2 px-3 py-3 text-sm items-center">
-              <div className="hidden md:block text-center text-xs text-muted">{SAMPLE_NOTICES.length - i}</div>
+              <div className="hidden md:block text-center text-xs text-muted">{notices.length - i}</div>
               <div className="hidden md:flex justify-center">
                 {n.isPinned ? <Icon.Pin size={14} className="text-foreground" /> : <span className="text-muted">—</span>}
               </div>

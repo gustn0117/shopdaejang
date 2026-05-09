@@ -1,16 +1,21 @@
 import Link from "next/link";
-import { SAMPLE_LISTINGS, SAMPLE_NOTICES, AD_PRICING, CATEGORIES } from "@/lib/data";
+import { AD_PRICING, CATEGORIES } from "@/lib/data";
+import { fetchListings, fetchNotices } from "@/lib/db";
 import { UrgentCard, PremiumCard, NormalRow, FreeRow } from "@/components/ListingCard";
 import { SearchBar } from "@/components/SearchBar";
 import { SectionHeader } from "@/components/SectionHeader";
 import { Icon } from "@/components/Icon";
 
-export default function HomePage() {
-  const urgent = SAMPLE_LISTINGS.filter((l) => l.tier === "urgent").slice(0, 8);
-  const premium = SAMPLE_LISTINGS.filter((l) => l.tier === "premium").slice(0, 8);
-  const normal = SAMPLE_LISTINGS.filter((l) => l.tier === "normal").slice(0, 10);
-  const free = SAMPLE_LISTINGS.filter((l) => l.tier === "free").slice(0, 8);
-  const notices = SAMPLE_NOTICES.slice(0, 4);
+export const revalidate = 60;
+
+export default async function HomePage() {
+  const [urgent, premium, normal, free, notices] = await Promise.all([
+    fetchListings({ tier: "urgent", limit: 8 }),
+    fetchListings({ tier: "premium", limit: 8 }),
+    fetchListings({ tier: "normal", limit: 10 }),
+    fetchListings({ tier: "free", limit: 8 }),
+    fetchNotices({ limit: 4 }),
+  ]);
 
   return (
     <div className="container-custom py-4 lg:py-6 space-y-6 lg:space-y-8">
