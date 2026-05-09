@@ -28,7 +28,7 @@ export function SearchBar() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white rounded-lg border border-border p-3 lg:p-4"
+      className="bg-white rounded-md border border-border p-3 lg:p-4"
     >
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-2">
         <select

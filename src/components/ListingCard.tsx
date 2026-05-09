@@ -8,7 +8,7 @@ export function UrgentCard({ listing }: { listing: Listing }) {
   return (
     <Link
       href={`/listings/${listing.id}`}
-      className="group block bg-white rounded-lg overflow-hidden border border-border hover:border-foreground transition-colors"
+      className="group block bg-white rounded-md overflow-hidden border border-border hover:border-foreground transition-colors"
     >
       <div className="relative aspect-[4/3] bg-zinc-100 overflow-hidden">
         <Image
@@ -49,7 +49,7 @@ export function PremiumCard({ listing }: { listing: Listing }) {
   return (
     <Link
       href={`/listings/${listing.id}`}
-      className="group flex gap-3 bg-white rounded-lg p-3 border border-border hover:border-foreground transition-colors"
+      className="group flex gap-3 bg-white rounded-md p-3 border border-border hover:border-foreground transition-colors"
     >
       <div className="relative w-24 h-24 lg:w-28 lg:h-28 shrink-0 bg-zinc-100 rounded-md overflow-hidden">
         <Image
