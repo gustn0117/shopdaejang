@@ -1,8 +1,8 @@
 import Link from "next/link";
-import Image from "next/image";
 import { fetchUsedGoods } from "@/lib/db";
 import { formatRelativeDate, formatPrice } from "@/lib/format";
 import { Icon } from "@/components/Icon";
+import { Thumbnail } from "@/components/Thumbnail";
 
 export const metadata = {
   title: "업주 직거래 중고장터",
@@ -75,9 +75,7 @@ export default async function UsedPage({ searchParams }: { searchParams: SP }) {
               <li key={item.id}>
                 <Link href={`/used/${item.id}`} className="flex gap-4 p-4 hover:bg-primary-soft transition-colors">
                   <div className="relative w-24 h-24 sm:w-28 sm:h-28 shrink-0 rounded-md bg-zinc-100 overflow-hidden">
-                    {item.thumbnail && (
-                      <Image src={item.thumbnail} alt={item.title} fill sizes="120px" className="object-cover" unoptimized />
-                    )}
+                    <Thumbnail src={item.thumbnail} alt={item.title} fill sizes="120px" className="object-cover" />
                     {item.isCompleted && (
                       <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
                         <span className="text-white text-xs font-black">판매완료</span>

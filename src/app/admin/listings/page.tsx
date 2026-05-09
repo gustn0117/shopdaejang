@@ -2,6 +2,7 @@ import { fetchListings } from "@/lib/db";
 import { TierBadge } from "@/components/TierBadge";
 import { formatRelativeDate } from "@/lib/format";
 import { RowActions } from "./RowActions";
+import { STRIPED_BG } from "@/lib/placeholder";
 
 export const metadata = { title: "매물 승인", robots: "noindex" };
 
@@ -59,7 +60,11 @@ export default async function AdminListingsPage() {
               <div className="flex gap-2 items-center min-w-0">
                 <div
                   className="w-12 h-12 lg:w-10 lg:h-10 rounded shrink-0 bg-cover bg-center"
-                  style={{ backgroundImage: `url(${l.thumbnail})` }}
+                  style={{
+                    backgroundImage: l.thumbnail
+                      ? `url(${l.thumbnail}), url("${STRIPED_BG}")`
+                      : `url("${STRIPED_BG}")`,
+                  }}
                 />
                 <div className="min-w-0 flex-1">
                   <div className="lg:hidden mb-1"><TierBadge tier={l.tier} size="xs" /></div>

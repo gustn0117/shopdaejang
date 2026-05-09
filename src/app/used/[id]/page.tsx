@@ -1,9 +1,9 @@
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { fetchUsedGoodById } from "@/lib/db";
 import { formatPrice, formatRelativeDate } from "@/lib/format";
 import { Icon } from "@/components/Icon";
+import { Thumbnail } from "@/components/Thumbnail";
 
 export default async function UsedDetailPage({
   params,
@@ -23,7 +23,7 @@ export default async function UsedDetailPage({
 
       <div className="bg-white rounded-md border border-border overflow-hidden mt-3">
         <div className="relative aspect-square sm:aspect-16/10 bg-zinc-100">
-          <Image src={item.thumbnail} alt={item.title} fill sizes="800px" className="object-cover" unoptimized />
+          <Thumbnail src={item.thumbnail} alt={item.title} fill sizes="800px" className="object-cover" />
           {item.isCompleted && (
             <div className="absolute top-3 left-3 px-3 py-1 bg-black/80 text-white text-xs font-black rounded">
               판매완료

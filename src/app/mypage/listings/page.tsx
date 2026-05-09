@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { TierBadge } from "@/components/TierBadge";
 import { formatRelativeDate } from "@/lib/format";
 import { Icon } from "@/components/Icon";
+import { STRIPED_BG } from "@/lib/placeholder";
 
 export const metadata = { title: "매물관리" };
 
@@ -98,8 +99,12 @@ export default async function MyListingsPage({ searchParams }: { searchParams: S
             <div key={l.id} className="bg-white rounded-md border border-border p-3 flex flex-col sm:flex-row gap-3">
               <div className="flex gap-3 flex-1 min-w-0">
                 <div
-                  className="w-20 h-20 sm:w-24 sm:h-24 shrink-0 rounded bg-cover bg-center bg-zinc-100"
-                  style={l.thumbnail ? { backgroundImage: `url(${l.thumbnail})` } : undefined}
+                  className="w-20 h-20 sm:w-24 sm:h-24 shrink-0 rounded bg-cover bg-center"
+                  style={{
+                    backgroundImage: l.thumbnail
+                      ? `url(${l.thumbnail}), url("${STRIPED_BG}")`
+                      : `url("${STRIPED_BG}")`,
+                  }}
                 />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1 mb-1">

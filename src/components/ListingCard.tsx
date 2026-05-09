@@ -1,8 +1,8 @@
 import Link from "next/link";
-import Image from "next/image";
 import type { Listing } from "@/lib/types";
 import { formatKRW, formatRelativeDate } from "@/lib/format";
 import { TierBadge } from "./TierBadge";
+import { Thumbnail } from "./Thumbnail";
 
 export function UrgentCard({ listing }: { listing: Listing }) {
   return (
@@ -11,16 +11,13 @@ export function UrgentCard({ listing }: { listing: Listing }) {
       className="group block bg-white rounded-md overflow-hidden border border-border hover:border-foreground transition-colors"
     >
       <div className="relative aspect-4/3 bg-zinc-100 overflow-hidden">
-        {listing.thumbnail && (
-          <Image
-            src={listing.thumbnail}
-            alt={listing.title}
-            fill
-            sizes="(max-width: 768px) 50vw, 25vw"
-            className="object-cover group-hover:scale-[1.03] transition-transform duration-500"
-            unoptimized
-          />
-        )}
+        <Thumbnail
+          src={listing.thumbnail}
+          alt={listing.title}
+          fill
+          sizes="(max-width: 768px) 50vw, 25vw"
+          className="object-cover group-hover:scale-[1.03] transition-transform duration-500"
+        />
         <div className="absolute top-2 left-2">
           <TierBadge tier="urgent" />
         </div>
@@ -54,16 +51,13 @@ export function PremiumCard({ listing }: { listing: Listing }) {
       className="group flex gap-3 bg-white rounded-md p-3 border border-border hover:border-foreground transition-colors"
     >
       <div className="relative w-24 h-24 lg:w-28 lg:h-28 shrink-0 bg-zinc-100 rounded overflow-hidden">
-        {listing.thumbnail && (
-          <Image
-            src={listing.thumbnail}
-            alt={listing.title}
-            fill
-            sizes="120px"
-            className="object-cover"
-            unoptimized
-          />
-        )}
+        <Thumbnail
+          src={listing.thumbnail}
+          alt={listing.title}
+          fill
+          sizes="120px"
+          className="object-cover"
+        />
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1 mb-1">

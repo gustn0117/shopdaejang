@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { fetchListingById, fetchListings } from "@/lib/db";
@@ -7,6 +6,7 @@ import { TierBadge } from "@/components/TierBadge";
 import { formatKRW, formatRelativeDate } from "@/lib/format";
 import { UrgentCard } from "@/components/ListingCard";
 import { Icon } from "@/components/Icon";
+import { Thumbnail } from "@/components/Thumbnail";
 
 export async function generateMetadata({
   params,
@@ -49,13 +49,12 @@ export default async function ListingDetailPage({
         <div>
           <div className="bg-white rounded-md border border-border overflow-hidden mb-4">
             <div className="relative aspect-16/10 bg-zinc-100">
-              <Image
+              <Thumbnail
                 src={listing.thumbnail}
                 alt={listing.title}
                 fill
                 sizes="(max-width: 1024px) 100vw, 800px"
                 className="object-cover"
-                unoptimized
                 priority
               />
               <div className="absolute top-3 left-3 flex gap-2">
