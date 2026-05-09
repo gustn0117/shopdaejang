@@ -119,34 +119,25 @@ export default async function ListingDetailPage({
               <span className="w-1 h-4 bg-foreground rounded-sm" />
               샵 구조
             </h2>
-            <div className="text-sm text-foreground/80 leading-relaxed space-y-2 mb-4">
-              <p>· 1인실 2개, 2인실 1개 (총 4베드 운영중)</p>
-              <p>· 샤워실 2개, 화장실 분리</p>
-              <p>· 대기실 + 카운터 분리 구조</p>
-              <p>· 신축 인테리어 후 1년 미사용 부분 다수</p>
-            </div>
+            <p className="text-sm text-foreground/80 leading-relaxed whitespace-pre-line mb-4">
+              {listing.shopStructure || "등록된 정보가 없습니다."}
+            </p>
 
             <h2 className="text-base font-bold mb-3 mt-6 flex items-center gap-2">
               <span className="w-1 h-4 bg-foreground rounded-sm" />
               상권
             </h2>
-            <div className="text-sm text-foreground/80 leading-relaxed space-y-2 mb-4">
-              <p>· 역세권 도보 5분 거리</p>
-              <p>· 주변 오피스 및 주거지 밀집 지역</p>
-              <p>· 경쟁업체 상대적으로 적은 안정 상권</p>
-              <p>· 평일/주말 모두 매출 안정적</p>
-            </div>
+            <p className="text-sm text-foreground/80 leading-relaxed whitespace-pre-line mb-4">
+              {listing.commercialArea || "등록된 정보가 없습니다."}
+            </p>
 
             <h2 className="text-base font-bold mb-3 mt-6 flex items-center gap-2">
               <span className="w-1 h-4 bg-foreground rounded-sm" />
               기타사항
             </h2>
-            <div className="text-sm text-foreground/80 leading-relaxed space-y-2">
-              <p>· 권리금 협의 가능</p>
-              <p>· 인테리어 사진 별도 전송 가능</p>
-              <p>· 현재 운영중이며 빠른 거래 원함</p>
-              <p>· 영업비밀 유지 부탁드립니다</p>
-            </div>
+            <p className="text-sm text-foreground/80 leading-relaxed whitespace-pre-line">
+              {listing.etcInfo || "등록된 정보가 없습니다."}
+            </p>
           </div>
 
           {/* Map */}

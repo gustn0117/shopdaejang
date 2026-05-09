@@ -37,22 +37,22 @@ function makeListings(n) {
     const sido = rand(REGIONS_KEYS);
     const tier = TIERS[i % 4];
     out.push({
-      title: `${sido} ${rand(["신축", "역세권", "권리인하", "급매", "우량", "운영중"])} ${rand(CATEGORIES)} ${rand(["급매", "양도", "매매", "권리인하"])}`,
-      description: rand(["역세권 5분거리 우량매물", "신축 인테리어 / 4베드 운영중", "오피스 밀집 안정상권", "신축 상가 1층 통유리 매장"]),
-      shop_structure: "1인실 2개, 2인실 1개 (총 4베드)",
-      commercial: "역세권 도보 5분, 오피스 밀집",
-      etc: "권리금 협의 가능, 현재 운영 중",
+      title: "이곳에 제목이 들어갑니다.",
+      description: "이곳에 매물 설명이 들어갑니다.",
+      shop_structure: "이곳에 샵 구조 설명이 들어갑니다.",
+      commercial: "이곳에 상권 설명이 들어갑니다.",
+      etc: "이곳에 기타 정보가 들어갑니다.",
       sido,
       sigungu: "강남구",
       dong: "역삼동",
       is_address_public: i % 5 !== 0,
       category: rand(CATEGORIES),
       area: 25 + ((i * 7) % 60),
-      deposit: 3000 + ((i * 113) % 7000),
-      monthly_rent: 100 + ((i * 17) % 400),
-      premium: 1000 + ((i * 211) % 12000),
+      deposit: 1000,
+      monthly_rent: 100,
+      premium: 500,
       tier,
-      thumbnail: `https://images.unsplash.com/photo-${1540000000000 + i * 13}?w=600&h=400&fit=crop`,
+      thumbnail: null,
       images: [],
       phone: "010-0000-0000",
       use_secret_number: true,
@@ -77,11 +77,11 @@ const NOTICES = [
 ];
 
 const USED = [
-  { category: "팝니다", title: "거의 새것 마사지베드 2대", description: "6개월 사용. 직접 픽업 시 추가 할인.", price: 450000, region: "서울 강남", thumbnail: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=600&h=400&fit=crop", views: 87, is_completed: false, created_at: new Date(Date.now() - 86400000 * 2).toISOString() },
-  { category: "팝니다", title: "마사지오일 30병 일괄", description: "유통기한 1년 이상 남음. 일괄로 80%가에 양도합니다.", price: 180000, region: "경기 수원", thumbnail: "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=600&h=400&fit=crop", views: 56, is_completed: false, created_at: new Date(Date.now() - 86400000 * 4).toISOString() },
-  { category: "삽니다", title: "타올워머 2단 구입 희망", description: "중고 가능. 상태 좋은 것으로 알아봅니다.", price: 100000, region: "부산 해운대", thumbnail: "https://images.unsplash.com/photo-1600618528240-fb9fc964b853?w=600&h=400&fit=crop", views: 23, is_completed: false, created_at: new Date(Date.now() - 86400000 * 1).toISOString() },
-  { category: "팝니다", title: "전동 마사지베드 (저렴 처분)", description: "이전으로 인한 처분.", price: 350000, region: "인천 부평", thumbnail: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&h=400&fit=crop", views: 134, is_completed: true, created_at: new Date(Date.now() - 86400000 * 7).toISOString() },
-  { category: "팝니다", title: "타올 100장 (미사용)", description: "포장 그대로 미사용 신상.", price: 80000, region: "대전 둔산", thumbnail: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&h=400&fit=crop", views: 41, is_completed: false, created_at: new Date(Date.now() - 86400000 * 3).toISOString() },
+  { category: "팝니다", title: "이곳에 제목이 들어갑니다.", description: "이곳에 상품 설명이 들어갑니다.", price: 100000, region: "서울 강남", thumbnail: null, views: 87, is_completed: false, created_at: new Date(Date.now() - 86400000 * 2).toISOString() },
+  { category: "팝니다", title: "이곳에 제목이 들어갑니다.", description: "이곳에 상품 설명이 들어갑니다.", price: 100000, region: "경기 수원", thumbnail: null, views: 56, is_completed: false, created_at: new Date(Date.now() - 86400000 * 4).toISOString() },
+  { category: "삽니다", title: "이곳에 제목이 들어갑니다.", description: "이곳에 상품 설명이 들어갑니다.", price: 100000, region: "부산 해운대", thumbnail: null, views: 23, is_completed: false, created_at: new Date(Date.now() - 86400000 * 1).toISOString() },
+  { category: "팝니다", title: "이곳에 제목이 들어갑니다.", description: "이곳에 상품 설명이 들어갑니다.", price: 100000, region: "인천 부평", thumbnail: null, views: 134, is_completed: true, created_at: new Date(Date.now() - 86400000 * 7).toISOString() },
+  { category: "팝니다", title: "이곳에 제목이 들어갑니다.", description: "이곳에 상품 설명이 들어갑니다.", price: 100000, region: "대전 둔산", thumbnail: null, views: 41, is_completed: false, created_at: new Date(Date.now() - 86400000 * 3).toISOString() },
 ];
 
 const FAQS = [
