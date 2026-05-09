@@ -1,19 +1,20 @@
 import Link from "next/link";
+import { Icon } from "@/components/Icon";
 
 export const metadata = {
   title: "용품도매장터",
   description: "마사지 관련 용품 및 도매 거래",
 };
 
-const CATEGORIES = [
-  { name: "마사지베드", count: 24, icon: "🛏️" },
-  { name: "마사지오일", count: 38, icon: "💧" },
-  { name: "타올/리넨", count: 52, icon: "📜" },
-  { name: "안마기/기기", count: 18, icon: "💪" },
-  { name: "인테리어소품", count: 27, icon: "🪴" },
-  { name: "유니폼/위생", count: 15, icon: "👕" },
-  { name: "관리/세정용품", count: 33, icon: "🧴" },
-  { name: "기타용품", count: 19, icon: "📦" },
+const CATEGORIES: { name: string; count: number; icon: keyof typeof Icon }[] = [
+  { name: "마사지베드", count: 24, icon: "Bed" },
+  { name: "마사지오일", count: 38, icon: "Drop" },
+  { name: "타올/리넨", count: 52, icon: "Scroll" },
+  { name: "안마기/기기", count: 18, icon: "Dumbbell" },
+  { name: "인테리어소품", count: 27, icon: "Plant" },
+  { name: "유니폼/위생", count: 15, icon: "Shirt" },
+  { name: "관리/세정용품", count: 33, icon: "Bottle" },
+  { name: "기타용품", count: 19, icon: "Box" },
 ];
 
 const ITEMS = [
@@ -30,50 +31,54 @@ export default function SuppliesPage() {
     <div className="container-custom py-4 lg:py-6">
       <div className="mb-4 flex items-end justify-between">
         <div>
-          <h1 className="text-xl lg:text-2xl font-black">용품도매장터</h1>
+          <h1 className="text-xl lg:text-2xl font-black tracking-tight">용품도매장터</h1>
           <p className="text-xs lg:text-sm text-muted mt-1">
             마사지 관련 용품과 도매 상품을 한눈에
           </p>
         </div>
-        <Link href="/supplies/inquiry" className="px-4 py-2 border border-border text-xs lg:text-sm font-bold rounded-lg hover:border-primary hover:text-primary">
+        <Link href="/supplies/inquiry" className="px-4 py-2 border border-border text-xs lg:text-sm font-bold rounded hover:border-foreground">
           입점 문의
         </Link>
       </div>
 
-      {/* 카테고리 */}
-      <section className="bg-white rounded-xl border border-border p-3 lg:p-4 mb-4">
+      <section className="bg-white rounded-md border border-border p-3 lg:p-4 mb-4">
         <h2 className="text-sm font-bold mb-3">카테고리별 용품</h2>
         <div className="grid grid-cols-4 lg:grid-cols-8 gap-2">
-          {CATEGORIES.map((c) => (
-            <Link
-              key={c.name}
-              href={`/supplies?cat=${encodeURIComponent(c.name)}`}
-              className="flex flex-col items-center gap-1 p-2 rounded-lg border border-border hover:border-primary hover:bg-primary-light"
-            >
-              <span className="text-2xl">{c.icon}</span>
-              <span className="text-[11px] font-semibold text-center line-clamp-1">{c.name}</span>
-              <span className="text-[10px] text-muted">{c.count}건</span>
-            </Link>
-          ))}
+          {CATEGORIES.map((c) => {
+            const IconComp = Icon[c.icon] as (props: { size?: number; className?: string }) => React.ReactElement;
+            return (
+              <Link
+                key={c.name}
+                href={`/supplies?cat=${encodeURIComponent(c.name)}`}
+                className="flex flex-col items-center gap-1.5 p-2 rounded border border-border hover:border-foreground hover:bg-zinc-50"
+              >
+                <IconComp size={22} className="text-foreground" />
+                <span className="text-[11px] font-semibold text-center line-clamp-1">{c.name}</span>
+                <span className="text-[10px] text-muted">{c.count}건</span>
+              </Link>
+            );
+          })}
         </div>
       </section>
 
-      {/* 추천 도매 상품 */}
       <section className="mb-4">
-        <h2 className="text-base lg:text-lg font-black mb-3">🔥 이번주 인기 도매 상품</h2>
+        <h2 className="text-base lg:text-lg font-black mb-3 tracking-tight inline-flex items-center gap-1.5">
+          <Icon.Fire size={18} strokeWidth={1.8} />
+          이번주 인기 도매 상품
+        </h2>
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
           {ITEMS.map((item) => (
             <Link
               key={item.id}
               href={`/supplies/${item.id}`}
-              className="bg-white rounded-xl border border-border overflow-hidden hover:shadow-md transition-shadow"
+              className="bg-white rounded-md border border-border overflow-hidden hover:border-foreground transition-colors"
             >
-              <div className="relative aspect-[4/3] bg-gradient-to-br from-primary-light to-amber-100">
-                <div className="absolute top-2 left-2 px-2 py-0.5 bg-primary text-white text-[10px] font-bold rounded">
+              <div className="relative aspect-4/3 bg-zinc-50 border-b border-border">
+                <div className="absolute top-2 left-2 px-2 py-0.5 bg-foreground text-white text-[10px] font-bold rounded">
                   {item.badge}
                 </div>
-                <div className="absolute inset-0 flex items-center justify-center text-3xl">
-                  📦
+                <div className="absolute inset-0 flex items-center justify-center text-muted">
+                  <Icon.Box size={40} strokeWidth={1.4} />
                 </div>
               </div>
               <div className="p-3">
@@ -83,27 +88,31 @@ export default function SuppliesPage() {
                   <span className="text-xs text-muted line-through">{item.original.toLocaleString()}</span>
                 </div>
                 <div className="flex items-baseline gap-1">
-                  <span className="text-base font-black text-primary">{item.price.toLocaleString()}원</span>
-                  <span className="text-xs text-red-500 font-bold">
-                    {Math.round((1 - item.price / item.original) * 100)}%↓
+                  <span className="text-base font-black text-foreground">{item.price.toLocaleString()}원</span>
+                  <span className="text-xs text-urgent font-bold">
+                    {Math.round((1 - item.price / item.original) * 100)}%
                   </span>
                 </div>
-                <p className="text-[10px] text-muted mt-1">{item.region}</p>
+                <p className="text-[10px] text-muted mt-1 inline-flex items-center gap-1">
+                  <Icon.Truck size={11} />
+                  {item.region}
+                </p>
               </div>
             </Link>
           ))}
         </div>
       </section>
 
-      <div className="bg-white border border-border rounded-xl p-4 lg:p-6 text-center">
+      <div className="bg-white border border-border rounded-md p-4 lg:p-6 text-center">
         <h3 className="text-base font-bold mb-2">용품 도매 입점 문의</h3>
         <p className="text-sm text-muted mb-4">
           마사지 관련 용품을 도매로 판매하고 계신가요?
           <br />
           샵대장 도매장터에 입점해보세요.
         </p>
-        <Link href="/supplies/inquiry" className="inline-flex items-center justify-center px-5 py-2.5 bg-primary text-white text-sm font-bold rounded-lg">
+        <Link href="/supplies/inquiry" className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-foreground text-white text-sm font-bold rounded">
           입점 문의하기
+          <Icon.ArrowRight size={14} strokeWidth={2.2} />
         </Link>
       </div>
     </div>

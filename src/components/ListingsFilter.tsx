@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { ShopCategory } from "@/lib/types";
+import { Icon } from "./Icon";
 
 const TIER_OPTIONS = [
   { value: "", label: "전체" },
@@ -75,12 +76,14 @@ export function ListingsFilter({
       <button
         type="button"
         onClick={() => setMobileOpen(true)}
-        className="lg:hidden flex items-center justify-between w-full px-4 py-3 bg-white border border-border rounded-lg font-semibold text-sm"
+        className="lg:hidden flex items-center justify-between w-full px-4 py-3 bg-white border border-border rounded-md font-semibold text-sm"
       >
         <span className="flex items-center gap-2">
-          🔍 검색 필터 {filterCount > 0 && <span className="px-1.5 py-0.5 bg-primary text-white text-[10px] rounded-full">{filterCount}</span>}
+          <Icon.Filter size={14} />
+          검색 필터
+          {filterCount > 0 && <span className="px-1.5 py-0.5 bg-foreground text-white text-[10px] rounded-full">{filterCount}</span>}
         </span>
-        <span className="text-muted">→</span>
+        <Icon.ChevronRight size={14} className="text-muted" />
       </button>
 
       <div
@@ -98,11 +101,11 @@ export function ListingsFilter({
           ${mobileOpen ? "translate-x-0" : "translate-x-full lg:translate-x-0"}
         `}
       >
-        <div className="bg-white lg:border lg:border-border rounded-xl p-4 space-y-4">
+        <div className="bg-white lg:border lg:border-border rounded-md p-4 space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="font-bold">검색 필터</h3>
-            <button type="button" onClick={() => setMobileOpen(false)} className="lg:hidden text-muted">
-              ✕
+            <button type="button" onClick={() => setMobileOpen(false)} className="lg:hidden text-muted" aria-label="닫기">
+              <Icon.X size={16} />
             </button>
           </div>
 
@@ -113,7 +116,7 @@ export function ListingsFilter({
               value={q}
               onChange={(e) => setQ(e.target.value)}
               placeholder="제목, 지역, 설명 검색"
-              className="w-full px-3 py-2 text-sm border border-border rounded focus:outline-none focus:border-primary"
+              className="w-full px-3 py-2 text-sm border border-border rounded focus:outline-none focus:border-foreground"
             />
           </div>
 
@@ -162,8 +165,8 @@ export function ListingsFilter({
                   onClick={() => setTier(t.value)}
                   className={`px-2 py-1 text-xs border rounded ${
                     tier === t.value
-                      ? "bg-primary text-white border-primary"
-                      : "border-border text-muted hover:border-primary"
+                      ? "bg-foreground text-white border-foreground"
+                      : "border-border text-muted hover:border-foreground"
                   }`}
                 >
                   {t.label}
@@ -226,10 +229,10 @@ export function ListingsFilter({
           </div>
 
           <div className="grid grid-cols-2 gap-2 pt-2">
-            <button type="button" onClick={reset} className="py-2.5 text-xs font-bold border border-border rounded hover:border-primary hover:text-primary">
+            <button type="button" onClick={reset} className="py-2.5 text-xs font-bold border border-border rounded hover:border-foreground">
               초기화
             </button>
-            <button type="button" onClick={apply} className="py-2.5 text-xs font-bold bg-primary text-white rounded hover:bg-primary-dark">
+            <button type="button" onClick={apply} className="py-2.5 text-xs font-bold bg-foreground text-white rounded hover:bg-foreground/90">
               검색하기
             </button>
           </div>

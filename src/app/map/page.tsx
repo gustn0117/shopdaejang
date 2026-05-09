@@ -11,7 +11,7 @@ export default function MapPage() {
   return (
     <div className="container-custom py-4 lg:py-6">
       <div className="mb-3">
-        <h1 className="text-xl lg:text-2xl font-black">지도검색</h1>
+        <h1 className="text-xl lg:text-2xl font-black tracking-tight">지도검색</h1>
         <p className="text-xs lg:text-sm text-muted mt-1">
           지도에서 매물 위치를 한눈에 확인하세요
         </p>

@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { CATEGORIES, REGIONS } from "@/lib/data";
+import { Icon } from "./Icon";
 
 export function SearchBar() {
   const router = useRouter();
@@ -27,7 +28,7 @@ export function SearchBar() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white rounded-xl shadow-sm border border-border p-3 lg:p-4"
+      className="bg-white rounded-lg border border-border p-3 lg:p-4"
     >
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-2">
         <select
@@ -36,7 +37,7 @@ export function SearchBar() {
             setSido(e.target.value);
             setSigungu("");
           }}
-          className="px-3 py-2.5 lg:py-3 text-sm border border-border rounded-lg bg-white focus:outline-none focus:border-primary"
+          className="px-3 py-2.5 lg:py-3 text-sm border border-border rounded-md bg-white focus:outline-none focus:border-foreground"
         >
           <option value="">지역선택</option>
           {sidoList.map((s) => (
@@ -49,7 +50,7 @@ export function SearchBar() {
           value={sigungu}
           onChange={(e) => setSigungu(e.target.value)}
           disabled={!sido}
-          className="px-3 py-2.5 lg:py-3 text-sm border border-border rounded-lg bg-white focus:outline-none focus:border-primary disabled:bg-zinc-50 disabled:text-muted"
+          className="px-3 py-2.5 lg:py-3 text-sm border border-border rounded-md bg-white focus:outline-none focus:border-foreground disabled:bg-zinc-50 disabled:text-muted"
         >
           <option value="">구·군선택</option>
           {sigunguList.map((s) => (
@@ -61,7 +62,7 @@ export function SearchBar() {
         <select
           value={category}
           onChange={(e) => setCategory(e.target.value)}
-          className="col-span-2 lg:col-span-1 px-3 py-2.5 lg:py-3 text-sm border border-border rounded-lg bg-white focus:outline-none focus:border-primary"
+          className="col-span-2 lg:col-span-1 px-3 py-2.5 lg:py-3 text-sm border border-border rounded-md bg-white focus:outline-none focus:border-foreground"
         >
           <option value="">업종선택</option>
           {CATEGORIES.map((c) => (
@@ -75,17 +76,14 @@ export function SearchBar() {
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
           placeholder="키워드 입력"
-          className="col-span-2 lg:col-span-1 px-3 py-2.5 lg:py-3 text-sm border border-border rounded-lg bg-white focus:outline-none focus:border-primary"
+          className="col-span-2 lg:col-span-1 px-3 py-2.5 lg:py-3 text-sm border border-border rounded-md bg-white focus:outline-none focus:border-foreground"
         />
         <button
           type="submit"
-          className="col-span-2 lg:col-span-1 px-4 py-2.5 lg:py-3 bg-primary hover:bg-primary-dark text-white font-bold text-sm rounded-lg flex items-center justify-center gap-2 transition-colors"
+          className="col-span-2 lg:col-span-1 px-4 py-2.5 lg:py-3 bg-foreground hover:bg-foreground/90 text-white font-bold text-sm rounded-md flex items-center justify-center gap-2 transition-colors"
         >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="11" cy="11" r="8"></circle>
-            <path d="m21 21-4.3-4.3"></path>
-          </svg>
-          빠른검색
+          <Icon.Search size={16} strokeWidth={2.2} />
+          검색
         </button>
       </div>
     </form>

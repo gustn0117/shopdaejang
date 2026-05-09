@@ -2,6 +2,7 @@ import Link from "next/link";
 import { SAMPLE_LISTINGS, REGIONS, CATEGORIES } from "@/lib/data";
 import { UrgentCard, PremiumCard, NormalRow } from "@/components/ListingCard";
 import { ListingsFilter } from "@/components/ListingsFilter";
+import { Icon } from "@/components/Icon";
 
 type SP = Promise<{
   sido?: string;
@@ -65,13 +66,14 @@ export default async function ListingsPage({ searchParams }: { searchParams: SP 
     <div className="container-custom py-4 lg:py-6">
       <div className="flex items-end justify-between mb-3">
         <div>
-          <h1 className="text-xl lg:text-2xl font-black">매물검색</h1>
+          <h1 className="text-xl lg:text-2xl font-black tracking-tight">매물검색</h1>
           <p className="text-xs lg:text-sm text-muted mt-1">
-            총 <span className="text-primary font-bold">{filtered.length}</span>건의 매물이 검색되었습니다
+            총 <span className="text-foreground font-bold">{filtered.length}</span>건의 매물이 검색되었습니다
           </p>
         </div>
-        <Link href="/map" className="hidden sm:inline-flex items-center gap-1 px-3 py-2 text-xs border border-border rounded-lg hover:border-primary hover:text-primary">
-          🗺️ 지도검색
+        <Link href="/map" className="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 text-xs border border-border rounded hover:border-foreground">
+          <Icon.Map size={12} />
+          지도검색
         </Link>
       </div>
 
@@ -108,17 +110,17 @@ export default async function ListingsPage({ searchParams }: { searchParams: SP 
           {normal.length > 0 && (
             <section>
               <h2 className="font-bold text-sm mb-2">일반·무료 ({normal.length})</h2>
-              <div className="bg-white rounded-xl border border-border overflow-hidden">
+              <div className="bg-white rounded-md border border-border overflow-hidden">
                 {normal.map((l) => <NormalRow key={l.id} listing={l} />)}
               </div>
             </section>
           )}
           {filtered.length === 0 && (
-            <div className="bg-white rounded-xl border border-border p-12 text-center">
-              <p className="text-2xl mb-2">🔍</p>
+            <div className="bg-white rounded-md border border-border p-12 text-center">
+              <Icon.Search size={32} className="mx-auto mb-3 text-muted" />
               <p className="font-bold mb-1">검색 결과가 없습니다</p>
               <p className="text-sm text-muted">다른 조건으로 다시 검색해주세요</p>
-              <Link href="/listings" className="inline-block mt-4 px-4 py-2 bg-primary text-white text-sm font-bold rounded-lg">
+              <Link href="/listings" className="inline-block mt-4 px-4 py-2 bg-foreground text-white text-sm font-bold rounded">
                 전체 매물 보기
               </Link>
             </div>

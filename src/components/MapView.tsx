@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { Listing } from "@/lib/types";
 import { TierBadge } from "./TierBadge";
-import { formatKRW } from "@/lib/format";
+import { Icon } from "./Icon";
 
 const SIDO_COORDS: Record<string, [number, number]> = {
   서울: [55, 32],
@@ -38,14 +38,6 @@ export function MapView({ listings }: { listings: Listing[] }) {
     return filtered;
   }, [listings, filter]);
 
-  // simple offsetter so multiple markers in same sido don't overlap
-  function offset(idx: number, total: number): [number, number] {
-    if (total <= 1) return [0, 0];
-    const angle = (idx / total) * Math.PI * 2;
-    const r = 2.5;
-    return [Math.cos(angle) * r, Math.sin(angle) * r];
-  }
-
   const counts: Record<string, number> = {};
   grouped.forEach((l) => {
     counts[l.sido] = (counts[l.sido] ?? 0) + 1;
@@ -53,34 +45,22 @@ export function MapView({ listings }: { listings: Listing[] }) {
 
   return (
     <div className="grid lg:grid-cols-[1fr_360px] gap-3 h-[80vh] lg:h-[78vh]">
-      <div className="relative bg-white rounded-2xl border border-border overflow-hidden">
-        {/* Korea silhouette */}
+      <div className="relative bg-white rounded-md border border-border overflow-hidden">
         <svg
           viewBox="0 0 100 100"
           className="absolute inset-0 w-full h-full"
           preserveAspectRatio="xMidYMid meet"
         >
-          <defs>
-            <linearGradient id="seaGrad" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor="#dbeafe" />
-              <stop offset="100%" stopColor="#e0f2fe" />
-            </linearGradient>
-            <linearGradient id="landGrad" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor="#f0fdf4" />
-              <stop offset="100%" stopColor="#dcfce7" />
-            </linearGradient>
-          </defs>
-          <rect width="100" height="100" fill="url(#seaGrad)" />
+          <rect width="100" height="100" fill="#fafafa" />
           <path
             d="M 38,18 Q 44,12 50,15 Q 58,12 60,20 Q 65,18 68,25 L 75,30 L 72,40 Q 80,42 78,52 L 82,58 Q 78,66 80,70 L 76,76 Q 70,80 64,78 L 56,82 Q 48,80 42,75 L 38,70 Q 34,62 38,55 L 36,48 Q 38,40 36,32 Z"
-            fill="url(#landGrad)"
-            stroke="#86efac"
+            fill="#ffffff"
+            stroke="#d4d4d4"
             strokeWidth="0.4"
           />
-          <circle cx="40" cy="92" r="4" fill="url(#landGrad)" stroke="#86efac" strokeWidth="0.3" />
+          <circle cx="40" cy="92" r="4" fill="#ffffff" stroke="#d4d4d4" strokeWidth="0.3" />
         </svg>
 
-        {/* Markers */}
         {Object.entries(SIDO_COORDS).map(([sido, [x, y]]) => {
           const sidoListings = grouped.filter((l) => l.sido === sido);
           if (sidoListings.length === 0) return null;
@@ -95,8 +75,7 @@ export function MapView({ listings }: { listings: Listing[] }) {
                 onClick={() => setSelected(sidoListings[0])}
                 className="relative group"
               >
-                <div className="absolute -inset-2 bg-primary/30 rounded-full animate-ping" />
-                <div className="relative w-12 h-12 lg:w-14 lg:h-14 rounded-full bg-primary text-white font-black text-xs lg:text-sm flex flex-col items-center justify-center shadow-lg hover:scale-110 transition-transform">
+                <div className="relative w-12 h-12 lg:w-14 lg:h-14 rounded-full bg-foreground text-white font-bold text-xs lg:text-sm flex flex-col items-center justify-center hover:scale-105 transition-transform">
                   <span className="leading-none">{sido}</span>
                   <span className="text-[10px] lg:text-xs leading-none mt-0.5">
                     {sidoListings.length}
@@ -107,8 +86,7 @@ export function MapView({ listings }: { listings: Listing[] }) {
           );
         })}
 
-        {/* Filters */}
-        <div className="absolute top-3 left-3 bg-white rounded-lg shadow-md border border-border p-1 flex gap-1">
+        <div className="absolute top-3 left-3 bg-white rounded border border-border p-1 flex gap-1">
           {[
             { v: "all", l: "전체" },
             { v: "urgent", l: "긴급" },
@@ -121,7 +99,7 @@ export function MapView({ listings }: { listings: Listing[] }) {
               type="button"
               onClick={() => setFilter(t.v)}
               className={`px-2.5 py-1 text-xs font-semibold rounded ${
-                filter === t.v ? "bg-primary text-white" : "text-muted hover:text-foreground"
+                filter === t.v ? "bg-foreground text-white" : "text-muted hover:text-foreground"
               }`}
             >
               {t.l}
@@ -129,13 +107,13 @@ export function MapView({ listings }: { listings: Listing[] }) {
           ))}
         </div>
 
-        <div className="absolute bottom-3 left-3 bg-white/90 backdrop-blur rounded-lg border border-border p-2 text-[11px] text-muted">
-          🗺️ 데모 지도 · 실제 서비스에는 카카오/네이버 지도 연동
+        <div className="absolute bottom-3 left-3 inline-flex items-center gap-1.5 bg-white border border-border rounded p-2 text-[11px] text-muted">
+          <Icon.Map size={12} />
+          데모 지도 · 실제 서비스에는 카카오/네이버 지도 연동
         </div>
       </div>
 
-      {/* Side list */}
-      <aside className="bg-white rounded-2xl border border-border overflow-hidden flex flex-col">
+      <aside className="bg-white rounded-md border border-border overflow-hidden flex flex-col">
         <div className="p-3 border-b border-border bg-zinc-50">
           <h3 className="font-bold text-sm">지역별 매물 현황</h3>
           <p className="text-xs text-muted">
@@ -151,14 +129,14 @@ export function MapView({ listings }: { listings: Listing[] }) {
               </div>
               <h4 className="font-bold text-sm mb-2">{selected.title}</h4>
               <p className="text-xs text-muted mb-2">{selected.description}</p>
-              <div className="grid grid-cols-3 gap-1 text-center text-[11px] mb-3 bg-zinc-50 p-2 rounded">
+              <div className="grid grid-cols-3 gap-1 text-center text-[11px] mb-3 bg-zinc-50 p-2 rounded border border-border">
                 <div><div className="text-muted">보증금</div><div className="font-bold">{selected.deposit.toLocaleString()}만</div></div>
                 <div><div className="text-muted">월세</div><div className="font-bold">{selected.monthlyRent.toLocaleString()}만</div></div>
                 <div><div className="text-muted">권리금</div><div className="font-bold">{selected.premium.toLocaleString()}만</div></div>
               </div>
               <Link
                 href={`/listings/${selected.id}`}
-                className="block w-full py-2 text-center bg-primary text-white text-sm font-bold rounded"
+                className="block w-full py-2 text-center bg-foreground text-white text-sm font-bold rounded"
               >
                 자세히 보기
               </Link>
@@ -174,10 +152,12 @@ export function MapView({ listings }: { listings: Listing[] }) {
                 <Link
                   key={sido}
                   href={`/listings?sido=${encodeURIComponent(sido)}`}
-                  className="flex items-center justify-between px-3 py-2 bg-zinc-50 rounded hover:bg-primary-light text-sm"
+                  className="flex items-center justify-between px-3 py-2 bg-zinc-50 rounded hover:bg-zinc-100 text-sm"
                 >
                   <span className="font-semibold">{sido}</span>
-                  <span className="text-muted text-xs">매물 {c}건 →</span>
+                  <span className="inline-flex items-center gap-1 text-muted text-xs">
+                    매물 {c}건 <Icon.ChevronRight size={11} />
+                  </span>
                 </Link>
               ))}
           </div>

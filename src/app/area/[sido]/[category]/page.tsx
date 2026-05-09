@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { SAMPLE_LISTINGS, REGIONS, CATEGORIES } from "@/lib/data";
 import { UrgentCard, NormalRow } from "@/components/ListingCard";
 import type { ShopCategory } from "@/lib/types";
+import { Icon } from "@/components/Icon";
 
 export async function generateMetadata({
   params,
@@ -51,31 +52,31 @@ export default async function CategoryAreaPage({
   return (
     <div className="container-custom py-4 lg:py-6">
       <nav className="text-xs text-muted mb-3 flex items-center gap-1 flex-wrap">
-        <Link href="/" className="hover:text-primary">홈</Link>
+        <Link href="/" className="hover:text-foreground">홈</Link>
         <span>/</span>
-        <Link href={`/area/${encodeURIComponent(sido)}`} className="hover:text-primary">{sido}</Link>
+        <Link href={`/area/${encodeURIComponent(sido)}`} className="hover:text-foreground">{sido}</Link>
         <span>/</span>
         <span className="text-foreground">{category}</span>
       </nav>
 
       <header className="mb-4">
-        <h1 className="text-2xl lg:text-3xl font-black">
+        <h1 className="text-2xl lg:text-3xl font-black tracking-tight">
           {sido} {category} 매물 모음
         </h1>
         <p className="text-xs lg:text-sm text-muted mt-2">
-          {sido} 지역의 {category} 매물 <span className="text-primary font-bold">{listings.length}건</span>이 등록되어 있습니다.
+          {sido} 지역의 {category} 매물 <span className="text-foreground font-bold">{listings.length}건</span>이 등록되어 있습니다.
         </p>
       </header>
 
       {/* 다른 카테고리 바로가기 */}
-      <section className="bg-white rounded-xl border border-border p-3 lg:p-4 mb-4">
+      <section className="bg-white rounded-md border border-border p-3 lg:p-4 mb-4">
         <h2 className="text-sm font-bold mb-2">{sido}의 다른 업종 보기</h2>
         <div className="flex flex-wrap gap-1">
           {CATEGORIES.filter((c) => c !== category).map((c) => (
             <Link
               key={c}
               href={`/area/${encodeURIComponent(sido)}/${encodeURIComponent(c)}`}
-              className="px-2 py-1 text-xs border border-border rounded-full hover:border-primary hover:text-primary"
+              className="px-2 py-1 text-xs border border-border rounded-full hover:border-foreground hover:text-foreground"
             >
               {c}
             </Link>
@@ -101,7 +102,7 @@ export default async function CategoryAreaPage({
               <h2 className="text-base lg:text-lg font-black mb-3">
                 {sido} {category} 전체 매물
               </h2>
-              <div className="bg-white rounded-xl border border-border overflow-hidden">
+              <div className="bg-white rounded-md border border-border overflow-hidden">
                 {listings.slice(6).map((l) => (
                   <NormalRow key={l.id} listing={l} />
                 ))}
@@ -110,17 +111,18 @@ export default async function CategoryAreaPage({
           )}
         </>
       ) : (
-        <div className="bg-white rounded-xl border border-border p-12 text-center">
-          <p className="text-2xl mb-2">🔍</p>
+        <div className="bg-white rounded-md border border-border p-12 text-center">
+          <Icon.Search size={32} className="mx-auto mb-3 text-muted" />
           <p className="font-bold">{sido} {category} 매물이 없습니다</p>
           <p className="text-sm text-muted mt-1">다른 지역이나 업종을 확인해보세요</p>
-          <Link href={`/area/${encodeURIComponent(sido)}`} className="inline-block mt-4 px-4 py-2 bg-primary text-white text-xs font-bold rounded-lg">
-            {sido} 전체 매물 보기 →
+          <Link href={`/area/${encodeURIComponent(sido)}`} className="inline-flex items-center gap-1.5 mt-4 px-4 py-2 bg-foreground text-white text-xs font-bold rounded">
+            {sido} 전체 매물 보기
+            <Icon.ChevronRight size={11} />
           </Link>
         </div>
       )}
 
-      <section className="mt-8 bg-white rounded-xl border border-border p-4 lg:p-6">
+      <section className="mt-8 bg-white rounded-md border border-border p-4 lg:p-6">
         <h2 className="text-base font-bold mb-2">{sido} {category} 매물에 대해</h2>
         <p className="text-xs lg:text-sm text-muted leading-relaxed">
           {sido}에서 {category} 양도양수를 원하시는 분들께 최신 매물 정보를 제공해드립니다.

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { Icon } from "./Icon";
 
 const NAV_ITEMS = [
   { href: "/", label: "홈" },
@@ -17,32 +18,30 @@ export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-40 bg-white border-b border-border shadow-sm">
+    <header className="sticky top-0 z-40 bg-white border-b border-border">
       <div className="container-custom">
-        {/* Top bar */}
         <div className="hidden lg:flex items-center justify-end gap-4 py-2 text-xs text-muted">
-          <Link href="/login" className="hover:text-primary">
+          <Link href="/login" className="hover:text-foreground">
             로그인
           </Link>
           <span className="text-border">|</span>
-          <Link href="/mypage" className="hover:text-primary">
+          <Link href="/mypage" className="hover:text-foreground">
             마이페이지
           </Link>
           <span className="text-border">|</span>
-          <Link href="/mypage/register" className="hover:text-primary">
+          <Link href="/mypage/register" className="hover:text-foreground">
             매물등록
           </Link>
           <span className="text-border">|</span>
-          <Link href="/notice" className="hover:text-primary">
+          <Link href="/notice" className="hover:text-foreground">
             고객센터
           </Link>
         </div>
 
-        {/* Main bar */}
         <div className="flex items-center justify-between py-3 lg:py-4">
           <div className="flex items-center gap-8">
             <Link href="/" className="flex items-center gap-2">
-              <div className="w-9 h-9 lg:w-10 lg:h-10 rounded-lg bg-primary flex items-center justify-center text-white font-black text-lg lg:text-xl">
+              <div className="w-9 h-9 lg:w-10 lg:h-10 rounded-md bg-foreground flex items-center justify-center text-white font-black text-base lg:text-lg">
                 샵
               </div>
               <div className="flex flex-col leading-tight">
@@ -60,7 +59,7 @@ export function Header() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="px-3 py-2 text-sm font-semibold text-foreground hover:text-primary hover:bg-primary-light rounded-md transition-colors"
+                  className="px-3 py-2 text-sm font-medium text-foreground/80 hover:text-foreground transition-colors"
                 >
                   {item.label}
                 </Link>
@@ -71,12 +70,9 @@ export function Header() {
           <div className="flex items-center gap-2">
             <Link
               href="/mypage/register"
-              className="hidden sm:inline-flex items-center gap-1 px-4 py-2 bg-primary text-white text-sm font-bold rounded-lg hover:bg-primary-dark transition-colors"
+              className="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 bg-foreground text-white text-sm font-bold rounded-md hover:bg-foreground/90 transition-colors"
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-              </svg>
+              <Icon.Plus size={14} strokeWidth={2.5} />
               매물등록
             </Link>
             <button
@@ -85,25 +81,11 @@ export function Header() {
               className="lg:hidden p-2 text-foreground"
               aria-label="메뉴 열기"
             >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                {isMenuOpen ? (
-                  <>
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                  </>
-                ) : (
-                  <>
-                    <line x1="3" y1="12" x2="21" y2="12"></line>
-                    <line x1="3" y1="6" x2="21" y2="6"></line>
-                    <line x1="3" y1="18" x2="21" y2="18"></line>
-                  </>
-                )}
-              </svg>
+              {isMenuOpen ? <Icon.X size={22} /> : <Icon.Menu size={22} />}
             </button>
           </div>
         </div>
 
-        {/* Mobile menu */}
         {isMenuOpen && (
           <div className="lg:hidden pb-3 animate-fade-up">
             <nav className="flex flex-col gap-1 pt-2 border-t border-border">
@@ -112,7 +94,7 @@ export function Header() {
                   key={item.href}
                   href={item.href}
                   onClick={() => setIsMenuOpen(false)}
-                  className="px-3 py-3 text-base font-semibold text-foreground hover:bg-primary-light rounded-md"
+                  className="px-3 py-3 text-base font-medium text-foreground hover:bg-zinc-50 rounded-md"
                 >
                   {item.label}
                 </Link>
@@ -121,14 +103,14 @@ export function Header() {
                 <Link
                   href="/login"
                   onClick={() => setIsMenuOpen(false)}
-                  className="px-3 py-3 text-sm text-center font-semibold text-foreground border border-border rounded-md"
+                  className="px-3 py-3 text-sm text-center font-medium text-foreground border border-border rounded-md"
                 >
                   로그인
                 </Link>
                 <Link
                   href="/mypage"
                   onClick={() => setIsMenuOpen(false)}
-                  className="px-3 py-3 text-sm text-center font-semibold text-white bg-primary rounded-md"
+                  className="px-3 py-3 text-sm text-center font-medium text-white bg-foreground rounded-md"
                 >
                   마이페이지
                 </Link>

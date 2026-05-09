@@ -10,7 +10,7 @@ export default function RegisterPage() {
   return (
     <div className="container-custom py-4 lg:py-8">
       <div className="mb-6">
-        <h1 className="text-xl lg:text-3xl font-black mb-1">매물 등록하기</h1>
+        <h1 className="text-xl lg:text-3xl font-black mb-1 tracking-tight">매물 등록하기</h1>
         <p className="text-sm text-muted">
           매도자가 직접 매물을 등록하고 광고 상품을 선택하실 수 있습니다.
         </p>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Icon } from "./Icon";
 
 export function SectionHeader({
   title,
@@ -15,11 +16,11 @@ export function SectionHeader({
     <div className="flex items-end justify-between mb-3 lg:mb-4">
       <div className="flex items-center gap-2 lg:gap-3">
         {badge && (
-          <span className="inline-flex items-center justify-center px-2 py-0.5 text-[10px] font-bold bg-primary text-white rounded">
+          <span className="inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-bold border border-foreground text-foreground rounded">
             {badge}
           </span>
         )}
-        <h2 className="text-lg lg:text-2xl font-black text-foreground">
+        <h2 className="text-lg lg:text-xl font-black text-foreground tracking-tight">
           {title}
         </h2>
         {subtitle && (
@@ -31,12 +32,10 @@ export function SectionHeader({
       {href && (
         <Link
           href={href}
-          className="text-xs lg:text-sm text-muted hover:text-primary font-medium flex items-center gap-1"
+          className="text-xs lg:text-sm text-muted hover:text-foreground font-medium flex items-center gap-1"
         >
           더보기
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="9 18 15 12 9 6" />
-          </svg>
+          <Icon.ChevronRight size={12} strokeWidth={2.2} />
         </Link>
       )}
     </div>

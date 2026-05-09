@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { AD_PRICING } from "@/lib/data";
+import { Icon } from "@/components/Icon";
 
 export const metadata = {
   title: "광고안내",
@@ -18,32 +19,29 @@ const FEATURE_TABLE = [
 export default function AdInfoPage() {
   return (
     <div className="container-custom py-4 lg:py-8">
-      {/* Hero */}
-      <section className="bg-gradient-to-br from-primary to-primary-dark rounded-2xl p-5 lg:p-10 text-white mb-6 relative overflow-hidden">
-        <div className="absolute right-0 top-0 w-40 h-40 bg-white/10 rounded-full -translate-y-12 translate-x-12" />
-        <div className="absolute right-20 bottom-0 w-32 h-32 bg-white/10 rounded-full translate-y-8" />
-        <div className="relative max-w-2xl">
-          <span className="inline-block px-2 py-0.5 bg-white/20 text-[11px] font-semibold rounded mb-2">
+      <section className="bg-foreground rounded-md p-5 lg:p-10 text-white mb-6">
+        <div className="max-w-2xl">
+          <span className="inline-block px-2 py-0.5 border border-white/30 text-[11px] font-semibold rounded mb-3">
             ShopDaejang Advertising
           </span>
-          <h1 className="text-2xl lg:text-4xl font-black mb-2">
+          <h1 className="text-2xl lg:text-4xl font-black mb-2 tracking-tight">
             매물의 노출도를 높이는
             <br />
             샵대장 광고 상품
           </h1>
-          <p className="text-sm lg:text-base text-white/90 mb-4">
-            긴급매물, 프리미엄, 일반, 무료 - 매물 성격에 맞는 최적의 광고 상품을 선택하세요.
+          <p className="text-sm lg:text-base text-white/80 mb-4">
+            긴급매물, 프리미엄, 일반, 무료 — 매물 성격에 맞는 최적의 광고 상품을 선택하세요.
           </p>
-          <Link href="/mypage/register" className="inline-flex items-center gap-1 px-5 py-3 bg-white text-primary font-bold rounded-lg">
-            매물 등록하기 →
+          <Link href="/mypage/register" className="inline-flex items-center gap-1.5 px-5 py-3 bg-white text-foreground font-bold rounded">
+            매물 등록하기
+            <Icon.ArrowRight size={14} strokeWidth={2.2} />
           </Link>
         </div>
       </section>
 
-      {/* Pricing cards */}
       <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 mb-8">
         {AD_PRICING.map((p) => (
-          <div key={p.tier} className="bg-white rounded-2xl border-2 border-border p-4 lg:p-5 flex flex-col">
+          <div key={p.tier} className="bg-white rounded-md border border-border p-4 lg:p-5 flex flex-col">
             <div className="flex items-center gap-2 mb-1">
               <span
                 className={`inline-block px-2 py-1 rounded text-xs font-bold ${
@@ -62,12 +60,12 @@ export default function AdInfoPage() {
               {p.prices.map((price) => (
                 <li
                   key={price.period}
-                  className={`flex items-center justify-between p-2.5 rounded-lg border ${
-                    price.isFeatured ? "border-primary bg-primary-light" : "border-border"
+                  className={`flex items-center justify-between p-2.5 rounded border ${
+                    price.isFeatured ? "border-foreground bg-zinc-50" : "border-border"
                   }`}
                 >
                   <div>
-                    {price.isFeatured && <span className="text-[10px] font-bold text-primary block">추천</span>}
+                    {price.isFeatured && <span className="text-[10px] font-bold text-foreground block">추천</span>}
                     <span className="text-xs font-bold">{price.period}</span>
                   </div>
                   <span className="font-black text-sm">
@@ -81,8 +79,8 @@ export default function AdInfoPage() {
               <p className="text-[11px] font-bold mb-1.5 text-muted">상품 혜택</p>
               <ul className="space-y-1">
                 {p.benefits.map((b) => (
-                  <li key={b} className="text-[11px] text-foreground/80 flex items-start gap-1">
-                    <span className="text-primary shrink-0">✓</span>
+                  <li key={b} className="text-[11px] text-foreground/80 flex items-start gap-1.5">
+                    <Icon.Check size={12} strokeWidth={2.5} className="text-foreground shrink-0 mt-0.5" />
                     <span>{b}</span>
                   </li>
                 ))}
@@ -92,11 +90,10 @@ export default function AdInfoPage() {
         ))}
       </section>
 
-      {/* Comparison table */}
-      <section className="bg-white rounded-2xl border border-border p-4 lg:p-6 mb-6">
-        <h2 className="text-base lg:text-lg font-black mb-3">광고 상품 비교</h2>
+      <section className="bg-white rounded-md border border-border p-4 lg:p-6 mb-6">
+        <h2 className="text-base lg:text-lg font-black mb-3 tracking-tight">광고 상품 비교</h2>
         <div className="overflow-x-auto">
-          <table className="w-full text-sm border-collapse min-w-[600px]">
+          <table className="w-full text-sm border-collapse min-w-150">
             <thead>
               <tr>
                 <th className="text-left p-3 bg-zinc-50 border border-border font-bold text-xs">기능</th>
@@ -122,7 +119,13 @@ export default function AdInfoPage() {
                     const v = row[t];
                     return (
                       <td key={t} className="p-3 border border-border text-center text-xs">
-                        {typeof v === "boolean" ? (v ? <span className="text-green-600 font-bold">✓</span> : <span className="text-zinc-300">—</span>) : v}
+                        {typeof v === "boolean" ? (
+                          v ? (
+                            <Icon.Check size={14} strokeWidth={2.5} className="inline text-foreground" />
+                          ) : (
+                            <span className="text-zinc-300">—</span>
+                          )
+                        ) : v}
                       </td>
                     );
                   })}
@@ -133,9 +136,8 @@ export default function AdInfoPage() {
         </div>
       </section>
 
-      {/* Process */}
-      <section className="bg-white rounded-2xl border border-border p-4 lg:p-6 mb-6">
-        <h2 className="text-base lg:text-lg font-black mb-3">매물 등록 절차</h2>
+      <section className="bg-white rounded-md border border-border p-4 lg:p-6 mb-6">
+        <h2 className="text-base lg:text-lg font-black mb-3 tracking-tight">매물 등록 절차</h2>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
           {[
             { n: "1", t: "회원가입", d: "네이버/카카오/구글 간편 가입" },
@@ -143,8 +145,8 @@ export default function AdInfoPage() {
             { n: "3", t: "광고 결제", d: "광고 상품 선택 후 결제" },
             { n: "4", t: "관리자 승인", d: "검수 후 노출 (평균 2~6시간)" },
           ].map((s) => (
-            <div key={s.n} className="bg-primary-light rounded-xl p-4 text-center">
-              <div className="w-8 h-8 mx-auto bg-primary text-white rounded-full flex items-center justify-center font-black mb-2">
+            <div key={s.n} className="bg-zinc-50 border border-border rounded p-4 text-center">
+              <div className="w-8 h-8 mx-auto bg-foreground text-white rounded-full flex items-center justify-center font-black mb-2">
                 {s.n}
               </div>
               <h3 className="font-bold text-sm mb-1">{s.t}</h3>
@@ -154,9 +156,8 @@ export default function AdInfoPage() {
         </div>
       </section>
 
-      {/* FAQ */}
-      <section className="bg-white rounded-2xl border border-border p-4 lg:p-6 mb-6">
-        <h2 className="text-base lg:text-lg font-black mb-3">자주 묻는 질문</h2>
+      <section className="bg-white rounded-md border border-border p-4 lg:p-6 mb-6">
+        <h2 className="text-base lg:text-lg font-black mb-3 tracking-tight">자주 묻는 질문</h2>
         <div className="space-y-2">
           {[
             { q: "광고비는 환불 가능한가요?", a: "노출 시작 전까지는 100% 환불 가능합니다. 노출 시작 후에는 잔여 기간 안분 환불됩니다." },
@@ -164,10 +165,10 @@ export default function AdInfoPage() {
             { q: "광고 기간이 끝나면 어떻게 되나요?", a: "기간 만료 시 자동으로 비노출 처리되며, 매물 정보는 마이페이지에서 확인 가능합니다. 연장 결제 시 다시 노출됩니다." },
             { q: "매물 수정이 가능한가요?", a: "마이페이지에서 언제든 매물 정보 수정이 가능합니다. 단, 수정 시 다시 관리자 승인 절차를 거칩니다." },
           ].map((f, i) => (
-            <details key={i} className="bg-zinc-50 rounded-lg border border-border group">
-              <summary className="cursor-pointer px-4 py-3 font-bold text-sm flex items-center justify-between">
+            <details key={i} className="bg-zinc-50 rounded border border-border group">
+              <summary className="cursor-pointer px-4 py-3 font-bold text-sm flex items-center justify-between list-none">
                 <span>Q. {f.q}</span>
-                <span className="text-muted group-open:rotate-180 transition-transform">▼</span>
+                <Icon.ChevronDown size={14} className="text-muted group-open:rotate-180 transition-transform" />
               </summary>
               <p className="px-4 pb-3 text-sm text-foreground/80">A. {f.a}</p>
             </details>
@@ -175,11 +176,12 @@ export default function AdInfoPage() {
         </div>
       </section>
 
-      <div className="bg-foreground rounded-2xl p-6 lg:p-10 text-white text-center">
-        <h2 className="text-xl lg:text-2xl font-black mb-2">지금 바로 매물을 등록하세요</h2>
-        <p className="text-sm text-white/80 mb-4">간편한 매물 등록과 다양한 광고 상품으로 빠른 거래를 도와드립니다.</p>
-        <Link href="/mypage/register" className="inline-flex items-center gap-1 px-6 py-3 bg-primary text-white font-bold rounded-lg hover:bg-primary-dark">
-          매물 등록하러 가기 →
+      <div className="bg-foreground rounded-md p-6 lg:p-10 text-white text-center">
+        <h2 className="text-xl lg:text-2xl font-black mb-2 tracking-tight">지금 바로 매물을 등록하세요</h2>
+        <p className="text-sm text-white/70 mb-4">간편한 매물 등록과 다양한 광고 상품으로 빠른 거래를 도와드립니다.</p>
+        <Link href="/mypage/register" className="inline-flex items-center gap-1.5 px-6 py-3 bg-white text-foreground font-bold rounded">
+          매물 등록하러 가기
+          <Icon.ArrowRight size={14} strokeWidth={2.2} />
         </Link>
       </div>
     </div>

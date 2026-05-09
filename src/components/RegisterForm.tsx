@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { ShopCategory, AdTier, AdPricing } from "@/lib/types";
+import { Icon } from "./Icon";
 
 type Step = 1 | 2 | 3 | 4;
 
@@ -109,15 +110,17 @@ export function RegisterForm({
 
   if (submitted) {
     return (
-      <div className="bg-white rounded-2xl border border-border p-8 lg:p-12 text-center">
-        <div className="text-6xl mb-3">🎉</div>
+      <div className="bg-white rounded-md border border-border p-8 lg:p-12 text-center">
+        <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-foreground text-white mb-4">
+          <Icon.Check size={28} strokeWidth={2.5} />
+        </div>
         <h2 className="text-2xl font-black mb-2">매물 등록 완료</h2>
         <p className="text-sm text-muted mb-6">
           매물이 정상적으로 접수되었습니다. 관리자 승인 후 노출되며,
           <br />
           평균 영업일 기준 2~6시간 이내 검토됩니다.
         </p>
-        <div className="bg-primary-light rounded-lg p-4 mb-6 text-left max-w-md mx-auto text-sm space-y-1">
+        <div className="bg-zinc-50 border border-border rounded p-4 mb-6 text-left max-w-md mx-auto text-sm space-y-1">
           <div className="flex justify-between"><span className="text-muted">광고 상품</span><span className="font-bold">{selectedTier?.label}</span></div>
           <div className="flex justify-between"><span className="text-muted">기간</span><span className="font-bold">{selectedPeriod?.period}</span></div>
           <div className="flex justify-between"><span className="text-muted">결제 금액</span><span className="font-bold">{selectedPeriod?.price === 0 ? "무료" : `${selectedPeriod?.price.toLocaleString()}원`}</span></div>
@@ -126,14 +129,14 @@ export function RegisterForm({
           <button
             type="button"
             onClick={() => router.push("/mypage/listings")}
-            className="px-5 py-2.5 bg-primary text-white font-bold rounded-lg"
+            className="px-5 py-2.5 bg-foreground text-white font-bold rounded"
           >
             내 매물 보기
           </button>
           <button
             type="button"
             onClick={() => router.push("/")}
-            className="px-5 py-2.5 border border-border font-bold rounded-lg"
+            className="px-5 py-2.5 border border-border font-bold rounded"
           >
             홈으로
           </button>
@@ -144,22 +147,21 @@ export function RegisterForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      {/* Stepper */}
-      <div className="bg-white rounded-xl border border-border p-3">
+      <div className="bg-white rounded-md border border-border p-3">
         <div className="flex items-center gap-1">
           {([1, 2, 3, 4] as const).map((n, i) => (
             <div key={n} className="flex items-center flex-1">
               <div
                 className={`flex items-center justify-center w-8 h-8 rounded-full text-xs font-bold ${
-                  step >= n ? "bg-primary text-white" : "bg-zinc-100 text-muted"
+                  step >= n ? "bg-foreground text-white" : "bg-zinc-100 text-muted"
                 }`}
               >
-                {step > n ? "✓" : n}
+                {step > n ? <Icon.Check size={14} strokeWidth={2.5} /> : n}
               </div>
               <div className="flex-1 ml-1 mr-1 hidden sm:block">
                 <div className="text-[11px] font-semibold">{["기본정보", "연락/사진", "광고선택", "확인"][i]}</div>
               </div>
-              {n < 4 && <div className={`flex-1 h-0.5 ${step > n ? "bg-primary" : "bg-zinc-200"}`} />}
+              {n < 4 && <div className={`flex-1 h-0.5 ${step > n ? "bg-foreground" : "bg-zinc-200"}`} />}
             </div>
           ))}
         </div>
@@ -167,7 +169,7 @@ export function RegisterForm({
 
       {/* Step 1: 기본 정보 */}
       {step === 1 && (
-        <div className="bg-white rounded-xl border border-border p-4 lg:p-6 space-y-4 animate-fade-up">
+        <div className="bg-white rounded-md border border-border p-4 lg:p-6 space-y-4 animate-fade-up">
           <h2 className="text-base font-bold">1. 기본 정보 입력</h2>
 
           <Field label="광고 제목" required>
@@ -177,7 +179,7 @@ export function RegisterForm({
               onChange={(e) => setTitle(e.target.value)}
               placeholder="예) 강남 신축 마사지샵 권리인하 급매"
               maxLength={50}
-              className="w-full px-3 py-3 text-sm border border-border rounded-lg focus:outline-none focus:border-primary"
+              className="w-full px-3 py-3 text-sm border border-border rounded focus:outline-none focus:border-foreground"
             />
             <p className="text-[10px] text-muted mt-1 text-right">{title.length}/50</p>
           </Field>
@@ -188,7 +190,7 @@ export function RegisterForm({
                 <select
                   value={sido}
                   onChange={(e) => { setSido(e.target.value); setSigungu(""); }}
-                  className="px-3 py-3 text-sm border border-border rounded-lg bg-white"
+                  className="px-3 py-3 text-sm border border-border rounded bg-white"
                 >
                   <option value="">시·도 선택</option>
                   {Object.keys(regions).map((s) => <option key={s} value={s}>{s}</option>)}
@@ -197,7 +199,7 @@ export function RegisterForm({
                   value={sigungu}
                   onChange={(e) => setSigungu(e.target.value)}
                   disabled={!sido}
-                  className="px-3 py-3 text-sm border border-border rounded-lg bg-white disabled:bg-zinc-50"
+                  className="px-3 py-3 text-sm border border-border rounded bg-white disabled:bg-zinc-50"
                 >
                   <option value="">구·군 선택</option>
                   {sigunguList.map((s) => <option key={s} value={s}>{s}</option>)}
@@ -208,7 +210,7 @@ export function RegisterForm({
                 value={dong}
                 onChange={(e) => setDong(e.target.value)}
                 placeholder="동 (예: 역삼동)"
-                className="w-full px-3 py-3 text-sm border border-border rounded-lg"
+                className="w-full px-3 py-3 text-sm border border-border rounded"
               />
               <input
                 type="text"
@@ -216,16 +218,16 @@ export function RegisterForm({
                 onChange={(e) => setDetailAddress(e.target.value)}
                 placeholder="상세주소 (선택)"
                 disabled={!isAddressPublic}
-                className="w-full px-3 py-3 text-sm border border-border rounded-lg disabled:bg-zinc-50"
+                className="w-full px-3 py-3 text-sm border border-border rounded disabled:bg-zinc-50"
               />
-              <div className="flex gap-3 items-start bg-zinc-50 rounded-lg p-3">
+              <div className="flex gap-3 items-start bg-zinc-50 border border-border rounded p-3">
                 <label className="flex items-center gap-1.5 text-sm font-medium cursor-pointer">
                   <input
                     type="radio"
                     name="addr"
                     checked={isAddressPublic}
                     onChange={() => setIsAddressPublic(true)}
-                    className="accent-primary"
+                    className="accent-foreground"
                   />
                   주소 공개
                 </label>
@@ -235,7 +237,7 @@ export function RegisterForm({
                     name="addr"
                     checked={!isAddressPublic}
                     onChange={() => setIsAddressPublic(false)}
-                    className="accent-primary"
+                    className="accent-foreground"
                   />
                   주소 비공개 (동까지만 표시)
                 </label>
@@ -255,10 +257,10 @@ export function RegisterForm({
                   key={c}
                   type="button"
                   onClick={() => setCategory(c)}
-                  className={`py-2.5 text-sm font-medium border-2 rounded-lg ${
+                  className={`py-2.5 text-sm font-medium border rounded ${
                     category === c
-                      ? "border-primary bg-primary-light text-primary"
-                      : "border-border text-foreground hover:border-primary/50"
+                      ? "border-foreground bg-foreground text-white"
+                      : "border-border text-foreground hover:border-foreground/50"
                   }`}
                 >
                   {c}
@@ -274,7 +276,7 @@ export function RegisterForm({
               onChange={(e) => setArea(e.target.value)}
               placeholder="예) 35"
               min={1}
-              className="w-full px-3 py-3 text-sm border border-border rounded-lg focus:outline-none focus:border-primary"
+              className="w-full px-3 py-3 text-sm border border-border rounded focus:outline-none focus:border-foreground"
             />
           </Field>
 
@@ -282,15 +284,15 @@ export function RegisterForm({
             <div className="grid grid-cols-3 gap-2">
               <div>
                 <label className="text-[11px] text-muted mb-1 block">보증금</label>
-                <input type="number" value={deposit} onChange={(e) => setDeposit(e.target.value)} placeholder="3000" className="w-full px-3 py-3 text-sm border border-border rounded-lg" />
+                <input type="number" value={deposit} onChange={(e) => setDeposit(e.target.value)} placeholder="3000" className="w-full px-3 py-3 text-sm border border-border rounded" />
               </div>
               <div>
                 <label className="text-[11px] text-muted mb-1 block">월세</label>
-                <input type="number" value={monthlyRent} onChange={(e) => setMonthlyRent(e.target.value)} placeholder="200" className="w-full px-3 py-3 text-sm border border-border rounded-lg" />
+                <input type="number" value={monthlyRent} onChange={(e) => setMonthlyRent(e.target.value)} placeholder="200" className="w-full px-3 py-3 text-sm border border-border rounded" />
               </div>
               <div>
                 <label className="text-[11px] text-muted mb-1 block">권리금</label>
-                <input type="number" value={premium} onChange={(e) => setPremium(e.target.value)} placeholder="5000" className="w-full px-3 py-3 text-sm border border-border rounded-lg" />
+                <input type="number" value={premium} onChange={(e) => setPremium(e.target.value)} placeholder="5000" className="w-full px-3 py-3 text-sm border border-border rounded" />
               </div>
             </div>
           </Field>
@@ -300,23 +302,23 @@ export function RegisterForm({
               <textarea
                 value={shopStructure}
                 onChange={(e) => setShopStructure(e.target.value)}
-                placeholder="▼ 샵 구조: 베드 수, 룸 구성, 시설 등을 자유롭게 작성해주세요"
+                placeholder="샵 구조 — 베드 수, 룸 구성, 시설 등을 자유롭게 작성해주세요"
                 rows={3}
-                className="w-full px-3 py-3 text-sm border border-border rounded-lg focus:outline-none focus:border-primary"
+                className="w-full px-3 py-3 text-sm border border-border rounded focus:outline-none focus:border-foreground"
               />
               <textarea
                 value={commercial}
                 onChange={(e) => setCommercial(e.target.value)}
-                placeholder="▼ 상권: 위치 특성, 유동인구, 주변 환경 등"
+                placeholder="상권 — 위치 특성, 유동인구, 주변 환경 등"
                 rows={3}
-                className="w-full px-3 py-3 text-sm border border-border rounded-lg focus:outline-none focus:border-primary"
+                className="w-full px-3 py-3 text-sm border border-border rounded focus:outline-none focus:border-foreground"
               />
               <textarea
                 value={etc}
                 onChange={(e) => setEtc(e.target.value)}
-                placeholder="▼ 기타사항: 권리금 협의 여부, 매매 사유 등"
+                placeholder="기타사항 — 권리금 협의 여부, 매매 사유 등"
                 rows={3}
-                className="w-full px-3 py-3 text-sm border border-border rounded-lg focus:outline-none focus:border-primary"
+                className="w-full px-3 py-3 text-sm border border-border rounded focus:outline-none focus:border-foreground"
               />
             </div>
           </Field>
@@ -325,7 +327,7 @@ export function RegisterForm({
 
       {/* Step 2: 연락 + 사진 */}
       {step === 2 && (
-        <div className="bg-white rounded-xl border border-border p-4 lg:p-6 space-y-4 animate-fade-up">
+        <div className="bg-white rounded-md border border-border p-4 lg:p-6 space-y-4 animate-fade-up">
           <h2 className="text-base font-bold">2. 연락처 & 사진</h2>
 
           <Field label="연락처" required>
@@ -334,14 +336,14 @@ export function RegisterForm({
               value={phone}
               onChange={(e) => setPhone(e.target.value.replace(/[^0-9-]/g, ""))}
               placeholder="010-0000-0000"
-              className="w-full px-3 py-3 text-sm border border-border rounded-lg focus:outline-none focus:border-primary"
+              className="w-full px-3 py-3 text-sm border border-border rounded focus:outline-none focus:border-foreground"
             />
             <label className="flex items-start gap-2 mt-2 cursor-pointer text-sm">
               <input
                 type="checkbox"
                 checked={useSecretNumber}
                 onChange={(e) => setUseSecretNumber(e.target.checked)}
-                className="mt-0.5 accent-primary"
+                className="mt-0.5 accent-foreground"
               />
               <span>
                 <span className="font-semibold">안심번호 사용</span>
@@ -353,8 +355,8 @@ export function RegisterForm({
           </Field>
 
           <Field label="사진 업로드" subtitle="여러 장 업로드 가능 (최대 10장)">
-            <label className="flex flex-col items-center justify-center gap-2 py-8 border-2 border-dashed border-border rounded-lg cursor-pointer hover:border-primary hover:bg-primary-light/50">
-              <span className="text-3xl">📷</span>
+            <label className="flex flex-col items-center justify-center gap-2 py-8 border border-dashed border-border rounded cursor-pointer hover:border-foreground hover:bg-zinc-50">
+              <Icon.Camera size={28} className="text-muted" />
               <span className="text-sm font-bold">사진 선택하기</span>
               <span className="text-xs text-muted">JPG, PNG, WEBP · 최대 10MB / 장</span>
               <input
@@ -368,17 +370,19 @@ export function RegisterForm({
             {previews.length > 0 && (
               <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 mt-3">
                 {previews.map((src, i) => (
-                  <div key={i} className="relative aspect-square rounded-lg overflow-hidden border border-border bg-zinc-100">
+                  <div key={i} className="relative aspect-square rounded overflow-hidden border border-border bg-zinc-100">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={src} alt="" className="w-full h-full object-cover" />
                     <button
                       type="button"
                       onClick={() => removeImage(i)}
-                      className="absolute top-1 right-1 w-6 h-6 bg-black/60 text-white rounded-full text-xs"
+                      className="absolute top-1 right-1 w-6 h-6 inline-flex items-center justify-center bg-black/70 text-white rounded-full"
+                      aria-label="사진 삭제"
                     >
-                      ✕
+                      <Icon.X size={12} strokeWidth={2.5} />
                     </button>
                     {i === 0 && (
-                      <span className="absolute bottom-1 left-1 px-1.5 py-0.5 bg-primary text-white text-[10px] rounded font-bold">
+                      <span className="absolute bottom-1 left-1 px-1.5 py-0.5 bg-foreground text-white text-[10px] rounded font-bold">
                         대표
                       </span>
                     )}
@@ -392,7 +396,7 @@ export function RegisterForm({
 
       {/* Step 3: 광고 선택 */}
       {step === 3 && (
-        <div className="bg-white rounded-xl border border-border p-4 lg:p-6 space-y-4 animate-fade-up">
+        <div className="bg-white rounded-md border border-border p-4 lg:p-6 space-y-4 animate-fade-up">
           <h2 className="text-base font-bold">3. 광고 상품 선택</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {adPricing.map((p) => (
@@ -400,10 +404,10 @@ export function RegisterForm({
                 key={p.tier}
                 type="button"
                 onClick={() => { setTier(p.tier); setPeriod(""); }}
-                className={`text-left p-3 rounded-xl border-2 ${
+                className={`text-left p-3 rounded border ${
                   tier === p.tier
-                    ? "border-primary bg-primary-light"
-                    : "border-border hover:border-primary/50"
+                    ? "border-foreground bg-zinc-50"
+                    : "border-border hover:border-foreground/50"
                 }`}
               >
                 <div className="flex items-center gap-1 mb-1">
@@ -420,7 +424,7 @@ export function RegisterForm({
           </div>
 
           {selectedTier && (
-            <div className="bg-zinc-50 rounded-lg p-4">
+            <div className="bg-zinc-50 border border-border rounded p-4">
               <h3 className="text-sm font-bold mb-2">{selectedTier.label} 기간 선택</h3>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
                 {selectedTier.prices.map((p) => (
@@ -428,13 +432,13 @@ export function RegisterForm({
                     key={p.period}
                     type="button"
                     onClick={() => setPeriod(p.period)}
-                    className={`p-3 rounded-lg border-2 text-center ${
+                    className={`p-3 rounded border text-center ${
                       period === p.period
-                        ? "border-primary bg-white"
-                        : "border-border bg-white hover:border-primary/50"
+                        ? "border-foreground bg-white"
+                        : "border-border bg-white hover:border-foreground/50"
                     }`}
                   >
-                    {p.isFeatured && <span className="block text-[10px] font-bold text-primary mb-0.5">추천</span>}
+                    {p.isFeatured && <span className="block text-[10px] font-bold text-foreground mb-0.5">추천</span>}
                     <div className="text-xs font-bold">{p.period}</div>
                     <div className="text-sm font-black mt-1">
                       {p.price === 0 ? "무료" : `${(p.price / 10000).toFixed(0)}만원`}
@@ -442,7 +446,7 @@ export function RegisterForm({
                   </button>
                 ))}
               </div>
-              <div className="bg-white rounded-lg p-3 text-xs space-y-1">
+              <div className="bg-white border border-border rounded p-3 text-xs space-y-1">
                 <p className="font-bold mb-1">{selectedTier.label} 상품 혜택</p>
                 {selectedTier.benefits.map((b) => (
                   <p key={b} className="text-foreground/70">· {b}</p>
@@ -451,15 +455,15 @@ export function RegisterForm({
             </div>
           )}
 
-          <div className="bg-zinc-50 rounded-lg p-4">
+          <div className="bg-zinc-50 border border-border rounded p-4">
             <h3 className="text-sm font-bold mb-2">매물 공개 여부</h3>
             <div className="flex gap-3">
               <label className="flex items-center gap-1.5 text-sm font-medium cursor-pointer">
-                <input type="radio" checked={isPublic} onChange={() => setIsPublic(true)} className="accent-primary" />
+                <input type="radio" checked={isPublic} onChange={() => setIsPublic(true)} className="accent-foreground" />
                 공개 (검색 노출)
               </label>
               <label className="flex items-center gap-1.5 text-sm font-medium cursor-pointer">
-                <input type="radio" checked={!isPublic} onChange={() => setIsPublic(false)} className="accent-primary" />
+                <input type="radio" checked={!isPublic} onChange={() => setIsPublic(false)} className="accent-foreground" />
                 비공개 (임시저장)
               </label>
             </div>
@@ -469,10 +473,10 @@ export function RegisterForm({
 
       {/* Step 4: 확인 + 결제 */}
       {step === 4 && (
-        <div className="bg-white rounded-xl border border-border p-4 lg:p-6 space-y-4 animate-fade-up">
+        <div className="bg-white rounded-md border border-border p-4 lg:p-6 space-y-4 animate-fade-up">
           <h2 className="text-base font-bold">4. 등록 정보 확인 및 결제</h2>
 
-          <div className="bg-zinc-50 rounded-lg p-4 text-sm space-y-2">
+          <div className="bg-zinc-50 border border-border rounded p-4 text-sm space-y-2">
             <Row label="제목" value={title} />
             <Row label="지역" value={`${sido} ${sigungu} ${dong}`} />
             <Row label="업종" value={category} />
@@ -483,15 +487,15 @@ export function RegisterForm({
             <Row label="광고 상품" value={`${selectedTier?.label} - ${period}`} />
           </div>
 
-          <div className="bg-primary-light border-2 border-primary rounded-lg p-4">
-            <div className="flex items-center justify-between mb-2">
+          <div className="bg-foreground text-white rounded p-4">
+            <div className="flex items-center justify-between mb-1">
               <span className="text-sm font-bold">결제 금액</span>
-              <span className="text-2xl font-black text-primary">
+              <span className="text-2xl font-black">
                 {selectedPeriod?.price === 0 ? "무료" : `${selectedPeriod?.price.toLocaleString()}원`}
               </span>
             </div>
             {selectedPeriod && selectedPeriod.price > 0 && (
-              <p className="text-xs text-muted">
+              <p className="text-xs text-white/70">
                 결제 완료 후 관리자 승인을 거쳐 노출됩니다.
               </p>
             )}
@@ -504,7 +508,7 @@ export function RegisterForm({
                 <button
                   key={m}
                   type="button"
-                  className="py-3 border border-border rounded-lg text-xs font-semibold hover:border-primary hover:bg-primary-light"
+                  className="py-3 border border-border rounded text-xs font-semibold hover:border-foreground hover:bg-zinc-50"
                 >
                   {m}
                 </button>
@@ -517,7 +521,7 @@ export function RegisterForm({
               type="checkbox"
               checked={agreement}
               onChange={(e) => setAgreement(e.target.checked)}
-              className="mt-0.5 accent-primary"
+              className="mt-0.5 accent-foreground"
             />
             <span>
               <span className="font-semibold">이용약관, 개인정보처리방침, 광고게재 정책에 동의합니다.</span>
@@ -535,8 +539,9 @@ export function RegisterForm({
           <button
             type="button"
             onClick={prev}
-            className="flex-1 lg:flex-none px-6 py-3 border border-border font-bold rounded-lg hover:bg-zinc-50"
+            className="flex-1 lg:flex-none inline-flex items-center justify-center gap-1.5 px-6 py-3 border border-border font-bold rounded hover:bg-zinc-50"
           >
+            <Icon.ChevronLeft size={14} strokeWidth={2.2} />
             이전
           </button>
         )}
@@ -544,15 +549,16 @@ export function RegisterForm({
           <button
             type="button"
             onClick={next}
-            className="flex-1 px-6 py-3 bg-primary text-white font-bold rounded-lg hover:bg-primary-dark"
+            className="flex-1 inline-flex items-center justify-center gap-1.5 px-6 py-3 bg-foreground text-white font-bold rounded hover:bg-foreground/90"
           >
-            다음 →
+            다음
+            <Icon.ChevronRight size={14} strokeWidth={2.2} />
           </button>
         ) : (
           <button
             type="submit"
             disabled={!agreement}
-            className="flex-1 px-6 py-3 bg-primary text-white font-bold rounded-lg hover:bg-primary-dark disabled:bg-zinc-300 disabled:cursor-not-allowed"
+            className="flex-1 px-6 py-3 bg-foreground text-white font-bold rounded hover:bg-foreground/90 disabled:bg-zinc-300 disabled:cursor-not-allowed"
           >
             {selectedPeriod?.price === 0 ? "무료 등록 완료" : "결제하고 등록하기"}
           </button>
@@ -577,7 +583,7 @@ function Field({
     <div>
       <label className="flex items-center gap-1 text-sm font-bold mb-1.5">
         {label}
-        {required && <span className="text-primary">*</span>}
+        {required && <span className="text-urgent">*</span>}
         {subtitle && <span className="text-xs text-muted font-normal">· {subtitle}</span>}
       </label>
       {children}

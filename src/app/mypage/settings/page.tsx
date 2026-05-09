@@ -3,9 +3,9 @@ export const metadata = { title: "회원정보" };
 export default function SettingsPage() {
   return (
     <div className="space-y-3">
-      <h1 className="text-lg lg:text-xl font-black">회원정보</h1>
+      <h1 className="text-lg lg:text-xl font-black tracking-tight">회원정보</h1>
 
-      <div className="bg-white rounded-xl border border-border p-4 lg:p-6 space-y-4">
+      <div className="bg-white rounded-md border border-border p-4 lg:p-6 space-y-4">
         <h2 className="font-bold text-sm">기본 정보</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <Field label="회원 ID" value="shopdaejang_user" disabled />
@@ -17,7 +17,7 @@ export default function SettingsPage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl border border-border p-4 lg:p-6 space-y-4">
+      <div className="bg-white rounded-md border border-border p-4 lg:p-6 space-y-4">
         <h2 className="font-bold text-sm">사업자 정보 (선택)</h2>
         <p className="text-xs text-muted">사업자 등록 정보를 입력하시면 사업자 회원으로 전환됩니다.</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -28,7 +28,7 @@ export default function SettingsPage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl border border-border p-4 lg:p-6 space-y-3">
+      <div className="bg-white rounded-md border border-border p-4 lg:p-6 space-y-3">
         <h2 className="font-bold text-sm">알림 설정</h2>
         {[
           { label: "찜 알림", desc: "내 매물에 새 찜이 등록되면 알림" },
@@ -37,7 +37,7 @@ export default function SettingsPage() {
           { label: "마케팅 수신", desc: "이벤트 및 혜택 정보 수신" },
         ].map((item) => (
           <label key={item.label} className="flex items-start gap-3 cursor-pointer">
-            <input type="checkbox" defaultChecked className="mt-1 accent-primary" />
+            <input type="checkbox" defaultChecked className="mt-1 accent-foreground" />
             <div>
               <p className="text-sm font-semibold">{item.label}</p>
               <p className="text-[11px] text-muted">{item.desc}</p>
@@ -47,8 +47,8 @@ export default function SettingsPage() {
       </div>
 
       <div className="grid grid-cols-2 gap-2">
-        <button className="py-3 bg-primary text-white font-bold rounded-lg">변경사항 저장</button>
-        <button className="py-3 border border-red-300 text-red-600 font-bold rounded-lg">회원 탈퇴</button>
+        <button type="button" className="py-3 bg-foreground text-white font-bold rounded">변경사항 저장</button>
+        <button type="button" className="py-3 border border-urgent text-urgent font-bold rounded">회원 탈퇴</button>
       </div>
     </div>
   );
@@ -63,7 +63,7 @@ function Field({ label, value, placeholder, disabled }: { label: string; value: 
         defaultValue={value}
         placeholder={placeholder}
         disabled={disabled}
-        className="w-full px-3 py-2.5 text-sm border border-border rounded-lg focus:outline-none focus:border-primary disabled:bg-zinc-50 disabled:text-muted"
+        className="w-full px-3 py-2.5 text-sm border border-border rounded focus:outline-none focus:border-foreground disabled:bg-zinc-50 disabled:text-muted"
       />
     </div>
   );

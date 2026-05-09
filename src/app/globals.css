@@ -1,17 +1,19 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f6f7fa;
-  --foreground: #181a20;
-  --primary: #ff5b1f;
-  --primary-dark: #e94a0c;
-  --primary-light: #fff1ea;
-  --urgent: #ef4444;
-  --premium: #2563eb;
-  --normal: #475569;
+  --background: #fafafa;
+  --foreground: #0a0a0a;
+  --primary: #ea580c;
+  --primary-dark: #c2410c;
+  --primary-light: #fff7ed;
+  --urgent: #dc2626;
+  --premium: #1e40af;
+  --normal: #404040;
   --free: #16a34a;
-  --border: #e5e7eb;
-  --muted: #6b7280;
+  --border: #e5e5e5;
+  --border-strong: #d4d4d4;
+  --muted: #737373;
+  --muted-strong: #525252;
   --card: #ffffff;
 }
 
@@ -26,7 +28,9 @@
   --color-normal: var(--normal);
   --color-free: var(--free);
   --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
   --color-muted: var(--muted);
+  --color-muted-strong: var(--muted-strong);
   --color-card: var(--card);
   --font-sans: var(--font-noto-sans-kr), -apple-system,
     BlinkMacSystemFont, system-ui, "Apple SD Gothic Neo", sans-serif;
@@ -44,6 +48,7 @@ html, body {
     BlinkMacSystemFont, system-ui, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.01em;
 }
 
 input, textarea, select, button {
@@ -68,19 +73,19 @@ input[type="number"] {
 }
 
 .badge-urgent {
-  background: linear-gradient(135deg, #ef4444 0%, #f97316 100%);
+  background: var(--urgent);
   color: white;
 }
 .badge-premium {
-  background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+  background: var(--premium);
   color: white;
 }
 .badge-normal {
-  background: #475569;
+  background: var(--normal);
   color: white;
 }
 .badge-free {
-  background: #16a34a;
+  background: var(--free);
   color: white;
 }
 
@@ -104,11 +109,11 @@ input[type="number"] {
 }
 
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(8px); }
+  from { opacity: 0; transform: translateY(4px); }
   to { opacity: 1; transform: translateY(0); }
 }
 .animate-fade-up {
-  animation: fadeUp 0.3s ease-out;
+  animation: fadeUp 0.2s ease-out;
 }
 
 .safe-bottom {
