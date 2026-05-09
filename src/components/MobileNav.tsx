@@ -5,16 +5,16 @@ import { usePathname } from "next/navigation";
 import { Icon } from "./Icon";
 
 const ITEMS = [
-  { href: "/", label: "홈", icon: <Icon.Home size={22} /> },
-  { href: "/listings", label: "매물검색", icon: <Icon.Search size={22} /> },
+  { href: "/", label: "홈", icon: <Icon.Home size={20} /> },
+  { href: "/listings", label: "매물검색", icon: <Icon.Search size={20} /> },
   {
     href: "/mypage/register",
-    label: "매물등록",
+    label: "등록",
     icon: <Icon.Plus size={22} strokeWidth={2.4} />,
     primary: true,
   },
-  { href: "/used", label: "중고장터", icon: <Icon.Bag size={22} /> },
-  { href: "/mypage", label: "마이", icon: <Icon.User size={22} /> },
+  { href: "/used", label: "중고", icon: <Icon.Bag size={20} /> },
+  { href: "/mypage", label: "마이", icon: <Icon.User size={20} /> },
 ];
 
 export function MobileNav() {
@@ -40,7 +40,7 @@ export function MobileNav() {
                 }`}
               >
                 {item.primary ? (
-                  <span className="w-10 h-10 rounded-full bg-foreground text-white flex items-center justify-center -mt-3">
+                  <span className="w-11 h-11 rounded-full bg-foreground text-white flex items-center justify-center -mt-3">
                     {item.icon}
                   </span>
                 ) : (

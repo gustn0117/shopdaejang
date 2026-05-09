@@ -1,38 +1,44 @@
 @import "tailwindcss";
 
 :root {
-  --background: #fafafa;
-  --foreground: #0a0a0a;
-  --primary: #ea580c;
-  --primary-dark: #c2410c;
-  --primary-light: #fff7ed;
+  --background: #fafaf8;
+  --surface: #ffffff;
+  --foreground: #18181b;
+  --foreground-soft: #27272a;
+  --muted: #71717a;
+  --muted-strong: #52525b;
+  --border: #e4e4e7;
+  --border-strong: #d4d4d8;
+  --primary: #18181b;
+  --primary-soft: #f4f4f5;
+  --accent: #ea580c;
   --urgent: #dc2626;
-  --premium: #1e40af;
+  --premium: #1e3a8a;
   --normal: #404040;
-  --free: #16a34a;
-  --border: #e5e5e5;
-  --border-strong: #d4d4d4;
-  --muted: #737373;
-  --muted-strong: #525252;
-  --card: #ffffff;
+  --free: #15803d;
+  --success: #15803d;
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-surface: var(--surface);
   --color-foreground: var(--foreground);
+  --color-foreground-soft: var(--foreground-soft);
+  --color-muted: var(--muted);
+  --color-muted-strong: var(--muted-strong);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
   --color-primary: var(--primary);
-  --color-primary-dark: var(--primary-dark);
-  --color-primary-light: var(--primary-light);
+  --color-primary-soft: var(--primary-soft);
+  --color-accent: var(--accent);
   --color-urgent: var(--urgent);
   --color-premium: var(--premium);
   --color-normal: var(--normal);
   --color-free: var(--free);
-  --color-border: var(--border);
-  --color-border-strong: var(--border-strong);
-  --color-muted: var(--muted);
-  --color-muted-strong: var(--muted-strong);
-  --color-card: var(--card);
+  --color-success: var(--success);
   --font-sans: var(--font-noto-sans-kr), -apple-system,
+    BlinkMacSystemFont, system-ui, "Apple SD Gothic Neo", sans-serif;
+  --font-display: var(--font-noto-sans-kr), -apple-system,
     BlinkMacSystemFont, system-ui, "Apple SD Gothic Neo", sans-serif;
 }
 
@@ -48,7 +54,12 @@ html, body {
     BlinkMacSystemFont, system-ui, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.012em;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  font-feature-settings: "ss01", "cv11";
 }
 
 input, textarea, select, button {
@@ -70,6 +81,16 @@ input[type="number"] {
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+.h-display {
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
 }
 
 .badge-urgent {
@@ -128,9 +149,26 @@ input[type="number"] {
 
 .container-custom {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1240px;
   margin-left: auto;
   margin-right: auto;
   padding-left: 1rem;
   padding-right: 1rem;
+}
+
+.surface-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+}
+
+.divider-fade {
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--border) 12%,
+    var(--border) 88%,
+    transparent
+  );
+  height: 1px;
 }

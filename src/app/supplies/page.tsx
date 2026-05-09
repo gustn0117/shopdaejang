@@ -28,52 +28,65 @@ const ITEMS = [
 
 export default function SuppliesPage() {
   return (
-    <div className="container-custom py-4 lg:py-6">
-      <div className="mb-4 flex items-end justify-between">
+    <div className="container-custom py-6 lg:py-10 space-y-10">
+      <div className="flex items-end justify-between">
         <div>
-          <h1 className="text-xl lg:text-2xl font-black tracking-tight">용품도매장터</h1>
-          <p className="text-xs lg:text-sm text-muted mt-1">
+          <p className="text-[11px] font-semibold text-muted tracking-[0.18em] uppercase mb-2">
+            Supplies Wholesale
+          </p>
+          <h1 className="text-2xl lg:text-3xl font-black tracking-tight">용품도매장터</h1>
+          <p className="text-sm text-muted mt-2">
             마사지 관련 용품과 도매 상품을 한눈에
           </p>
         </div>
-        <Link href="/supplies/inquiry" className="px-4 py-2 border border-border text-xs lg:text-sm font-bold rounded hover:border-foreground">
+        <Link
+          href="/supplies/inquiry"
+          className="px-4 py-2.5 border border-border text-sm font-semibold rounded-md hover:border-foreground"
+        >
           입점 문의
         </Link>
       </div>
 
-      <section className="bg-white rounded-md border border-border p-3 lg:p-4 mb-4">
-        <h2 className="text-sm font-bold mb-3">카테고리별 용품</h2>
-        <div className="grid grid-cols-4 lg:grid-cols-8 gap-2">
+      <section>
+        <h2 className="text-base font-bold tracking-tight mb-4">카테고리</h2>
+        <div className="grid grid-cols-4 lg:grid-cols-8 gap-3">
           {CATEGORIES.map((c) => {
             const IconComp = Icon[c.icon] as (props: { size?: number; className?: string }) => React.ReactElement;
             return (
               <Link
                 key={c.name}
                 href={`/supplies?cat=${encodeURIComponent(c.name)}`}
-                className="flex flex-col items-center gap-1.5 p-2 rounded border border-border hover:border-foreground hover:bg-zinc-50"
+                className="flex flex-col items-center gap-2 p-3 rounded-md border border-border bg-white hover:border-foreground hover:bg-primary-soft transition-colors"
               >
                 <IconComp size={22} className="text-foreground" />
-                <span className="text-[11px] font-semibold text-center line-clamp-1">{c.name}</span>
-                <span className="text-[10px] text-muted">{c.count}건</span>
+                <span className="text-[12px] font-medium text-center line-clamp-1">{c.name}</span>
+                <span className="text-[10px] text-muted tabular">{c.count}건</span>
               </Link>
             );
           })}
         </div>
       </section>
 
-      <section className="mb-4">
-        <h2 className="text-base lg:text-lg font-black mb-3 tracking-tight inline-flex items-center gap-1.5">
-          <Icon.Fire size={18} strokeWidth={1.8} />
-          이번주 인기 도매 상품
-        </h2>
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
+      <section>
+        <div className="flex items-end justify-between mb-4">
+          <div>
+            <p className="text-[11px] font-bold tracking-[0.18em] uppercase text-muted mb-1.5">
+              This Week
+            </p>
+            <h2 className="text-lg lg:text-xl font-black tracking-tight inline-flex items-center gap-1.5">
+              <Icon.Fire size={18} strokeWidth={1.8} />
+              인기 도매 상품
+            </h2>
+          </div>
+        </div>
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-4">
           {ITEMS.map((item) => (
             <Link
               key={item.id}
               href={`/supplies/${item.id}`}
-              className="bg-white rounded-md border border-border overflow-hidden hover:border-foreground transition-colors"
+              className="surface-card overflow-hidden hover:border-foreground transition-colors"
             >
-              <div className="relative aspect-4/3 bg-zinc-50 border-b border-border">
+              <div className="relative aspect-4/3 bg-primary-soft border-b border-border">
                 <div className="absolute top-2 left-2 px-2 py-0.5 bg-foreground text-white text-[10px] font-bold rounded">
                   {item.badge}
                 </div>
@@ -81,19 +94,17 @@ export default function SuppliesPage() {
                   <Icon.Box size={40} strokeWidth={1.4} />
                 </div>
               </div>
-              <div className="p-3">
-                <p className="text-[11px] text-muted mb-1">{item.supplier}</p>
-                <h3 className="font-bold text-sm line-clamp-2 mb-2 h-10">{item.title}</h3>
-                <div className="flex items-baseline gap-1 mb-1">
-                  <span className="text-xs text-muted line-through">{item.original.toLocaleString()}</span>
-                </div>
-                <div className="flex items-baseline gap-1">
-                  <span className="text-base font-black text-foreground">{item.price.toLocaleString()}원</span>
-                  <span className="text-xs text-urgent font-bold">
+              <div className="p-4">
+                <p className="text-[11px] text-muted mb-1.5">{item.supplier}</p>
+                <h3 className="font-semibold text-sm line-clamp-2 mb-2 h-10 leading-tight">{item.title}</h3>
+                <div className="flex items-baseline gap-1.5">
+                  <span className="text-base font-black text-foreground tabular">{item.price.toLocaleString()}원</span>
+                  <span className="text-xs text-urgent font-bold tabular">
                     {Math.round((1 - item.price / item.original) * 100)}%
                   </span>
                 </div>
-                <p className="text-[10px] text-muted mt-1 inline-flex items-center gap-1">
+                <p className="text-[11px] text-muted line-through mt-0.5 tabular">{item.original.toLocaleString()}원</p>
+                <p className="text-[10px] text-muted mt-2 inline-flex items-center gap-1">
                   <Icon.Truck size={11} />
                   {item.region}
                 </p>
@@ -103,14 +114,17 @@ export default function SuppliesPage() {
         </div>
       </section>
 
-      <div className="bg-white border border-border rounded-md p-4 lg:p-6 text-center">
-        <h3 className="text-base font-bold mb-2">용품 도매 입점 문의</h3>
-        <p className="text-sm text-muted mb-4">
+      <div className="bg-white border border-border rounded-md p-6 lg:p-10 text-center">
+        <h3 className="text-lg font-bold mb-2 tracking-tight">용품 도매 입점 문의</h3>
+        <p className="text-sm text-muted mb-5 leading-relaxed">
           마사지 관련 용품을 도매로 판매하고 계신가요?
           <br />
           샵대장 도매장터에 입점해보세요.
         </p>
-        <Link href="/supplies/inquiry" className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-foreground text-white text-sm font-bold rounded">
+        <Link
+          href="/supplies/inquiry"
+          className="inline-flex items-center gap-1.5 px-5 py-3 bg-foreground text-white text-sm font-semibold rounded-md"
+        >
           입점 문의하기
           <Icon.ArrowRight size={14} strokeWidth={2.2} />
         </Link>

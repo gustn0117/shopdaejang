@@ -45,64 +45,68 @@ export default async function ListingsPage({ searchParams }: { searchParams: SP 
   const normal = filtered.filter((l) => l.tier === "normal" || l.tier === "free");
 
   return (
-    <div className="container-custom py-4 lg:py-6">
-      <div className="flex items-end justify-between mb-3">
+    <div className="container-custom py-6 lg:py-10">
+      <div className="flex items-end justify-between mb-6">
         <div>
-          <h1 className="text-xl lg:text-2xl font-black tracking-tight">매물검색</h1>
-          <p className="text-xs lg:text-sm text-muted mt-1">
-            총 <span className="text-foreground font-bold">{filtered.length}</span>건의 매물이 검색되었습니다
+          <p className="text-[11px] font-semibold text-muted tracking-[0.18em] uppercase mb-2">
+            Listings
+          </p>
+          <h1 className="text-2xl lg:text-3xl font-black tracking-tight">매물검색</h1>
+          <p className="text-sm text-muted mt-2">
+            <span className="text-foreground font-bold tabular">{filtered.length.toLocaleString()}</span>건의 매물
           </p>
         </div>
-        <Link href="/map" className="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 text-xs border border-border rounded hover:border-foreground">
-          <Icon.Map size={12} />
+        <Link
+          href="/map"
+          className="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 text-sm border border-border rounded-md hover:border-foreground transition-colors"
+        >
+          <Icon.Map size={14} />
           지도검색
         </Link>
       </div>
 
-      <div className="grid lg:grid-cols-[260px_1fr] gap-4">
-        <ListingsFilter
-          regions={REGIONS}
-          categories={CATEGORIES}
-          initial={sp}
-        />
+      <div className="grid lg:grid-cols-[260px_1fr] gap-6">
+        <ListingsFilter regions={REGIONS} categories={CATEGORIES} initial={sp} />
 
-        <div className="space-y-6">
+        <div className="space-y-8">
           {urgent.length > 0 && (
             <section>
-              <h2 className="font-bold text-sm mb-2 flex items-center gap-2">
+              <h2 className="font-semibold text-sm mb-3 flex items-center gap-2">
                 <span className="px-1.5 py-0.5 badge-urgent text-[10px] rounded">긴급</span>
-                긴급매물 ({urgent.length})
+                긴급매물 <span className="text-muted tabular">({urgent.length})</span>
               </h2>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {urgent.map((l) => <UrgentCard key={l.id} listing={l} />)}
               </div>
             </section>
           )}
           {premium.length > 0 && (
             <section>
-              <h2 className="font-bold text-sm mb-2 flex items-center gap-2">
+              <h2 className="font-semibold text-sm mb-3 flex items-center gap-2">
                 <span className="px-1.5 py-0.5 badge-premium text-[10px] rounded">프리미엄</span>
-                프리미엄 ({premium.length})
+                프리미엄 <span className="text-muted tabular">({premium.length})</span>
               </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {premium.map((l) => <PremiumCard key={l.id} listing={l} />)}
               </div>
             </section>
           )}
           {normal.length > 0 && (
             <section>
-              <h2 className="font-bold text-sm mb-2">일반·무료 ({normal.length})</h2>
-              <div className="bg-white rounded-md border border-border overflow-hidden">
+              <h2 className="font-semibold text-sm mb-3">
+                일반·무료 <span className="text-muted tabular">({normal.length})</span>
+              </h2>
+              <div className="surface-card overflow-hidden">
                 {normal.map((l) => <NormalRow key={l.id} listing={l} />)}
               </div>
             </section>
           )}
           {filtered.length === 0 && (
-            <div className="bg-white rounded-md border border-border p-12 text-center">
-              <Icon.Search size={32} className="mx-auto mb-3 text-muted" />
-              <p className="font-bold mb-1">검색 결과가 없습니다</p>
-              <p className="text-sm text-muted">다른 조건으로 다시 검색해주세요</p>
-              <Link href="/listings" className="inline-block mt-4 px-4 py-2 bg-foreground text-white text-sm font-bold rounded">
+            <div className="surface-card p-16 text-center">
+              <Icon.Search size={32} className="mx-auto mb-4 text-muted" />
+              <p className="font-semibold text-foreground">검색 결과가 없습니다</p>
+              <p className="text-sm text-muted mt-1">다른 조건으로 다시 검색해주세요</p>
+              <Link href="/listings" className="inline-block mt-5 px-4 py-2 bg-foreground text-white text-sm font-semibold rounded-md">
                 전체 매물 보기
               </Link>
             </div>

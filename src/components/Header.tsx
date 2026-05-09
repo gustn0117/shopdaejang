@@ -5,12 +5,11 @@ import { Icon } from "./Icon";
 import { HeaderMobile } from "./HeaderMobile";
 
 const NAV_ITEMS = [
-  { href: "/", label: "홈" },
   { href: "/listings", label: "매물검색" },
-  { href: "/map", label: "지도검색" },
+  { href: "/map", label: "지도" },
   { href: "/used", label: "중고장터" },
   { href: "/supplies", label: "용품도매" },
-  { href: "/notice", label: "공지사항" },
+  { href: "/notice", label: "공지" },
   { href: "/ad-info", label: "광고안내" },
 ];
 
@@ -21,23 +20,19 @@ export async function Header() {
   const isAdmin = role === "admin";
 
   return (
-    <header className="sticky top-0 z-40 bg-white border-b border-border">
+    <header className="sticky top-0 z-40 bg-background/95 backdrop-blur border-b border-border">
       <div className="container-custom">
-        <div className="hidden lg:flex items-center justify-end gap-4 py-2 text-xs text-muted">
+        <div className="hidden lg:flex items-center justify-end gap-3 py-1.5 text-[11px] text-muted">
           {user ? (
             <>
-              <span className="text-foreground">{user.user_metadata?.name ?? user.email}</span>
-              <span className="text-border">|</span>
+              <span className="text-foreground/80">{user.user_metadata?.name ?? user.email}</span>
               <Link href="/mypage" className="hover:text-foreground">마이페이지</Link>
-              <span className="text-border">|</span>
               <Link href="/mypage/register" className="hover:text-foreground">매물등록</Link>
               {isAdmin && (
-                <>
-                  <span className="text-border">|</span>
-                  <Link href="/admin" className="text-foreground font-bold hover:underline">관리자</Link>
-                </>
+                <Link href="/admin" className="text-foreground font-semibold hover:underline">
+                  관리자
+                </Link>
               )}
-              <span className="text-border">|</span>
               <form action={signOut}>
                 <button type="submit" className="hover:text-foreground">로그아웃</button>
               </form>
@@ -45,36 +40,29 @@ export async function Header() {
           ) : (
             <>
               <Link href="/login" className="hover:text-foreground">로그인</Link>
-              <span className="text-border">|</span>
               <Link href="/signup" className="hover:text-foreground">회원가입</Link>
-              <span className="text-border">|</span>
               <Link href="/notice" className="hover:text-foreground">고객센터</Link>
             </>
           )}
         </div>
 
         <div className="flex items-center justify-between py-3 lg:py-4">
-          <div className="flex items-center gap-8">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="w-9 h-9 lg:w-10 lg:h-10 rounded-md bg-foreground flex items-center justify-center text-white font-black text-base lg:text-lg">
-                샵
-              </div>
-              <div className="flex flex-col leading-tight">
-                <span className="text-lg lg:text-xl font-black text-foreground">
-                  샵대장
-                </span>
-                <span className="hidden lg:inline text-[10px] text-muted">
-                  마사지샵 직거래 전문 사이트
-                </span>
-              </div>
+          <div className="flex items-center gap-10">
+            <Link href="/" className="inline-flex items-baseline gap-2 group">
+              <span className="text-xl lg:text-[22px] font-black text-foreground tracking-tight leading-none">
+                샵대장
+              </span>
+              <span className="hidden lg:inline text-[10px] text-muted tracking-wide">
+                마사지샵 직거래
+              </span>
             </Link>
 
-            <nav className="hidden lg:flex items-center gap-1">
+            <nav className="hidden lg:flex items-center">
               {NAV_ITEMS.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="px-3 py-2 text-sm font-medium text-foreground/80 hover:text-foreground transition-colors"
+                  className="px-3 py-2 text-[13px] font-medium text-foreground-soft hover:text-foreground transition-colors"
                 >
                   {item.label}
                 </Link>
@@ -85,9 +73,9 @@ export async function Header() {
           <div className="flex items-center gap-2">
             <Link
               href="/mypage/register"
-              className="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 bg-foreground text-white text-sm font-bold rounded-md hover:bg-foreground/90 transition-colors"
+              className="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 bg-foreground text-white text-[13px] font-semibold rounded-md hover:bg-foreground-soft transition-colors"
             >
-              <Icon.Plus size={14} strokeWidth={2.5} />
+              <Icon.Plus size={13} strokeWidth={2.5} />
               매물등록
             </Link>
             <HeaderMobile items={NAV_ITEMS} isAuthenticated={!!user} isAdmin={isAdmin} />

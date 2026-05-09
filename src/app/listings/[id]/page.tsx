@@ -35,16 +35,13 @@ export default async function ListingDetailPage({
   const related = relatedAll.filter((l) => l.id !== listing.id).slice(0, 4);
 
   return (
-    <div className="container-custom py-4 lg:py-6">
-      {/* Breadcrumb */}
-      <nav className="text-xs text-muted mb-3 flex items-center gap-1">
+    <div className="container-custom py-6 lg:py-10">
+      <nav className="text-[11px] text-muted mb-5 flex items-center gap-1.5">
         <Link href="/" className="hover:text-foreground">홈</Link>
-        <span>/</span>
+        <span className="text-border">/</span>
         <Link href="/listings" className="hover:text-foreground">매물검색</Link>
-        <span>/</span>
+        <span className="text-border">/</span>
         <Link href={`/listings?sido=${listing.sido}`} className="hover:text-foreground">{listing.sido}</Link>
-        <span>/</span>
-        <span className="text-foreground">{listing.title}</span>
       </nav>
 
       <div className="grid lg:grid-cols-[1fr_380px] gap-4 lg:gap-6">
@@ -97,19 +94,19 @@ export default async function ListingDetailPage({
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-4 pt-4 border-t border-border">
               <div className="text-center">
                 <div className="text-[11px] text-muted mb-1">보증금</div>
-                <div className="font-black text-base">{listing.deposit.toLocaleString()}만</div>
+                <div className="font-black text-base tabular">{listing.deposit.toLocaleString()}만</div>
               </div>
               <div className="text-center">
                 <div className="text-[11px] text-muted mb-1">월세</div>
-                <div className="font-black text-base">{listing.monthlyRent.toLocaleString()}만</div>
+                <div className="font-black text-base tabular">{listing.monthlyRent.toLocaleString()}만</div>
               </div>
               <div className="text-center">
                 <div className="text-[11px] text-muted mb-1">권리금</div>
-                <div className="font-black text-base">{listing.premium.toLocaleString()}만</div>
+                <div className="font-black text-base tabular">{listing.premium.toLocaleString()}만</div>
               </div>
               <div className="text-center bg-foreground text-white rounded p-2">
                 <div className="text-[11px] text-white/70 mb-1">합계</div>
-                <div className="font-black text-base">
+                <div className="font-black text-base tabular">
                   {formatKRW(listing.deposit + listing.premium)}
                 </div>
               </div>
