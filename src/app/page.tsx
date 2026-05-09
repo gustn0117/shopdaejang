@@ -33,12 +33,12 @@ export default async function HomePage() {
 
   return (
     <div className="container-custom py-6 lg:py-10 space-y-10 lg:space-y-16">
-      <section className="grid lg:grid-cols-12 gap-8 lg:gap-10 items-end pb-2">
+      <section className="grid lg:grid-cols-12 gap-y-8 gap-x-10 items-end pt-4 pb-4">
         <div className="lg:col-span-7">
           <p className="text-[11px] font-semibold text-muted tracking-[0.18em] uppercase mb-4">
             Shopdaejang · Marketplace
           </p>
-          <h1 className="h-display text-[34px] sm:text-[44px] lg:text-[58px] text-foreground">
+          <h1 className="h-display text-[32px] sm:text-[44px] lg:text-[60px] text-foreground">
             마사지샵
             <br />
             <span className="text-muted-strong">직거래</span>의 기준
@@ -66,7 +66,7 @@ export default async function HomePage() {
           </div>
         </div>
 
-        <div className="lg:col-span-5 grid grid-cols-3 gap-4 lg:gap-6 lg:pb-3">
+        <div className="lg:col-span-5 grid grid-cols-3 gap-4 lg:gap-8 lg:pb-2 lg:pl-8 lg:border-l lg:border-border">
           <Stat label="등록 매물" value={stats.total.toLocaleString()} suffix="건" />
           <Stat label="긴급 매물" value={stats.urgent.toLocaleString()} suffix="건" />
           <Stat label="중개 수수료" value="0" suffix="원" />

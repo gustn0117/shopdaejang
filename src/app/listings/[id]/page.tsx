@@ -7,6 +7,7 @@ import { formatKRW, formatRelativeDate } from "@/lib/format";
 import { UrgentCard } from "@/components/ListingCard";
 import { Icon } from "@/components/Icon";
 import { Thumbnail } from "@/components/Thumbnail";
+import { MiniMap } from "@/components/MiniMap";
 
 export async function generateMetadata({
   params,
@@ -157,11 +158,12 @@ export default async function ListingDetailPage({
             {listing.isAddressPublic ? (
               <>
                 <p className="text-sm text-foreground mb-3">
-                  {listing.region} (역세권 도보 5분)
+                  {listing.region}
                 </p>
-                <div className="aspect-video bg-zinc-100 rounded flex items-center justify-center text-muted text-sm">
-                  지도 영역 (카카오맵 / 네이버맵 연동 예정)
-                </div>
+                <MiniMap sido={listing.sido} sigungu={listing.sigungu} />
+                <p className="text-[11px] text-muted mt-2 leading-relaxed">
+                  지도는 시·도 단위 위치 기준이며, 정확한 매장 위치는 매도자에게 직접 확인해주세요.
+                </p>
               </>
             ) : (
               <div className="aspect-video bg-zinc-50 rounded flex flex-col items-center justify-center text-muted text-sm gap-2 border border-dashed border-border">
