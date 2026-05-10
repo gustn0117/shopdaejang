@@ -9,6 +9,7 @@ import { Icon } from "@/components/Icon";
 import { Thumbnail } from "@/components/Thumbnail";
 import { MiniMap } from "@/components/MiniMap";
 import { FavoriteButton } from "@/components/FavoriteButton";
+import { MobileCtaBar } from "@/components/MobileCtaBar";
 import { createClient } from "@/lib/supabase/server";
 import { incrementListingView } from "../actions";
 
@@ -76,8 +77,35 @@ export default async function ListingDetailPage({
   const relatedAll = await fetchListings({ category: listing.category, limit: 5 });
   const related = relatedAll.filter((l) => l.id !== listing.id).slice(0, 4);
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: `${listing.region} ${listing.category} ${listing.area}평`,
+    description: listing.description || `${listing.region} ${listing.category} 양도양수 매물`,
+    sku: `SHOP-${listing.id}`,
+    category: listing.category,
+    offers: {
+      "@type": "Offer",
+      price: listing.deposit + listing.premium,
+      priceCurrency: "KRW",
+      availability:
+        listing.status === "approved"
+          ? "https://schema.org/InStock"
+          : "https://schema.org/OutOfStock",
+      areaServed: { "@type": "Place", name: listing.region },
+    },
+    aggregateRating:
+      listing.favorites > 0
+        ? { "@type": "AggregateRating", ratingValue: 5, ratingCount: listing.favorites }
+        : undefined,
+  };
+
   return (
-    <div className="container-custom py-6 lg:py-10">
+    <div className="container-custom py-6 lg:py-10 pb-32 lg:pb-10">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <nav className="text-[11px] text-muted mb-5 flex items-center gap-1.5">
         <Link href="/" className="hover:text-foreground">홈</Link>
         <span className="text-border">/</span>
@@ -261,7 +289,14 @@ export default async function ListingDetailPage({
         </aside>
       </div>
 
-      {/* Related */}
+      <MobileCtaBar
+        listingId={listing.id}
+        initialFavorited={favorited}
+        initialCount={listing.favorites}
+        phone={listing.phone}
+        useSecretNumber={listing.useSecretNumber}
+      />
+
       {related.length > 0 && (
         <section className="mt-8">
           <h2 className="text-lg lg:text-xl font-black mb-3 tracking-tight">같은 업종의 다른 매물</h2>

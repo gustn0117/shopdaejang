@@ -4,6 +4,7 @@ import { fetchUsedGoodById } from "@/lib/db";
 import { formatPrice, formatRelativeDate } from "@/lib/format";
 import { Icon } from "@/components/Icon";
 import { Thumbnail } from "@/components/Thumbnail";
+import { incrementUsedView } from "../actions";
 
 export default async function UsedDetailPage({
   params,
@@ -13,6 +14,8 @@ export default async function UsedDetailPage({
   const { id } = await params;
   const item = await fetchUsedGoodById(Number(id));
   if (!item) notFound();
+
+  await incrementUsedView(item.id);
 
   return (
     <div className="container-custom py-4 lg:py-6 max-w-3xl">

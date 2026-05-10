@@ -5,6 +5,7 @@ import { UrgentCard, PremiumCard, NormalRow } from "@/components/ListingCard";
 import { ListingsFilter } from "@/components/ListingsFilter";
 import { Icon } from "@/components/Icon";
 import type { Listing } from "@/lib/types";
+import { SortBar } from "./SortBar";
 
 type SP = Promise<{
   sido?: string;
@@ -46,7 +47,7 @@ export default async function ListingsPage({ searchParams }: { searchParams: SP 
 
   return (
     <div className="container-custom py-6 lg:py-10">
-      <div className="flex items-end justify-between mb-6">
+      <div className="flex items-end justify-between mb-6 flex-wrap gap-4">
         <div>
           <p className="text-[11px] font-semibold text-muted tracking-[0.18em] uppercase mb-2">
             Listings
@@ -56,13 +57,16 @@ export default async function ListingsPage({ searchParams }: { searchParams: SP 
             <span className="text-foreground font-bold tabular">{filtered.length.toLocaleString()}</span>건의 매물
           </p>
         </div>
-        <Link
-          href="/map"
-          className="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 text-sm border border-border rounded-md hover:border-foreground transition-colors"
-        >
-          <Icon.Map size={14} />
-          지도검색
-        </Link>
+        <div className="flex items-center gap-2">
+          <SortBar currentSort={sp.sort ?? "default"} />
+          <Link
+            href="/map"
+            className="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 text-sm border border-border rounded-md hover:border-foreground transition-colors"
+          >
+            <Icon.Map size={14} />
+            지도검색
+          </Link>
+        </div>
       </div>
 
       <div className="grid lg:grid-cols-[260px_1fr] gap-6">

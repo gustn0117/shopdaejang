@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 import { createClient, createAdminClient } from "@/lib/supabase/server";
 
 export async function toggleFavorite(
@@ -39,8 +40,23 @@ export async function toggleFavorite(
 }
 
 export async function incrementListingView(id: number) {
-  const admin = createAdminClient();
-  await admin.rpc("increment_listing_view", { p_id: id });
+  // 30분 내 동일 매물 재조회는 카운트하지 않음 (쿠키 기반 throttle)
+  const jar = await cookies();
+  const key = `vw_${id}`;
+  if (jar.get(key)?.value) return;
+
+  try {
+    const admin = createAdminClient();
+    await admin.rpc("increment_listing_view", { p_id: id });
+    jar.set(key, "1", {
+      maxAge: 60 * 30, // 30 minutes
+      path: "/",
+      sameSite: "lax",
+      httpOnly: true,
+    });
+  } catch {
+    // 조회수 실패는 페이지 렌더를 막지 않음
+  }
 }
 
 export async function requireLogin(redirectTo: string) {

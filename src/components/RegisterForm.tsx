@@ -47,6 +47,7 @@ export function RegisterForm({
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [stepError, setStepError] = useState<string | null>(null);
 
   const sigunguList = sido ? regions[sido] ?? [] : [];
 
@@ -81,21 +82,23 @@ export function RegisterForm({
 
   function next() {
     if (step === 1 && !validStep1) {
-      alert("필수 항목을 모두 입력해주세요");
+      setStepError("제목(4자 이상)·지역·업종·면적을 모두 입력해주세요.");
       return;
     }
     if (step === 2 && !validStep2) {
-      alert("연락처를 입력해주세요");
+      setStepError("연락처를 정확히 입력해주세요.");
       return;
     }
     if (step === 3 && !validStep3) {
-      alert("광고 상품을 선택해주세요");
+      setStepError("광고 상품과 기간을 선택해주세요.");
       return;
     }
+    setStepError(null);
     setStep((s) => (Math.min(4, s + 1) as Step));
     if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
   }
   function prev() {
+    setStepError(null);
     setStep((s) => (Math.max(1, s - 1) as Step));
     if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
   }
@@ -103,7 +106,7 @@ export function RegisterForm({
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!agreement) {
-      alert("이용약관에 동의해주세요");
+      setSubmitError("이용약관에 동의해주세요.");
       return;
     }
     setSubmitting(true);
@@ -599,8 +602,11 @@ export function RegisterForm({
       )}
 
       {/* Buttons */}
-      {submitError && (
-        <p className="text-xs text-urgent bg-zinc-50 border border-urgent rounded p-2">{submitError}</p>
+      {(stepError || submitError) && (
+        <p className="text-xs text-urgent bg-white border border-urgent rounded p-3 inline-flex items-center gap-1.5">
+          <Icon.Warning size={12} strokeWidth={2.2} />
+          {stepError || submitError}
+        </p>
       )}
       <div className="flex gap-2">
         {step > 1 && (

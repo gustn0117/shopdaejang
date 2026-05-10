@@ -110,33 +110,37 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section>
-        <SectionHeader
-          eyebrow="HOT"
-          title="긴급매물"
-          subtitle="빠른 거래를 원하시는 매물"
-          href="/listings?tier=urgent"
-        />
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 lg:gap-4">
-          {urgent.map((l) => (
-            <UrgentCard key={l.id} listing={l} />
-          ))}
-        </div>
-      </section>
+      {urgent.length > 0 && (
+        <section>
+          <SectionHeader
+            eyebrow="HOT"
+            title="긴급매물"
+            subtitle="빠른 거래를 원하시는 매물"
+            href="/listings?tier=urgent"
+          />
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 lg:gap-4">
+            {urgent.map((l) => (
+              <UrgentCard key={l.id} listing={l} />
+            ))}
+          </div>
+        </section>
+      )}
 
-      <section>
-        <SectionHeader
-          eyebrow="PRO"
-          title="프리미엄 매물"
-          subtitle="검증된 매물을 추천합니다"
-          href="/listings?tier=premium"
-        />
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {premium.map((l) => (
-            <PremiumCard key={l.id} listing={l} />
-          ))}
-        </div>
-      </section>
+      {premium.length > 0 && (
+        <section>
+          <SectionHeader
+            eyebrow="PRO"
+            title="프리미엄 매물"
+            subtitle="검증된 매물을 추천합니다"
+            href="/listings?tier=premium"
+          />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {premium.map((l) => (
+              <PremiumCard key={l.id} listing={l} />
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className="grid lg:grid-cols-3 gap-3">
         <Link
@@ -175,23 +179,27 @@ export default async function HomePage() {
         </Link>
       </section>
 
-      <section>
-        <SectionHeader title="일반 매물" href="/listings?tier=normal" />
-        <div className="surface-card overflow-hidden">
-          {normal.map((l) => (
-            <NormalRow key={l.id} listing={l} />
-          ))}
-        </div>
-      </section>
+      {normal.length > 0 && (
+        <section>
+          <SectionHeader title="일반 매물" href="/listings?tier=normal" />
+          <div className="surface-card overflow-hidden">
+            {normal.map((l) => (
+              <NormalRow key={l.id} listing={l} />
+            ))}
+          </div>
+        </section>
+      )}
 
-      <section>
-        <SectionHeader title="무료 매물" subtitle="10일간 무료 노출" href="/listings?tier=free" />
-        <div className="surface-card overflow-hidden">
-          {free.map((l) => (
-            <FreeRow key={l.id} listing={l} />
-          ))}
-        </div>
-      </section>
+      {free.length > 0 && (
+        <section>
+          <SectionHeader title="무료 매물" subtitle="10일간 무료 노출" href="/listings?tier=free" />
+          <div className="surface-card overflow-hidden">
+            {free.map((l) => (
+              <FreeRow key={l.id} listing={l} />
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className="grid lg:grid-cols-[1fr_320px] gap-8 lg:gap-12 pt-2">
         <div>
