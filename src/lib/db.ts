@@ -87,6 +87,11 @@ export async function fetchListings(opts?: {
     .eq("status", opts?.status ?? "approved")
     .eq("is_public", true);
 
+  // 자동 만료: 승인된 매물에만 적용 (관리자 검토 시점은 만료와 무관)
+  if ((opts?.status ?? "approved") === "approved") {
+    q = q.or("ad_expires_at.is.null,ad_expires_at.gt." + new Date().toISOString());
+  }
+
   if (opts?.tier) q = q.eq("tier", opts.tier);
   if (opts?.sido) q = q.eq("sido", opts.sido);
   if (opts?.sigungu) q = q.eq("sigungu", opts.sigungu);

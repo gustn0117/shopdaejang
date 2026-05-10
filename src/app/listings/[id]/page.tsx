@@ -8,6 +8,9 @@ import { UrgentCard } from "@/components/ListingCard";
 import { Icon } from "@/components/Icon";
 import { Thumbnail } from "@/components/Thumbnail";
 import { MiniMap } from "@/components/MiniMap";
+import { FavoriteButton } from "@/components/FavoriteButton";
+import { createClient } from "@/lib/supabase/server";
+import { incrementListingView } from "../actions";
 
 export async function generateMetadata({
   params,
@@ -17,9 +20,30 @@ export async function generateMetadata({
   const { id } = await params;
   const listing = await fetchListingById(Number(id));
   if (!listing) return { title: "매물을 찾을 수 없습니다" };
+
+  const title = `${listing.region} ${listing.category} ${listing.area}평 - ${listing.title}`;
+  const description = `${listing.region} ${listing.category} ${listing.area}평 양도양수 매물. 보증금 ${listing.deposit.toLocaleString()}만, 월세 ${listing.monthlyRent.toLocaleString()}만, 권리금 ${listing.premium.toLocaleString()}만. 직거래로 빠르고 안전하게.`;
+  const url = `https://shopdaejang.hsweb.pics/listings/${listing.id}`;
+
   return {
-    title: `${listing.title} - ${listing.region} ${listing.category}`,
-    description: `${listing.region} ${listing.category} ${listing.area}평 매물. 보증금 ${listing.deposit.toLocaleString()}만 / 월세 ${listing.monthlyRent.toLocaleString()}만 / 권리금 ${listing.premium.toLocaleString()}만`,
+    title,
+    description,
+    keywords: [
+      `${listing.region} ${listing.category}`,
+      `${listing.sido} 마사지샵`,
+      `${listing.sido} ${listing.category} 양도`,
+      `${listing.sido} ${listing.category} 매매`,
+      "마사지샵 직거래",
+      "샵대장",
+    ],
+    alternates: { canonical: url },
+    openGraph: {
+      title,
+      description,
+      url,
+      type: "website",
+      locale: "ko_KR",
+    },
   };
 }
 
@@ -31,6 +55,23 @@ export default async function ListingDetailPage({
   const { id } = await params;
   const listing = await fetchListingById(Number(id));
   if (!listing) notFound();
+
+  // 조회수 증가 (server side)
+  await incrementListingView(listing.id);
+
+  // 현재 사용자가 찜했는지 확인
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  let favorited = false;
+  if (user) {
+    const { data: fav } = await supabase
+      .from("favorites")
+      .select("listing_id")
+      .eq("user_id", user.id)
+      .eq("listing_id", listing.id)
+      .maybeSingle();
+    favorited = !!fav;
+  }
 
   const relatedAll = await fetchListings({ category: listing.category, limit: 5 });
   const related = relatedAll.filter((l) => l.id !== listing.id).slice(0, 4);
@@ -82,12 +123,13 @@ export default async function ListingDetailPage({
                 </h1>
                 <p className="text-sm text-muted">{listing.description}</p>
               </div>
-              <div className="flex flex-col items-end gap-1 shrink-0">
-                <button type="button" className="inline-flex items-center gap-1 px-3 py-1.5 border border-border rounded text-xs font-semibold text-muted hover:text-foreground hover:border-foreground">
-                  <Icon.Heart size={12} strokeWidth={2} />
-                  찜 {listing.favorites}
-                </button>
-                <span className="text-[11px] text-muted">조회 {listing.views.toLocaleString()}</span>
+              <div className="flex flex-col items-end gap-1.5 shrink-0">
+                <FavoriteButton
+                  listingId={listing.id}
+                  initialFavorited={favorited}
+                  initialCount={listing.favorites}
+                />
+                <span className="text-[11px] text-muted tabular">조회 {listing.views.toLocaleString()}</span>
               </div>
             </div>
 
@@ -186,10 +228,12 @@ export default async function ListingDetailPage({
                 <Icon.Chat size={14} strokeWidth={2.2} />
                 카카오톡 상담
               </button>
-              <button type="button" className="flex items-center justify-center gap-2 w-full py-2.5 border border-border text-foreground font-semibold rounded hover:bg-zinc-50">
-                <Icon.Heart size={14} strokeWidth={2} />
-                찜하기
-              </button>
+              <FavoriteButton
+                listingId={listing.id}
+                initialFavorited={favorited}
+                initialCount={listing.favorites}
+                variant="block"
+              />
             </div>
             <div className="mt-4 pt-4 border-t border-border space-y-2 text-xs">
               <div className="flex justify-between"><span className="text-muted">매물번호</span><span className="font-medium">{listing.id}</span></div>

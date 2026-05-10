@@ -75,6 +75,21 @@ export default async function HomePage() {
 
       <SearchBar />
 
+      <section className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        {[
+          { n: "01", t: "회원가입 + 매물등록", d: "이메일로 가입하고 사진과 함께 매물을 등록합니다." },
+          { n: "02", t: "광고 상품 결제", d: "긴급·프리미엄·일반·무료 중 선택해 결제합니다." },
+          { n: "03", t: "관리자 승인 노출", d: "검수 후 평균 2~6시간 이내 노출됩니다." },
+          { n: "04", t: "매수자 직접 연락", d: "매수자가 전화·카톡으로 매도자에게 직접 연락합니다." },
+        ].map((s) => (
+          <div key={s.n} className="surface-card p-4 lg:p-5">
+            <p className="text-2xl font-black tabular text-muted-strong mb-3">{s.n}</p>
+            <h3 className="font-bold text-sm tracking-tight mb-1">{s.t}</h3>
+            <p className="text-[12px] text-muted leading-relaxed">{s.d}</p>
+          </div>
+        ))}
+      </section>
+
       <section>
         <div className="flex items-end justify-between mb-4">
           <h2 className="text-base lg:text-lg font-bold text-foreground tracking-tight">
