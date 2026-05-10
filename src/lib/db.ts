@@ -64,6 +64,11 @@ function rowToListing(r: ListingRow): Listing {
   };
 }
 
+export type ListingsResult = {
+  rows: Listing[];
+  total: number;
+};
+
 export async function fetchListings(opts?: {
   tier?: Listing["tier"] | "";
   sido?: string;
@@ -79,6 +84,8 @@ export async function fetchListings(opts?: {
   premiumMax?: number;
   sort?: string;
   limit?: number;
+  offset?: number;
+  withCount?: boolean;
 }): Promise<Listing[]> {
   const supabase = await createClient();
   let q = supabase
@@ -121,7 +128,11 @@ export async function fetchListings(opts?: {
       q = q.order("bumped_at", { ascending: false });
   }
 
-  if (opts?.limit) q = q.limit(opts.limit);
+  if (opts?.offset !== undefined && opts?.limit) {
+    q = q.range(opts.offset, opts.offset + opts.limit - 1);
+  } else if (opts?.limit) {
+    q = q.limit(opts.limit);
+  }
 
   const { data, error } = await q;
   if (error) {
@@ -129,6 +140,37 @@ export async function fetchListings(opts?: {
     return [];
   }
   return ((data ?? []) as ListingRow[]).map(rowToListing);
+}
+
+export async function fetchListingsWithCount(
+  opts: Parameters<typeof fetchListings>[0] & { page?: number; pageSize?: number }
+): Promise<ListingsResult> {
+  const supabase = await createClient();
+  const pageSize = opts?.pageSize ?? 24;
+  const page = Math.max(1, opts?.page ?? 1);
+  const offset = (page - 1) * pageSize;
+
+  let countQ = supabase
+    .from("listings")
+    .select("id", { count: "exact", head: true })
+    .eq("status", opts?.status ?? "approved")
+    .eq("is_public", true);
+
+  if ((opts?.status ?? "approved") === "approved") {
+    countQ = countQ.or("ad_expires_at.is.null,ad_expires_at.gt." + new Date().toISOString());
+  }
+  if (opts?.tier) countQ = countQ.eq("tier", opts.tier);
+  if (opts?.sido) countQ = countQ.eq("sido", opts.sido);
+  if (opts?.sigungu) countQ = countQ.eq("sigungu", opts.sigungu);
+  if (opts?.category) countQ = countQ.eq("category", opts.category);
+  if (opts?.q) countQ = countQ.or(`title.ilike.%${opts.q}%,description.ilike.%${opts.q}%`);
+
+  const [rows, count] = await Promise.all([
+    fetchListings({ ...opts, limit: pageSize, offset }),
+    countQ,
+  ]);
+
+  return { rows, total: count.count ?? 0 };
 }
 
 export async function fetchListingById(id: number): Promise<Listing | null> {

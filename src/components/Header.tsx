@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { signOut } from "@/app/login/actions";
 import { Icon } from "./Icon";
 import { HeaderMobile } from "./HeaderMobile";
+import { HeaderSearch } from "./HeaderSearch";
 
 const NAV_ITEMS = [
   { href: "/listings", label: "매물검색" },
@@ -71,6 +72,7 @@ export async function Header() {
           </div>
 
           <div className="flex items-center gap-2">
+            <HeaderSearch />
             <Link
               href="/mypage/register"
               className="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 bg-foreground text-white text-[13px] font-semibold rounded-md hover:bg-foreground-soft transition-colors"

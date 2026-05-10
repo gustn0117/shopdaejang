@@ -1,11 +1,15 @@
 import Link from "next/link";
 import { REGIONS, CATEGORIES } from "@/lib/data";
-import { fetchListings } from "@/lib/db";
+import { fetchListingsWithCount } from "@/lib/db";
 import { UrgentCard, PremiumCard, NormalRow } from "@/components/ListingCard";
 import { ListingsFilter } from "@/components/ListingsFilter";
 import { Icon } from "@/components/Icon";
+import { Pagination } from "@/components/Pagination";
 import type { Listing } from "@/lib/types";
 import { SortBar } from "./SortBar";
+import { QuickChips } from "./QuickChips";
+
+const PAGE_SIZE = 24;
 
 type SP = Promise<{
   sido?: string;
@@ -20,13 +24,15 @@ type SP = Promise<{
   premiumMin?: string;
   premiumMax?: string;
   sort?: string;
+  page?: string;
 }>;
 
 export default async function ListingsPage({ searchParams }: { searchParams: SP }) {
   const sp = await searchParams;
   const tier = (sp.tier as Listing["tier"] | undefined) ?? undefined;
+  const page = Math.max(1, Number(sp.page ?? "1"));
 
-  const filtered = await fetchListings({
+  const { rows: filtered, total } = await fetchListingsWithCount({
     tier,
     sido: sp.sido,
     sigungu: sp.sigungu,
@@ -39,11 +45,23 @@ export default async function ListingsPage({ searchParams }: { searchParams: SP 
     premiumMin: sp.premiumMin ? Number(sp.premiumMin) : undefined,
     premiumMax: sp.premiumMax ? Number(sp.premiumMax) : undefined,
     sort: sp.sort,
+    page,
+    pageSize: PAGE_SIZE,
   });
 
   const urgent = filtered.filter((l) => l.tier === "urgent");
   const premium = filtered.filter((l) => l.tier === "premium");
   const normal = filtered.filter((l) => l.tier === "normal" || l.tier === "free");
+
+  function buildHref(p: number) {
+    const params = new URLSearchParams();
+    Object.entries(sp).forEach(([k, v]) => {
+      if (k !== "page" && v) params.set(k, String(v));
+    });
+    if (p > 1) params.set("page", String(p));
+    const qs = params.toString();
+    return `/listings${qs ? `?${qs}` : ""}`;
+  }
 
   return (
     <div className="container-custom py-6 lg:py-10">
@@ -54,7 +72,7 @@ export default async function ListingsPage({ searchParams }: { searchParams: SP 
           </p>
           <h1 className="text-2xl lg:text-3xl font-black tracking-tight">매물검색</h1>
           <p className="text-sm text-muted mt-2">
-            <span className="text-foreground font-bold tabular">{filtered.length.toLocaleString()}</span>건의 매물
+            <span className="text-foreground font-bold tabular">{total.toLocaleString()}</span>건의 매물
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -69,7 +87,9 @@ export default async function ListingsPage({ searchParams }: { searchParams: SP 
         </div>
       </div>
 
-      <div className="grid lg:grid-cols-[260px_1fr] gap-6">
+      <QuickChips currentTier={tier} currentSido={sp.sido} />
+
+      <div className="grid lg:grid-cols-[260px_1fr] gap-6 mt-4">
         <ListingsFilter regions={REGIONS} categories={CATEGORIES} initial={sp} />
 
         <div className="space-y-8">
@@ -114,6 +134,14 @@ export default async function ListingsPage({ searchParams }: { searchParams: SP 
                 전체 매물 보기
               </Link>
             </div>
+          )}
+          {total > PAGE_SIZE && (
+            <Pagination
+              current={page}
+              total={total}
+              pageSize={PAGE_SIZE}
+              buildHref={buildHref}
+            />
           )}
         </div>
       </div>

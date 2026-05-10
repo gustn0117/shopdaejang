@@ -4,6 +4,7 @@ import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { MobileNav } from "@/components/MobileNav";
+import { ToastProvider } from "@/components/Toast";
 
 const notoSansKR = Noto_Sans_KR({
   subsets: ["latin"],
@@ -51,10 +52,12 @@ export default function RootLayout({
   return (
     <html lang="ko" className={`${notoSansKR.variable} h-full`}>
       <body className="min-h-full flex flex-col bg-background text-foreground">
-        <Header />
-        <main className="flex-1 pb-16 lg:pb-0">{children}</main>
-        <Footer />
-        <MobileNav />
+        <ToastProvider>
+          <Header />
+          <main className="flex-1 pb-16 lg:pb-0">{children}</main>
+          <Footer />
+          <MobileNav />
+        </ToastProvider>
       </body>
     </html>
   );

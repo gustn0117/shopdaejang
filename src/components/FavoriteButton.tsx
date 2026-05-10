@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { toggleFavorite } from "@/app/listings/actions";
+import { useToast } from "./Toast";
 
 function HeartIcon({ filled, size = 14 }: { filled: boolean; size?: number }) {
   return (
@@ -36,6 +37,7 @@ export function FavoriteButton({
   variant = "icon",
 }: Props) {
   const router = useRouter();
+  const toast = useToast();
   const [favorited, setFavorited] = useState(initialFavorited);
   const [count, setCount] = useState(initialCount);
   const [pending, start] = useTransition();
@@ -47,6 +49,7 @@ export function FavoriteButton({
       const result = await toggleFavorite(listingId);
       if (!result.ok) {
         if (result.reason === "auth") {
+          toast.info("로그인이 필요합니다.");
           router.push(
             `/login?redirect=${encodeURIComponent(window.location.pathname)}`
           );
@@ -55,6 +58,7 @@ export function FavoriteButton({
       }
       setFavorited(result.favorited);
       setCount((c) => Math.max(0, c + (result.favorited ? 1 : -1)));
+      toast.success(result.favorited ? "찜한 매물에 추가됐어요." : "찜에서 해제했어요.");
     });
   }
 

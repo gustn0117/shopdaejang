@@ -11,6 +11,7 @@ import { MiniMap } from "@/components/MiniMap";
 import { FavoriteButton } from "@/components/FavoriteButton";
 import { MobileCtaBar } from "@/components/MobileCtaBar";
 import { ViewTracker } from "@/components/ViewTracker";
+import { RecentTracker } from "@/components/RecentTracker";
 import { createClient } from "@/lib/supabase/server";
 
 export async function generateMetadata({
@@ -102,6 +103,7 @@ export default async function ListingDetailPage({
   return (
     <div className="container-custom py-6 lg:py-10 pb-32 lg:pb-10">
       <ViewTracker type="listing" id={listing.id} />
+      <RecentTracker id={listing.id} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -237,12 +239,21 @@ export default async function ListingDetailPage({
           </div>
         </div>
 
-        {/* Right: Contact panel (sticky on desktop) */}
         <aside className="lg:sticky lg:top-24 self-start space-y-3">
           <div className="bg-white rounded-md border border-border p-4">
-            <p className="text-xs text-muted mb-1">매도자에게 직접 연락하세요</p>
-            <p className="text-[11px] text-muted mb-3">
-              샵대장은 광고 플랫폼이며 거래 중개에 개입하지 않습니다.
+            <div className="flex items-center gap-1.5 mb-3">
+              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-foreground text-white text-[10px] font-bold rounded">
+                <Icon.Check size={10} strokeWidth={3} />
+                관리자 검수 완료
+              </span>
+              {listing.useSecretNumber && (
+                <span className="inline-flex items-center gap-1 px-1.5 py-0.5 border border-foreground text-foreground text-[10px] font-bold rounded">
+                  안심번호
+                </span>
+              )}
+            </div>
+            <p className="text-[12px] text-muted mb-3 leading-relaxed">
+              매도자에게 직접 연락하세요. 샵대장은 광고 플랫폼이며 거래에 개입하지 않습니다.
             </p>
             <div className="space-y-2">
               <a
@@ -250,7 +261,7 @@ export default async function ListingDetailPage({
                 className="flex items-center justify-center gap-2 w-full py-3 bg-foreground text-white font-bold rounded hover:bg-foreground/90"
               >
                 <Icon.Phone size={16} strokeWidth={2.4} />
-                전화걸기 {listing.useSecretNumber && <span className="text-[10px] border border-white/30 px-1.5 py-0.5 rounded">안심번호</span>}
+                전화걸기
               </a>
               <button type="button" className="flex items-center justify-center gap-2 w-full py-3 bg-[#FEE500] text-black font-bold rounded hover:opacity-90">
                 <Icon.Chat size={14} strokeWidth={2.2} />
@@ -263,22 +274,31 @@ export default async function ListingDetailPage({
                 variant="block"
               />
             </div>
-            <div className="mt-4 pt-4 border-t border-border space-y-2 text-xs">
-              <div className="flex justify-between"><span className="text-muted">매물번호</span><span className="font-medium">{listing.id}</span></div>
-              <div className="flex justify-between"><span className="text-muted">등록일</span><span className="font-medium">{formatRelativeDate(listing.createdAt)}</span></div>
-              <div className="flex justify-between"><span className="text-muted">상태</span><span className="font-medium text-free">정상</span></div>
-            </div>
+            <dl className="mt-4 pt-4 border-t border-border grid grid-cols-2 gap-y-2 gap-x-3 text-xs">
+              <dt className="text-muted">매물번호</dt>
+              <dd className="font-medium tabular text-right">#{listing.id}</dd>
+              <dt className="text-muted">등록일</dt>
+              <dd className="font-medium text-right">{formatRelativeDate(listing.createdAt)}</dd>
+              <dt className="text-muted">조회수</dt>
+              <dd className="font-medium tabular text-right">{listing.views.toLocaleString()}</dd>
+              <dt className="text-muted">상태</dt>
+              <dd className="font-medium text-free text-right inline-flex items-center justify-end gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-free inline-block" />
+                정상 노출중
+              </dd>
+            </dl>
           </div>
 
-          <div className="bg-zinc-50 border border-border rounded p-3 text-xs text-foreground/80">
-            <p className="font-bold mb-1.5 flex items-center gap-1.5 text-foreground">
+          <div className="bg-white border border-border rounded-md p-4 text-xs text-foreground/80">
+            <p className="font-bold mb-2 flex items-center gap-1.5 text-foreground">
               <Icon.Warning size={12} strokeWidth={2.2} />
-              사기 피해 예방
+              안전 거래 가이드
             </p>
-            <ul className="space-y-1">
-              <li>· 계약금/보증금을 미리 송금하지 마세요</li>
+            <ul className="space-y-1.5 leading-relaxed">
+              <li>· 계약금·보증금을 미리 송금하지 마세요</li>
               <li>· 반드시 현장 방문 후 거래하세요</li>
-              <li>· 의심스러운 매물은 신고해주세요</li>
+              <li>· 사업자등록증·임대차계약서 확인을 권장합니다</li>
+              <li>· 의심스러운 매물은 즉시 신고해주세요</li>
             </ul>
           </div>
 

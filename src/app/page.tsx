@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { cookies } from "next/headers";
 import { AD_PRICING, CATEGORIES } from "@/lib/data";
 import { fetchListings, fetchNotices } from "@/lib/db";
 import { UrgentCard, PremiumCard, NormalRow, FreeRow } from "@/components/ListingCard";
@@ -6,6 +7,7 @@ import { SearchBar } from "@/components/SearchBar";
 import { SectionHeader } from "@/components/SectionHeader";
 import { Icon } from "@/components/Icon";
 import { createAdminClient } from "@/lib/supabase/server";
+import type { Listing } from "@/lib/types";
 
 export const revalidate = 60;
 
@@ -21,14 +23,31 @@ async function fetchStats() {
   };
 }
 
+async function fetchRecentlyViewed(): Promise<Listing[]> {
+  const jar = await cookies();
+  const raw = jar.get("recent_listings")?.value;
+  if (!raw) return [];
+  const ids = raw
+    .split(",")
+    .map((s) => Number(s))
+    .filter((n) => Number.isInteger(n) && n > 0)
+    .slice(0, 8);
+  if (ids.length === 0) return [];
+
+  const all = await fetchListings({ limit: 100 });
+  const byId = new Map(all.map((l) => [l.id, l]));
+  return ids.map((id) => byId.get(id)).filter((l): l is Listing => Boolean(l));
+}
+
 export default async function HomePage() {
-  const [urgent, premium, normal, free, notices, stats] = await Promise.all([
+  const [urgent, premium, normal, free, notices, stats, recent] = await Promise.all([
     fetchListings({ tier: "urgent", limit: 8 }),
     fetchListings({ tier: "premium", limit: 6 }),
     fetchListings({ tier: "normal", limit: 8 }),
     fetchListings({ tier: "free", limit: 8 }),
     fetchNotices({ limit: 3 }),
     fetchStats(),
+    fetchRecentlyViewed(),
   ]);
 
   return (
@@ -109,6 +128,21 @@ export default async function HomePage() {
           ))}
         </div>
       </section>
+
+      {recent.length > 0 && (
+        <section>
+          <SectionHeader
+            eyebrow="Recently Viewed"
+            title="최근 본 매물"
+            href="/listings"
+          />
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 lg:gap-4">
+            {recent.slice(0, 4).map((l) => (
+              <UrgentCard key={l.id} listing={l} />
+            ))}
+          </div>
+        </section>
+      )}
 
       {urgent.length > 0 && (
         <section>

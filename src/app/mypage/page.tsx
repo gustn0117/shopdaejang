@@ -151,9 +151,21 @@ export default async function MyPage() {
               })}
             </ul>
           ) : (
-            <p className="text-sm text-muted">
-              등록한 매물이 없습니다. 우측 상단에서 새 매물을 등록해보세요.
-            </p>
+            <div className="text-center py-6">
+              <p className="text-sm font-semibold mb-1">아직 등록한 매물이 없어요</p>
+              <p className="text-xs text-muted leading-relaxed mb-4">
+                광고 상품에 따라 노출 위치와 기간이 달라집니다.
+                <br />
+                무료 매물은 10일간 노출 가능합니다.
+              </p>
+              <Link
+                href="/mypage/register"
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-foreground text-white text-xs font-bold rounded"
+              >
+                <Icon.Plus size={12} strokeWidth={2.5} />
+                새 매물 등록하기
+              </Link>
+            </div>
           )}
         </div>
 
@@ -188,7 +200,19 @@ export default async function MyPage() {
               ))}
             </ul>
           ) : (
-            <p className="text-sm text-muted">결제 내역이 없습니다.</p>
+            <div className="text-center py-6">
+              <p className="text-sm font-semibold mb-1">결제 내역이 없습니다</p>
+              <p className="text-xs text-muted leading-relaxed mb-4">
+                광고 상품 결제 후 노출이 시작되면 이곳에서 확인할 수 있어요.
+              </p>
+              <Link
+                href="/ad-info"
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 border border-border text-xs font-bold rounded hover:border-foreground"
+              >
+                광고 상품 보기
+                <Icon.ChevronRight size={11} />
+              </Link>
+            </div>
           )}
         </div>
       </div>
