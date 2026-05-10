@@ -92,20 +92,17 @@ function Select({
   className?: string;
 }) {
   return (
-    <div className={`relative ${className} lg:flex-1`}>
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        disabled={disabled}
-        className="w-full appearance-none px-4 py-3 pr-9 text-sm bg-transparent focus:outline-none disabled:text-muted/60 cursor-pointer"
-      >
-        {options.map((o) => (
-          <option key={o.value} value={o.value}>
-            {o.label}
-          </option>
-        ))}
-      </select>
-      <Icon.ChevronDown size={12} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-muted" />
-    </div>
+    <select
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      disabled={disabled}
+      className={`${className} lg:flex-1 px-4 py-3 text-sm bg-transparent rounded focus:outline-none disabled:text-muted/60 cursor-pointer`}
+    >
+      {options.map((o) => (
+        <option key={o.value} value={o.value}>
+          {o.label}
+        </option>
+      ))}
+    </select>
   );
 }
