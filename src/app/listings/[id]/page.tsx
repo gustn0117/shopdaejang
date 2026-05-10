@@ -10,8 +10,8 @@ import { Thumbnail } from "@/components/Thumbnail";
 import { MiniMap } from "@/components/MiniMap";
 import { FavoriteButton } from "@/components/FavoriteButton";
 import { MobileCtaBar } from "@/components/MobileCtaBar";
+import { ViewTracker } from "@/components/ViewTracker";
 import { createClient } from "@/lib/supabase/server";
-import { incrementListingView } from "../actions";
 
 export async function generateMetadata({
   params,
@@ -57,8 +57,7 @@ export default async function ListingDetailPage({
   const listing = await fetchListingById(Number(id));
   if (!listing) notFound();
 
-  // 조회수 증가 (server side)
-  await incrementListingView(listing.id);
+  // 조회수 증가는 클라이언트 마운트 시 ViewTracker → /api/views/listing/[id] 호출
 
   // 현재 사용자가 찜했는지 확인
   const supabase = await createClient();
@@ -102,6 +101,7 @@ export default async function ListingDetailPage({
 
   return (
     <div className="container-custom py-6 lg:py-10 pb-32 lg:pb-10">
+      <ViewTracker type="listing" id={listing.id} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

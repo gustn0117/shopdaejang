@@ -4,7 +4,7 @@ import { fetchUsedGoodById } from "@/lib/db";
 import { formatPrice, formatRelativeDate } from "@/lib/format";
 import { Icon } from "@/components/Icon";
 import { Thumbnail } from "@/components/Thumbnail";
-import { incrementUsedView } from "../actions";
+import { ViewTracker } from "@/components/ViewTracker";
 
 export default async function UsedDetailPage({
   params,
@@ -15,10 +15,9 @@ export default async function UsedDetailPage({
   const item = await fetchUsedGoodById(Number(id));
   if (!item) notFound();
 
-  await incrementUsedView(item.id);
-
   return (
     <div className="container-custom py-4 lg:py-6 max-w-3xl">
+      <ViewTracker type="used" id={item.id} />
       <Link href="/used" className="inline-flex items-center gap-1 text-xs text-muted hover:text-foreground">
         <Icon.ChevronLeft size={12} />
         중고장터 목록
