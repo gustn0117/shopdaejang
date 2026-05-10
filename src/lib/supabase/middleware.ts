@@ -26,13 +26,16 @@ export async function updateSession(request: NextRequest) {
   const { data } = await supabase.auth.getUser();
   const user = data.user;
 
+  // 관리자: 비밀번호 쿠키 기반 (Supabase Auth와 무관)
   if (request.nextUrl.pathname.startsWith("/admin")) {
-    const role = user?.app_metadata?.role ?? user?.user_metadata?.role;
-    if (!user || role !== "admin") {
+    if (request.nextUrl.pathname.startsWith("/admin/login")) {
+      return supabaseResponse;
+    }
+    const adminPass = request.cookies.get("admin_pass")?.value;
+    if (adminPass !== "ok") {
       const url = request.nextUrl.clone();
-      url.pathname = "/login";
+      url.pathname = "/admin/login";
       url.searchParams.set("redirect", request.nextUrl.pathname);
-      url.searchParams.set("admin_required", "1");
       return NextResponse.redirect(url);
     }
   }

@@ -1,14 +1,13 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { createClient, createAdminClient } from "@/lib/supabase/server";
+import { cookies } from "next/headers";
+import { createAdminClient } from "@/lib/supabase/server";
 
 async function assertAdmin() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  const role = user?.app_metadata?.role ?? user?.user_metadata?.role;
-  if (!user || role !== "admin") {
-    throw new Error("관리자 권한이 필요합니다.");
+  const jar = await cookies();
+  if (jar.get("admin_pass")?.value !== "ok") {
+    throw new Error("관리자 인증이 필요합니다.");
   }
 }
 

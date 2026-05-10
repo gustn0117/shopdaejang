@@ -9,11 +9,9 @@ type NavItem = { href: string; label: string };
 export function HeaderMobile({
   items,
   isAuthenticated,
-  isAdmin,
 }: {
   items: NavItem[];
   isAuthenticated: boolean;
-  isAdmin: boolean;
 }) {
   const [open, setOpen] = useState(false);
   return (
@@ -49,23 +47,13 @@ export function HeaderMobile({
                   >
                     마이페이지
                   </Link>
-                  {isAdmin ? (
-                    <Link
-                      href="/admin"
-                      onClick={() => setOpen(false)}
-                      className="px-3 py-3 text-sm text-center font-medium text-foreground border border-border rounded"
-                    >
-                      관리자
-                    </Link>
-                  ) : (
-                    <Link
-                      href="/mypage/register"
-                      onClick={() => setOpen(false)}
-                      className="px-3 py-3 text-sm text-center font-medium text-foreground border border-border rounded"
-                    >
-                      매물등록
-                    </Link>
-                  )}
+                  <Link
+                    href="/mypage/register"
+                    onClick={() => setOpen(false)}
+                    className="px-3 py-3 text-sm text-center font-medium text-foreground border border-border rounded"
+                  >
+                    매물등록
+                  </Link>
                 </>
               ) : (
                 <>

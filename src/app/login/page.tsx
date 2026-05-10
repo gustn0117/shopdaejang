@@ -6,7 +6,7 @@ export const metadata = {
   description: "샵대장 로그인",
 };
 
-type SP = Promise<{ error?: string; redirect?: string; admin_required?: string }>;
+type SP = Promise<{ error?: string; redirect?: string }>;
 
 export default async function LoginPage({ searchParams }: { searchParams: SP }) {
   const sp = await searchParams;
@@ -18,11 +18,6 @@ export default async function LoginPage({ searchParams }: { searchParams: SP }) 
         </Link>
         <h1 className="text-lg font-bold mt-6 tracking-tight">로그인</h1>
         <p className="text-sm text-muted mt-1">이메일로 로그인하세요</p>
-        {sp.admin_required && (
-          <p className="text-xs text-urgent mt-3 bg-white border border-urgent/30 rounded px-3 py-2">
-            관리자 페이지는 관리자 계정으로만 접근할 수 있습니다.
-          </p>
-        )}
         {sp.error && (
           <p className="text-xs text-urgent mt-3 bg-white border border-urgent/30 rounded px-3 py-2">{sp.error}</p>
         )}

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Icon } from "@/components/Icon";
+import { adminSignOut } from "./login/actions";
 
 const NAV: { href: string; label: string; icon: keyof typeof Icon; badge?: number }[] = [
   { href: "/admin", label: "대시보드", icon: "Grid" },
@@ -19,10 +20,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <span className="px-2 py-0.5 border border-white/30 text-[11px] font-bold rounded tracking-wide">ADMIN</span>
           <span className="font-bold text-sm tracking-tight">샵대장 관리자</span>
         </div>
-        <Link href="/" className="inline-flex items-center gap-1 text-xs text-white/70 hover:text-white">
-          사이트로
-          <Icon.ChevronRight size={11} />
-        </Link>
+        <div className="flex items-center gap-3">
+          <form action={adminSignOut}>
+            <button type="submit" className="text-xs text-white/70 hover:text-white">
+              로그아웃
+            </button>
+          </form>
+          <span className="text-white/30">|</span>
+          <Link href="/" className="inline-flex items-center gap-1 text-xs text-white/70 hover:text-white">
+            사이트로
+            <Icon.ChevronRight size={11} />
+          </Link>
+        </div>
       </div>
       <div className="grid lg:grid-cols-[220px_1fr] gap-8">
         <aside className="lg:sticky lg:top-24 self-start">

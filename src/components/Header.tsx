@@ -17,8 +17,6 @@ const NAV_ITEMS = [
 export async function Header() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  const role = user?.app_metadata?.role ?? user?.user_metadata?.role;
-  const isAdmin = role === "admin";
 
   return (
     <header className="sticky top-0 z-40 bg-background/95 backdrop-blur border-b border-border">
@@ -29,11 +27,6 @@ export async function Header() {
               <span className="text-foreground/80">{user.user_metadata?.name ?? user.email}</span>
               <Link href="/mypage" className="hover:text-foreground">마이페이지</Link>
               <Link href="/mypage/register" className="hover:text-foreground">매물등록</Link>
-              {isAdmin && (
-                <Link href="/admin" className="text-foreground font-semibold hover:underline">
-                  관리자
-                </Link>
-              )}
               <form action={signOut}>
                 <button type="submit" className="hover:text-foreground">로그아웃</button>
               </form>
@@ -80,7 +73,7 @@ export async function Header() {
               <Icon.Plus size={13} strokeWidth={2.5} />
               매물등록
             </Link>
-            <HeaderMobile items={NAV_ITEMS} isAuthenticated={!!user} isAdmin={isAdmin} />
+            <HeaderMobile items={NAV_ITEMS} isAuthenticated={!!user} />
           </div>
         </div>
       </div>
