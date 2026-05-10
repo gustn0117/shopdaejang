@@ -6,25 +6,26 @@ export const metadata = {
   description: "마사지 관련 용품 및 도매 거래",
 };
 
-const CATEGORIES: { name: string; count: number; icon: keyof typeof Icon }[] = [
-  { name: "마사지베드", count: 24, icon: "Bed" },
-  { name: "마사지오일", count: 38, icon: "Drop" },
-  { name: "타올/리넨", count: 52, icon: "Scroll" },
-  { name: "안마기/기기", count: 18, icon: "Dumbbell" },
-  { name: "인테리어소품", count: 27, icon: "Plant" },
-  { name: "유니폼/위생", count: 15, icon: "Shirt" },
-  { name: "관리/세정용품", count: 33, icon: "Bottle" },
-  { name: "기타용품", count: 19, icon: "Box" },
+const CATEGORIES: { name: string; icon: keyof typeof Icon }[] = [
+  { name: "마사지베드", icon: "Bed" },
+  { name: "마사지오일", icon: "Drop" },
+  { name: "타올/리넨", icon: "Scroll" },
+  { name: "안마기/기기", icon: "Dumbbell" },
+  { name: "인테리어소품", icon: "Plant" },
+  { name: "유니폼/위생", icon: "Shirt" },
+  { name: "관리/세정용품", icon: "Bottle" },
+  { name: "기타용품", icon: "Box" },
 ];
 
-const ITEMS = [
-  { id: 1, title: "프리미엄 마사지오일 1L 도매가", supplier: "(주)뷰티오일", price: 18000, original: 25000, region: "전국 배송", badge: "도매" },
-  { id: 2, title: "전동베드 신상 50% 할인", supplier: "샵퍼니쳐", price: 850000, original: 1700000, region: "수도권 무료설치", badge: "특가" },
-  { id: 3, title: "프리미엄 타올 100장 패키지", supplier: "타올팩토리", price: 65000, original: 85000, region: "전국 배송", badge: "베스트" },
-  { id: 4, title: "샵 인테리어 소품 풀세트", supplier: "샵디자인", price: 480000, original: 650000, region: "전국 배송", badge: "신상" },
-  { id: 5, title: "타올워머 2단 신제품", supplier: "쿡온", price: 230000, original: 290000, region: "전국 배송", badge: "도매" },
-  { id: 6, title: "에센셜오일 모음 (10종)", supplier: "오일팜", price: 95000, original: 130000, region: "전국 배송", badge: "특가" },
-];
+const ITEMS: {
+  id: number;
+  title: string;
+  supplier: string;
+  price: number;
+  original: number;
+  region: string;
+  badge: string;
+}[] = [];
 
 export default function SuppliesPage() {
   return (
@@ -56,11 +57,10 @@ export default function SuppliesPage() {
               <Link
                 key={c.name}
                 href={`/supplies?cat=${encodeURIComponent(c.name)}`}
-                className="flex flex-col items-center gap-2 p-3 rounded-md border border-border bg-white hover:border-foreground hover:bg-primary-soft transition-colors"
+                className="flex flex-col items-center gap-2 p-4 rounded-md border border-border bg-white hover:border-foreground hover:bg-primary-soft transition-colors"
               >
                 <IconComp size={22} className="text-foreground" />
                 <span className="text-[12px] font-medium text-center line-clamp-1">{c.name}</span>
-                <span className="text-[10px] text-muted tabular">{c.count}건</span>
               </Link>
             );
           })}
@@ -79,6 +79,13 @@ export default function SuppliesPage() {
             </h2>
           </div>
         </div>
+        {ITEMS.length === 0 ? (
+          <div className="surface-card p-12 text-center">
+            <Icon.Box size={28} className="mx-auto mb-3 text-muted" />
+            <p className="text-sm font-semibold">등록된 도매 상품이 없습니다.</p>
+            <p className="text-xs text-muted mt-1">입점 문의 후 상품이 등록되면 이곳에 노출됩니다.</p>
+          </div>
+        ) : (
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-4">
           {ITEMS.map((item) => (
             <Link
@@ -112,6 +119,7 @@ export default function SuppliesPage() {
             </Link>
           ))}
         </div>
+        )}
       </section>
 
       <div className="bg-white border border-border rounded-md p-6 lg:p-10 text-center">
