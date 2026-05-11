@@ -86,9 +86,19 @@ export default async function HomePage() {
         </div>
 
         <div className="lg:col-span-5 grid grid-cols-3 gap-4 lg:gap-8 lg:pb-2 lg:pl-8 lg:border-l lg:border-border">
-          <Stat label="등록 매물" value={stats.total.toLocaleString()} suffix="건" />
-          <Stat label="긴급 매물" value={stats.urgent.toLocaleString()} suffix="건" />
-          <Stat label="중개 수수료" value="0" suffix="원" />
+          {stats.total > 0 ? (
+            <>
+              <Stat label="등록 매물" value={stats.total.toLocaleString()} suffix="건" />
+              <Stat label="긴급 매물" value={stats.urgent.toLocaleString()} suffix="건" />
+              <Stat label="중개 수수료" value="0" suffix="원" />
+            </>
+          ) : (
+            <>
+              <PropStat label="중개 수수료" value="0원" />
+              <PropStat label="매물 검수" value="전 매물" />
+              <PropStat label="거래 방식" value="직거래" />
+            </>
+          )}
         </div>
       </section>
 
@@ -319,6 +329,19 @@ function Stat({ label, value, suffix }: { label: string; value: string; suffix?:
       <p className="text-2xl lg:text-3xl font-black tabular tracking-tight text-foreground">
         {value}
         {suffix && <span className="text-base font-semibold text-muted ml-0.5">{suffix}</span>}
+      </p>
+    </div>
+  );
+}
+
+function PropStat({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <p className="text-[10px] lg:text-[11px] font-semibold text-muted tracking-wider uppercase mb-1">
+        {label}
+      </p>
+      <p className="text-lg lg:text-xl font-black tracking-tight text-foreground leading-tight">
+        {value}
       </p>
     </div>
   );
