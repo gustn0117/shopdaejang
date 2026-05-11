@@ -43,12 +43,10 @@ export default async function HomePage() {
           Shopdaejang · Marketplace
         </p>
         <h1 className="h-display text-[32px] sm:text-[44px] lg:text-[58px] text-foreground">
-          마사지샵 <span className="text-muted-strong">직거래</span>의 기준
+          <span className="text-muted-strong">마사지샵 전문 직거래 플랫폼</span>
+          <br />
+          샵대장
         </h1>
-        <p className="text-sm lg:text-base text-muted mt-5 max-w-xl leading-relaxed">
-          매도자와 매수자가 직접 만나는 마사지샵 양도양수 플랫폼.
-          중개 수수료 없이, 광고 비용만으로 거래를 시작하세요.
-        </p>
         <div className="flex flex-wrap gap-2 mt-7">
           <Link
             href="/mypage/register"
