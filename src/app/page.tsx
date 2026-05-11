@@ -6,22 +6,9 @@ import { UrgentCard, PremiumCard, NormalRow, FreeRow } from "@/components/Listin
 import { SearchBar } from "@/components/SearchBar";
 import { SectionHeader } from "@/components/SectionHeader";
 import { Icon } from "@/components/Icon";
-import { createAdminClient } from "@/lib/supabase/server";
 import type { Listing } from "@/lib/types";
 
 export const revalidate = 60;
-
-async function fetchStats() {
-  const admin = createAdminClient();
-  const [{ count: totalCount }, { count: urgentCount }] = await Promise.all([
-    admin.from("listings").select("id", { count: "exact", head: true }).eq("status", "approved"),
-    admin.from("listings").select("id", { count: "exact", head: true }).eq("status", "approved").eq("tier", "urgent"),
-  ]);
-  return {
-    total: totalCount ?? 0,
-    urgent: urgentCount ?? 0,
-  };
-}
 
 async function fetchRecentlyViewed(): Promise<Listing[]> {
   const jar = await cookies();
@@ -40,65 +27,43 @@ async function fetchRecentlyViewed(): Promise<Listing[]> {
 }
 
 export default async function HomePage() {
-  const [urgent, premium, normal, free, notices, stats, recent] = await Promise.all([
+  const [urgent, premium, normal, free, notices, recent] = await Promise.all([
     fetchListings({ tier: "urgent", limit: 8 }),
     fetchListings({ tier: "premium", limit: 6 }),
     fetchListings({ tier: "normal", limit: 8 }),
     fetchListings({ tier: "free", limit: 8 }),
     fetchNotices({ limit: 3 }),
-    fetchStats(),
     fetchRecentlyViewed(),
   ]);
 
   return (
     <div className="container-custom py-6 lg:py-10 space-y-10 lg:space-y-16">
-      <section className="grid lg:grid-cols-12 gap-y-8 gap-x-10 items-end pt-4 pb-4">
-        <div className="lg:col-span-7">
-          <p className="text-[11px] font-semibold text-muted tracking-[0.18em] uppercase mb-4">
-            Shopdaejang · Marketplace
-          </p>
-          <h1 className="h-display text-[32px] sm:text-[44px] lg:text-[60px] text-foreground">
-            마사지샵
-            <br />
-            <span className="text-muted-strong">직거래</span>의 기준
-          </h1>
-          <p className="text-sm lg:text-base text-muted mt-5 max-w-md leading-relaxed">
-            매도자와 매수자가 직접 만나는 마사지샵 양도양수 플랫폼.
-            <br className="hidden sm:inline" />
-            중개 수수료 없이, 광고 비용만으로 거래를 시작하세요.
-          </p>
-          <div className="flex flex-wrap gap-2 mt-7">
-            <Link
-              href="/mypage/register"
-              className="inline-flex items-center gap-1.5 px-5 py-3 bg-foreground text-white text-sm font-semibold rounded-md hover:bg-foreground-soft transition-colors"
-            >
-              <Icon.Plus size={14} strokeWidth={2.4} />
-              매물 등록하기
-            </Link>
-            <Link
-              href="/listings"
-              className="inline-flex items-center gap-1.5 px-5 py-3 bg-white border border-border text-foreground text-sm font-semibold rounded-md hover:border-foreground transition-colors"
-            >
-              <Icon.Search size={14} strokeWidth={2.2} />
-              매물 둘러보기
-            </Link>
-          </div>
-        </div>
-
-        <div className="lg:col-span-5 grid grid-cols-3 gap-4 lg:gap-8 lg:pb-2 lg:pl-8 lg:border-l lg:border-border">
-          {stats.total > 0 ? (
-            <>
-              <Stat label="등록 매물" value={stats.total.toLocaleString()} suffix="건" />
-              <Stat label="긴급 매물" value={stats.urgent.toLocaleString()} suffix="건" />
-              <Stat label="중개 수수료" value="0" suffix="원" />
-            </>
-          ) : (
-            <>
-              <PropStat label="중개 수수료" value="0원" />
-              <PropStat label="매물 검수" value="전 매물" />
-              <PropStat label="거래 방식" value="직거래" />
-            </>
-          )}
+      <section className="pt-4 pb-2 max-w-3xl">
+        <p className="text-[11px] font-semibold text-muted tracking-[0.18em] uppercase mb-4">
+          Shopdaejang · Marketplace
+        </p>
+        <h1 className="h-display text-[32px] sm:text-[44px] lg:text-[58px] text-foreground">
+          마사지샵 <span className="text-muted-strong">직거래</span>의 기준
+        </h1>
+        <p className="text-sm lg:text-base text-muted mt-5 max-w-xl leading-relaxed">
+          매도자와 매수자가 직접 만나는 마사지샵 양도양수 플랫폼.
+          중개 수수료 없이, 광고 비용만으로 거래를 시작하세요.
+        </p>
+        <div className="flex flex-wrap gap-2 mt-7">
+          <Link
+            href="/mypage/register"
+            className="inline-flex items-center gap-1.5 px-5 py-3 bg-foreground text-white text-sm font-semibold rounded-md hover:bg-foreground-soft transition-colors"
+          >
+            <Icon.Plus size={14} strokeWidth={2.4} />
+            매물 등록하기
+          </Link>
+          <Link
+            href="/listings"
+            className="inline-flex items-center gap-1.5 px-5 py-3 bg-white border border-border text-foreground text-sm font-semibold rounded-md hover:border-foreground transition-colors"
+          >
+            <Icon.Search size={14} strokeWidth={2.2} />
+            매물 둘러보기
+          </Link>
         </div>
       </section>
 
@@ -320,29 +285,3 @@ export default async function HomePage() {
   );
 }
 
-function Stat({ label, value, suffix }: { label: string; value: string; suffix?: string }) {
-  return (
-    <div>
-      <p className="text-[10px] lg:text-[11px] font-semibold text-muted tracking-wider uppercase mb-1">
-        {label}
-      </p>
-      <p className="text-2xl lg:text-3xl font-black tabular tracking-tight text-foreground">
-        {value}
-        {suffix && <span className="text-base font-semibold text-muted ml-0.5">{suffix}</span>}
-      </p>
-    </div>
-  );
-}
-
-function PropStat({ label, value }: { label: string; value: string }) {
-  return (
-    <div>
-      <p className="text-[10px] lg:text-[11px] font-semibold text-muted tracking-wider uppercase mb-1">
-        {label}
-      </p>
-      <p className="text-lg lg:text-xl font-black tracking-tight text-foreground leading-tight">
-        {value}
-      </p>
-    </div>
-  );
-}
