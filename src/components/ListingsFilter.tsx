@@ -13,12 +13,119 @@ const TIER_OPTIONS = [
   { value: "free", label: "무료" },
 ];
 
-// 0~20000만 (2억)
-const MONEY_OPTIONS = Array.from({ length: 21 }, (_, i) => i * 1000);
-function moneyLabel(v: number) {
-  if (v === 0) return "0";
-  if (v >= 10000) return `${v / 10000}억`;
-  return `${v.toLocaleString()}만`;
+// 단위: 만원
+type Preset = { label: string; min?: number; max?: number };
+
+const DEPOSIT_PRESETS: Preset[] = [
+  { label: "1천 이하", max: 1000 },
+  { label: "1천~2천", min: 1000, max: 2000 },
+  { label: "2천~4천", min: 2000, max: 4000 },
+  { label: "4천~6천", min: 4000, max: 6000 },
+  { label: "6천~1억", min: 6000, max: 10000 },
+  { label: "1억+", min: 10000 },
+];
+
+const RENT_PRESETS: Preset[] = [
+  { label: "100 이하", max: 100 },
+  { label: "100~200", min: 100, max: 200 },
+  { label: "200~300", min: 200, max: 300 },
+  { label: "300~500", min: 300, max: 500 },
+  { label: "500+", min: 500 },
+];
+
+const PREMIUM_PRESETS: Preset[] = [
+  { label: "무권리", min: 0, max: 0 },
+  { label: "2천 이하", max: 2000 },
+  { label: "2천~4천", min: 2000, max: 4000 },
+  { label: "4천~6천", min: 4000, max: 6000 },
+  { label: "6천~8천", min: 6000, max: 8000 },
+  { label: "8천~1억", min: 8000, max: 10000 },
+  { label: "1억+", min: 10000 },
+];
+
+const chipCls = (active: boolean) =>
+  `px-2 py-1 text-[11px] font-medium border rounded transition-colors ${
+    active
+      ? "bg-foreground text-white border-foreground"
+      : "border-border text-muted hover:border-foreground"
+  }`;
+
+function MoneyRangeField({
+  title,
+  presets,
+  min,
+  max,
+  setMin,
+  setMax,
+}: {
+  title: string;
+  presets: Preset[];
+  min: string;
+  max: string;
+  setMin: (v: string) => void;
+  setMax: (v: string) => void;
+}) {
+  const numMin = min === "" ? undefined : Number(min);
+  const numMax = max === "" ? undefined : Number(max);
+  const isAll = min === "" && max === "";
+
+  function applyPreset(p?: Preset) {
+    if (!p) {
+      setMin("");
+      setMax("");
+      return;
+    }
+    setMin(p.min !== undefined ? String(p.min) : "");
+    setMax(p.max !== undefined ? String(p.max) : "");
+  }
+
+  function presetActive(p: Preset) {
+    return p.min === numMin && p.max === numMax;
+  }
+
+  return (
+    <div>
+      <label className="text-xs font-bold mb-1.5 block">{title}</label>
+      <div className="flex flex-wrap gap-1 mb-2">
+        <button type="button" onClick={() => applyPreset()} className={chipCls(isAll)}>
+          전체
+        </button>
+        {presets.map((p) => (
+          <button
+            key={p.label}
+            type="button"
+            onClick={() => applyPreset(p)}
+            className={chipCls(presetActive(p))}
+          >
+            {p.label}
+          </button>
+        ))}
+      </div>
+      <div className="flex items-center gap-1.5">
+        <span className="text-[10px] text-muted shrink-0">직접입력</span>
+        <input
+          type="number"
+          inputMode="numeric"
+          min={0}
+          value={min}
+          onChange={(e) => setMin(e.target.value)}
+          placeholder="최소"
+          className="w-0 flex-1 px-2 py-1.5 text-xs border border-border rounded focus:outline-none focus:border-foreground"
+        />
+        <span className="text-muted text-xs">~</span>
+        <input
+          type="number"
+          inputMode="numeric"
+          min={0}
+          value={max}
+          onChange={(e) => setMax(e.target.value)}
+          placeholder="최대"
+          className="w-0 flex-1 px-2 py-1.5 text-xs border border-border rounded focus:outline-none focus:border-foreground"
+        />
+        <span className="text-[10px] text-muted shrink-0">만원</span>
+      </div>
+    </div>
+  );
 }
 
 export function ListingsFilter({
@@ -54,12 +161,12 @@ export function ListingsFilter({
     if (category) params.set("category", category);
     if (tier) params.set("tier", tier);
     if (q) params.set("q", q);
-    if (depositMin) params.set("depositMin", depositMin);
-    if (depositMax) params.set("depositMax", depositMax);
-    if (rentMin) params.set("rentMin", rentMin);
-    if (rentMax) params.set("rentMax", rentMax);
-    if (premiumMin) params.set("premiumMin", premiumMin);
-    if (premiumMax) params.set("premiumMax", premiumMax);
+    if (depositMin !== "") params.set("depositMin", depositMin);
+    if (depositMax !== "") params.set("depositMax", depositMax);
+    if (rentMin !== "") params.set("rentMin", rentMin);
+    if (rentMax !== "") params.set("rentMax", rentMax);
+    if (premiumMin !== "") params.set("premiumMin", premiumMin);
+    if (premiumMax !== "") params.set("premiumMax", premiumMax);
     if (sort && sort !== "default") params.set("sort", sort);
     router.push(`/listings?${params.toString()}`);
     setMobileOpen(false);
@@ -69,7 +176,10 @@ export function ListingsFilter({
     router.push("/listings");
   }
 
-  const filterCount = [sido, sigungu, category, tier, q, depositMin, depositMax, rentMin, rentMax, premiumMin, premiumMax].filter(Boolean).length;
+  const filterCount = [
+    sido, sigungu, category, tier, q,
+    depositMin, depositMax, rentMin, rentMax, premiumMin, premiumMax,
+  ].filter((v) => v !== "").length;
 
   return (
     <>
@@ -81,7 +191,11 @@ export function ListingsFilter({
         <span className="flex items-center gap-2">
           <Icon.Filter size={14} />
           검색 필터
-          {filterCount > 0 && <span className="px-1.5 py-0.5 bg-foreground text-white text-[10px] rounded-full">{filterCount}</span>}
+          {filterCount > 0 && (
+            <span className="px-1.5 py-0.5 bg-foreground text-white text-[10px] rounded-full">
+              {filterCount}
+            </span>
+          )}
         </span>
         <Icon.ChevronRight size={14} className="text-muted" />
       </button>
@@ -94,14 +208,14 @@ export function ListingsFilter({
       <aside
         className={`
           fixed lg:sticky top-0 lg:top-24 right-0 z-50 lg:z-0
-          h-screen lg:h-auto w-[88vw] max-w-sm lg:w-auto lg:max-w-none
+          h-screen lg:h-auto w-[92vw] max-w-sm lg:w-auto lg:max-w-none
           bg-white lg:bg-transparent
           overflow-y-auto lg:overflow-visible
           transition-transform
           ${mobileOpen ? "translate-x-0" : "translate-x-full lg:translate-x-0"}
         `}
       >
-        <div className="bg-white lg:border lg:border-border rounded-md p-4 space-y-4">
+        <div className="bg-white lg:border lg:border-border rounded-md p-4 space-y-4 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto">
           <div className="flex items-center justify-between">
             <h3 className="font-bold">검색 필터</h3>
             <button type="button" onClick={() => setMobileOpen(false)} className="lg:hidden text-muted" aria-label="닫기">
@@ -110,7 +224,7 @@ export function ListingsFilter({
           </div>
 
           <div>
-            <label className="text-xs font-bold mb-1 block">키워드</label>
+            <label className="text-xs font-bold mb-1.5 block">키워드</label>
             <input
               type="text"
               value={q}
@@ -121,7 +235,7 @@ export function ListingsFilter({
           </div>
 
           <div>
-            <label className="text-xs font-bold mb-1 block">지역</label>
+            <label className="text-xs font-bold mb-1.5 block">지역</label>
             <div className="grid grid-cols-2 gap-1">
               <select
                 value={sido}
@@ -144,7 +258,7 @@ export function ListingsFilter({
           </div>
 
           <div>
-            <label className="text-xs font-bold mb-1 block">업종</label>
+            <label className="text-xs font-bold mb-1.5 block">업종</label>
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
@@ -156,18 +270,14 @@ export function ListingsFilter({
           </div>
 
           <div>
-            <label className="text-xs font-bold mb-1 block">광고 등급</label>
+            <label className="text-xs font-bold mb-1.5 block">광고 등급</label>
             <div className="flex flex-wrap gap-1">
               {TIER_OPTIONS.map((t) => (
                 <button
                   key={t.value}
                   type="button"
                   onClick={() => setTier(t.value)}
-                  className={`px-2 py-1 text-xs border rounded ${
-                    tier === t.value
-                      ? "bg-foreground text-white border-foreground"
-                      : "border-border text-muted hover:border-foreground"
-                  }`}
+                  className={chipCls(tier === t.value)}
                 >
                   {t.label}
                 </button>
@@ -175,50 +285,39 @@ export function ListingsFilter({
             </div>
           </div>
 
-          <div>
-            <label className="text-xs font-bold mb-1 block">보증금</label>
-            <div className="grid grid-cols-2 gap-1">
-              <select value={depositMin} onChange={(e) => setDepositMin(e.target.value)} className="px-2 py-2 text-xs border border-border rounded bg-white">
-                <option value="">최소</option>
-                {MONEY_OPTIONS.map((v) => <option key={v} value={v}>{moneyLabel(v)}</option>)}
-              </select>
-              <select value={depositMax} onChange={(e) => setDepositMax(e.target.value)} className="px-2 py-2 text-xs border border-border rounded bg-white">
-                <option value="">최대</option>
-                {MONEY_OPTIONS.map((v) => <option key={v} value={v}>{moneyLabel(v)}</option>)}
-              </select>
-            </div>
-          </div>
+          <div className="h-px bg-border" />
+
+          <MoneyRangeField
+            title="보증금"
+            presets={DEPOSIT_PRESETS}
+            min={depositMin}
+            max={depositMax}
+            setMin={setDepositMin}
+            setMax={setDepositMax}
+          />
+
+          <MoneyRangeField
+            title="월세"
+            presets={RENT_PRESETS}
+            min={rentMin}
+            max={rentMax}
+            setMin={setRentMin}
+            setMax={setRentMax}
+          />
+
+          <MoneyRangeField
+            title="권리금"
+            presets={PREMIUM_PRESETS}
+            min={premiumMin}
+            max={premiumMax}
+            setMin={setPremiumMin}
+            setMax={setPremiumMax}
+          />
+
+          <div className="h-px bg-border" />
 
           <div>
-            <label className="text-xs font-bold mb-1 block">월세</label>
-            <div className="grid grid-cols-2 gap-1">
-              <select value={rentMin} onChange={(e) => setRentMin(e.target.value)} className="px-2 py-2 text-xs border border-border rounded bg-white">
-                <option value="">최소</option>
-                {MONEY_OPTIONS.map((v) => <option key={v} value={v}>{moneyLabel(v)}</option>)}
-              </select>
-              <select value={rentMax} onChange={(e) => setRentMax(e.target.value)} className="px-2 py-2 text-xs border border-border rounded bg-white">
-                <option value="">최대</option>
-                {MONEY_OPTIONS.map((v) => <option key={v} value={v}>{moneyLabel(v)}</option>)}
-              </select>
-            </div>
-          </div>
-
-          <div>
-            <label className="text-xs font-bold mb-1 block">권리금</label>
-            <div className="grid grid-cols-2 gap-1">
-              <select value={premiumMin} onChange={(e) => setPremiumMin(e.target.value)} className="px-2 py-2 text-xs border border-border rounded bg-white">
-                <option value="">최소</option>
-                {MONEY_OPTIONS.map((v) => <option key={v} value={v}>{moneyLabel(v)}</option>)}
-              </select>
-              <select value={premiumMax} onChange={(e) => setPremiumMax(e.target.value)} className="px-2 py-2 text-xs border border-border rounded bg-white">
-                <option value="">최대</option>
-                {MONEY_OPTIONS.map((v) => <option key={v} value={v}>{moneyLabel(v)}</option>)}
-              </select>
-            </div>
-          </div>
-
-          <div>
-            <label className="text-xs font-bold mb-1 block">정렬</label>
+            <label className="text-xs font-bold mb-1.5 block">정렬</label>
             <select value={sort} onChange={(e) => setSort(e.target.value)} className="w-full px-2 py-2 text-xs border border-border rounded bg-white">
               <option value="default">기본 (광고순)</option>
               <option value="newest">최신순</option>
@@ -228,7 +327,7 @@ export function ListingsFilter({
             </select>
           </div>
 
-          <div className="grid grid-cols-2 gap-2 pt-2">
+          <div className="grid grid-cols-2 gap-2 pt-1">
             <button type="button" onClick={reset} className="py-2.5 text-xs font-bold border border-border rounded hover:border-foreground">
               초기화
             </button>

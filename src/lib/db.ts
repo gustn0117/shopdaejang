@@ -164,6 +164,12 @@ export async function fetchListingsWithCount(
   if (opts?.sigungu) countQ = countQ.eq("sigungu", opts.sigungu);
   if (opts?.category) countQ = countQ.eq("category", opts.category);
   if (opts?.q) countQ = countQ.or(`title.ilike.%${opts.q}%,description.ilike.%${opts.q}%`);
+  if (opts?.depositMin !== undefined) countQ = countQ.gte("deposit", opts.depositMin);
+  if (opts?.depositMax !== undefined) countQ = countQ.lte("deposit", opts.depositMax);
+  if (opts?.rentMin !== undefined) countQ = countQ.gte("monthly_rent", opts.rentMin);
+  if (opts?.rentMax !== undefined) countQ = countQ.lte("monthly_rent", opts.rentMax);
+  if (opts?.premiumMin !== undefined) countQ = countQ.gte("premium", opts.premiumMin);
+  if (opts?.premiumMax !== undefined) countQ = countQ.lte("premium", opts.premiumMax);
 
   const [rows, count] = await Promise.all([
     fetchListings({ ...opts, limit: pageSize, offset }),
