@@ -41,6 +41,10 @@ export async function updateSession(request: NextRequest) {
   }
 
   if (request.nextUrl.pathname.startsWith("/mypage")) {
+    // /mypage/register 는 비로그인도 화면 조회 가능 (제출은 server action 에서 한 번 더 체크)
+    if (request.nextUrl.pathname.startsWith("/mypage/register")) {
+      return supabaseResponse;
+    }
     if (!user) {
       const url = request.nextUrl.clone();
       url.pathname = "/login";

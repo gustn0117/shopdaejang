@@ -35,29 +35,15 @@ export function QuickChips({
     <div className="flex flex-wrap items-center gap-1.5">
       <span className="text-[11px] text-muted mr-1">빠른 필터</span>
       <Link
-        href={buildHref({ tier: undefined })}
+        href={buildHref({ sido: undefined, sigungu: undefined })}
         className={`px-2.5 py-1 text-[11px] font-semibold rounded-full border ${
-          !currentTier
+          !currentSido
             ? "bg-foreground text-white border-foreground"
             : "border-border text-muted hover:border-foreground"
         }`}
       >
         전체
       </Link>
-      {TIERS.map((t) => (
-        <Link
-          key={t.value}
-          href={buildHref({ tier: currentTier === t.value ? undefined : t.value })}
-          className={`px-2.5 py-1 text-[11px] font-semibold rounded-full border ${
-            currentTier === t.value
-              ? "bg-foreground text-white border-foreground"
-              : "border-border text-muted hover:border-foreground"
-          }`}
-        >
-          {t.label}
-        </Link>
-      ))}
-      <span className="w-px h-4 bg-border mx-1" />
       {POPULAR_SIDOS.map((sido) => (
         <Link
           key={sido}
@@ -69,6 +55,20 @@ export function QuickChips({
           }`}
         >
           {sido}
+        </Link>
+      ))}
+      <span className="w-px h-4 bg-border mx-1" />
+      {TIERS.map((t) => (
+        <Link
+          key={t.value}
+          href={buildHref({ tier: currentTier === t.value ? undefined : t.value })}
+          className={`px-2.5 py-1 text-[11px] font-semibold rounded-full border ${
+            currentTier === t.value
+              ? "bg-foreground text-white border-foreground"
+              : "border-border text-muted hover:border-foreground"
+          }`}
+        >
+          {t.label}
         </Link>
       ))}
     </div>
