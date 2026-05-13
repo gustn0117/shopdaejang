@@ -8,6 +8,7 @@ import { Pagination } from "@/components/Pagination";
 import type { Listing } from "@/lib/types";
 import { SortBar } from "./SortBar";
 import { QuickChips } from "./QuickChips";
+import { ActiveFilters } from "./ActiveFilters";
 
 const PAGE_SIZE = 24;
 
@@ -89,7 +90,11 @@ export default async function ListingsPage({ searchParams }: { searchParams: SP 
 
       <QuickChips currentTier={tier} currentSido={sp.sido} />
 
-      <div className="grid lg:grid-cols-[260px_1fr] gap-6 mt-4">
+      <div className="mt-4">
+        <ActiveFilters />
+      </div>
+
+      <div className="grid lg:grid-cols-[260px_1fr] gap-6 mt-2">
         <ListingsFilter regions={REGIONS} categories={CATEGORIES} initial={sp} />
 
         <div className="space-y-8">

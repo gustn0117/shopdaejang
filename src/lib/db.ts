@@ -20,6 +20,7 @@ type ListingRow = {
   tier: string;
   thumbnail: string | null;
   images: string[] | null;
+  features: string[] | null;
   phone: string | null;
   use_secret_number: boolean;
   status: string;
@@ -51,6 +52,7 @@ function rowToListing(r: ListingRow): Listing {
     phone: r.phone ?? "",
     useSecretNumber: r.use_secret_number,
     images: r.images ?? [],
+    features: r.features ?? [],
     thumbnail: r.thumbnail ?? "",
     tier: r.tier as Listing["tier"],
     status: r.status as Listing["status"],
@@ -118,11 +120,14 @@ export async function fetchListings(opts?: {
     case "views":
       q = q.order("views", { ascending: false });
       break;
-    case "price-low":
+    case "deposit-low":
       q = q.order("deposit", { ascending: true });
       break;
-    case "price-high":
-      q = q.order("deposit", { ascending: false });
+    case "rent-low":
+      q = q.order("monthly_rent", { ascending: true });
+      break;
+    case "premium-low":
+      q = q.order("premium", { ascending: true });
       break;
     default:
       q = q.order("bumped_at", { ascending: false });

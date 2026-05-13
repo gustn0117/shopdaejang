@@ -65,22 +65,44 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <SearchBar />
-
-      <section className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        {[
-          { n: "01", t: "회원가입 + 매물등록", d: "이메일로 가입하고 사진과 함께 매물을 등록합니다." },
-          { n: "02", t: "광고 상품 결제", d: "긴급·프리미엄·일반·무료 중 선택해 결제합니다." },
-          { n: "03", t: "관리자 승인 노출", d: "검수 후 평균 2~6시간 이내 노출됩니다." },
-          { n: "04", t: "매수자 직접 연락", d: "매수자가 전화·카톡으로 매도자에게 직접 연락합니다." },
-        ].map((s) => (
-          <div key={s.n} className="surface-card p-4 lg:p-5">
-            <p className="text-2xl font-black tabular text-muted-strong mb-3">{s.n}</p>
-            <h3 className="font-bold text-sm tracking-tight mb-1">{s.t}</h3>
-            <p className="text-[12px] text-muted leading-relaxed">{s.d}</p>
+      <section className="grid lg:grid-cols-3 gap-3">
+        <Link
+          href="/ad-info"
+          className="group lg:col-span-2 bg-foreground text-white rounded-md p-6 lg:p-8 flex items-center justify-between hover:bg-foreground-soft transition-colors"
+        >
+          <div>
+            <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-white/60 mb-2">
+              Launch Promotion
+            </p>
+            <h3 className="text-xl lg:text-2xl font-bold tracking-tight">
+              최상단 긴급매물 무료등록 이벤트
+            </h3>
+            <p className="text-sm text-white/70 mt-1">
+              1개월 무료 · 20만원 상당의 광고를 첫 등록 매물에 제공합니다.
+            </p>
           </div>
-        ))}
+          <Icon.ArrowRight size={22} strokeWidth={1.6} className="shrink-0 group-hover:translate-x-1 transition-transform" />
+        </Link>
+        <Link
+          href="/map"
+          className="group bg-white border border-border rounded-md p-6 lg:p-8 flex items-center justify-between hover:border-foreground transition-colors"
+        >
+          <div>
+            <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-muted mb-2">
+              Map View
+            </p>
+            <h3 className="text-xl lg:text-2xl font-bold tracking-tight">
+              지도로 찾기
+            </h3>
+            <p className="text-sm text-muted mt-1">
+              지역별 매물을 한눈에.
+            </p>
+          </div>
+          <Icon.ArrowRight size={22} strokeWidth={1.6} className="shrink-0 group-hover:translate-x-1 transition-transform" />
+        </Link>
       </section>
+
+      <SearchBar />
 
       <section>
         <div className="flex items-end justify-between mb-4">
@@ -148,43 +170,6 @@ export default async function HomePage() {
           </div>
         </section>
       )}
-
-      <section className="grid lg:grid-cols-3 gap-3">
-        <Link
-          href="/ad-info"
-          className="group lg:col-span-2 bg-foreground text-white rounded-md p-6 lg:p-8 flex items-center justify-between hover:bg-foreground-soft transition-colors"
-        >
-          <div>
-            <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-white/60 mb-2">
-              Shopdaejang Ad
-            </p>
-            <h3 className="text-xl lg:text-2xl font-bold tracking-tight">
-              긴급매물 1+1 이벤트
-            </h3>
-            <p className="text-sm text-white/70 mt-1">
-              긴급매물 등록 시 광고 기간을 두 배로 드립니다.
-            </p>
-          </div>
-          <Icon.ArrowRight size={22} strokeWidth={1.6} className="shrink-0 group-hover:translate-x-1 transition-transform" />
-        </Link>
-        <Link
-          href="/map"
-          className="group bg-white border border-border rounded-md p-6 lg:p-8 flex items-center justify-between hover:border-foreground transition-colors"
-        >
-          <div>
-            <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-muted mb-2">
-              Map View
-            </p>
-            <h3 className="text-xl lg:text-2xl font-bold tracking-tight">
-              지도로 찾기
-            </h3>
-            <p className="text-sm text-muted mt-1">
-              지역별 매물을 한눈에.
-            </p>
-          </div>
-          <Icon.ArrowRight size={22} strokeWidth={1.6} className="shrink-0 group-hover:translate-x-1 transition-transform" />
-        </Link>
-      </section>
 
       {normal.length > 0 && (
         <section>

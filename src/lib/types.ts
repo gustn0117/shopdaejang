@@ -40,6 +40,7 @@ export type Listing = {
   useSecretNumber: boolean;
   images: string[];
   thumbnail: string;
+  features: string[];
   tier: AdTier;
   status: "pending" | "approved" | "rejected" | "expired" | "sold";
   isPublic: boolean;

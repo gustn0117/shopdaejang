@@ -24,6 +24,7 @@ type ListingPayload = {
   ad_period: string;
   thumbnail?: string;
   images: string[];
+  features: string[];
   phone: string;
   use_secret_number: boolean;
   is_public: boolean;

@@ -13,6 +13,7 @@ import { MobileCtaBar } from "@/components/MobileCtaBar";
 import { ViewTracker } from "@/components/ViewTracker";
 import { RecentTracker } from "@/components/RecentTracker";
 import { createClient } from "@/lib/supabase/server";
+import { FEATURE_LABEL } from "@/lib/features";
 
 export async function generateMetadata({
   params,
@@ -76,6 +77,14 @@ export default async function ListingDetailPage({
 
   const relatedAll = await fetchListings({ category: listing.category, limit: 5 });
   const related = relatedAll.filter((l) => l.id !== listing.id).slice(0, 4);
+
+  // 같은 구·군 매물
+  const sameDistrictAll = await fetchListings({
+    sido: listing.sido,
+    sigungu: listing.sigungu,
+    limit: 6,
+  });
+  const sameDistrict = sameDistrictAll.filter((l) => l.id !== listing.id).slice(0, 3);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -210,9 +219,28 @@ export default async function ListingDetailPage({
             <p className="text-sm text-foreground/80 leading-relaxed whitespace-pre-line">
               {listing.etcInfo || "등록된 정보가 없습니다."}
             </p>
+
+            {listing.features && listing.features.length > 0 && (
+              <>
+                <h2 className="text-base font-bold mb-3 mt-6 flex items-center gap-2">
+                  <span className="w-1 h-4 bg-foreground rounded-sm" />
+                  매물 특징
+                </h2>
+                <div className="flex flex-wrap gap-1.5">
+                  {listing.features.map((k) => (
+                    <span
+                      key={k}
+                      className="inline-flex items-center gap-1 px-2.5 py-1 text-[12px] font-medium border border-border rounded-full bg-zinc-50"
+                    >
+                      <Icon.Check size={11} strokeWidth={2.5} className="text-foreground" />
+                      {FEATURE_LABEL[k] ?? k}
+                    </span>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
 
-          {/* Map */}
           <div className="bg-white rounded-md border border-border p-4 lg:p-6">
             <h2 className="text-base font-bold mb-3 flex items-center gap-2">
               <span className="w-1 h-4 bg-foreground rounded-sm" />
@@ -225,8 +253,28 @@ export default async function ListingDetailPage({
                 </p>
                 <MiniMap sido={listing.sido} sigungu={listing.sigungu} />
                 <p className="text-[11px] text-muted mt-2 leading-relaxed">
-                  지도는 시·도 단위 위치 기준이며, 정확한 매장 위치는 매도자에게 직접 확인해주세요.
+                  표시된 위치는 등록 시 입력한 주소를 기반으로 보여지며, 정확한 위치와 차이가 있을 수 있습니다.
                 </p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <a
+                    href={`https://map.kakao.com/?q=${encodeURIComponent(`${listing.sido} ${listing.sigungu}${listing.dong ? " " + listing.dong : ""}`)}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold border border-border rounded hover:border-foreground"
+                  >
+                    <Icon.Map size={12} />
+                    카카오 지도에서 보기
+                  </a>
+                  <a
+                    href={`https://map.kakao.com/link/roadview/${encodeURIComponent(`${listing.sido} ${listing.sigungu}${listing.dong ? " " + listing.dong : ""}`)}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold border border-border rounded hover:border-foreground"
+                  >
+                    <Icon.MapPin size={12} />
+                    로드뷰 보기
+                  </a>
+                </div>
               </>
             ) : (
               <div className="aspect-video bg-zinc-50 rounded flex flex-col items-center justify-center text-muted text-sm gap-2 border border-dashed border-border">
@@ -261,12 +309,24 @@ export default async function ListingDetailPage({
                 className="flex items-center justify-center gap-2 w-full py-3 bg-foreground text-white font-bold rounded hover:bg-foreground/90"
               >
                 <Icon.Phone size={16} strokeWidth={2.4} />
-                전화걸기
+                판매자에게 전화
               </a>
-              <button type="button" className="flex items-center justify-center gap-2 w-full py-3 bg-[#FEE500] text-black font-bold rounded hover:opacity-90">
+              <a
+                href={`sms:${listing.phone}`}
+                className="flex items-center justify-center gap-2 w-full py-3 bg-white border border-foreground text-foreground font-bold rounded hover:bg-zinc-50"
+              >
+                <Icon.Chat size={16} strokeWidth={2.4} />
+                판매자에게 문자
+              </a>
+              <a
+                href="http://pf.kakao.com/_shopdaejang"
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center justify-center gap-2 w-full py-3 bg-[#FEE500] text-black font-bold rounded hover:opacity-90"
+              >
                 <Icon.Chat size={14} strokeWidth={2.2} />
-                카카오톡 상담
-              </button>
+                샵대장 카카오톡 채널 상담
+              </a>
               <FavoriteButton
                 listingId={listing.id}
                 initialFavorited={favorited}
@@ -322,6 +382,22 @@ export default async function ListingDetailPage({
           <h2 className="text-lg lg:text-xl font-black mb-3 tracking-tight">같은 업종의 다른 매물</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 lg:gap-3">
             {related.map((l) => (
+              <UrgentCard key={l.id} listing={l} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {sameDistrict.length > 0 && (
+        <section className="mt-10">
+          <p className="text-[11px] font-semibold text-muted tracking-[0.18em] uppercase mb-2">
+            Same District
+          </p>
+          <h2 className="text-lg lg:text-xl font-black mb-4 tracking-tight">
+            &lsquo;{listing.sido} {listing.sigungu}&rsquo; 지역의 다른 매물을 보여드려요
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 lg:gap-3">
+            {sameDistrict.map((l) => (
               <UrgentCard key={l.id} listing={l} />
             ))}
           </div>

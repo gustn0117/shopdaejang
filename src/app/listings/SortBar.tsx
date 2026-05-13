@@ -6,8 +6,9 @@ const SORT_OPTIONS = [
   { value: "default", label: "기본 (광고순)" },
   { value: "newest", label: "최신순" },
   { value: "views", label: "조회순" },
-  { value: "price-low", label: "낮은 가격순" },
-  { value: "price-high", label: "높은 가격순" },
+  { value: "deposit-low", label: "보증금 낮은순" },
+  { value: "rent-low", label: "월세 낮은순" },
+  { value: "premium-low", label: "권리금 낮은순" },
 ];
 
 export function SortBar({ currentSort }: { currentSort: string }) {

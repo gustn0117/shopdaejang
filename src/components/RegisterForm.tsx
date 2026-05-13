@@ -6,6 +6,7 @@ import type { ShopCategory, AdTier, AdPricing } from "@/lib/types";
 import { Icon } from "./Icon";
 import { createClient } from "@/lib/supabase/client";
 import { createListing } from "@/app/mypage/register/actions";
+import { LISTING_FEATURES } from "@/lib/features";
 
 type Step = 1 | 2 | 3 | 4;
 
@@ -48,6 +49,13 @@ export function RegisterForm({
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [stepError, setStepError] = useState<string | null>(null);
+  const [features, setFeatures] = useState<string[]>([]);
+
+  function toggleFeature(key: string) {
+    setFeatures((arr) =>
+      arr.includes(key) ? arr.filter((k) => k !== key) : [...arr, key]
+    );
+  }
 
   const sigunguList = sido ? regions[sido] ?? [] : [];
 
@@ -156,6 +164,7 @@ export function RegisterForm({
         ad_period: period,
         thumbnail: uploaded[0],
         images: uploaded,
+        features,
         phone,
         use_secret_number: useSecretNumber,
         is_public: isPublic,
@@ -388,6 +397,35 @@ export function RegisterForm({
                 rows={3}
                 className="w-full px-3 py-3 text-sm border border-border rounded focus:outline-none focus:border-foreground"
               />
+            </div>
+          </Field>
+
+          <Field label="매물 특징" subtitle="선택 사항 · 해당하는 항목을 모두 선택">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
+              {LISTING_FEATURES.map((f) => {
+                const active = features.includes(f.key);
+                return (
+                  <button
+                    key={f.key}
+                    type="button"
+                    onClick={() => toggleFeature(f.key)}
+                    className={`inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium border rounded transition-colors ${
+                      active
+                        ? "bg-foreground text-white border-foreground"
+                        : "border-border text-foreground hover:border-foreground"
+                    }`}
+                  >
+                    <span
+                      className={`inline-flex items-center justify-center w-3.5 h-3.5 rounded-sm border ${
+                        active ? "border-white bg-white text-foreground" : "border-border"
+                      }`}
+                    >
+                      {active && <Icon.Check size={9} strokeWidth={3} />}
+                    </span>
+                    {f.label}
+                  </button>
+                );
+              })}
             </div>
           </Field>
         </div>
