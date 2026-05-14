@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import { signOut } from "@/app/login/actions";
 import { Icon } from "./Icon";
@@ -42,12 +43,22 @@ export async function Header() {
 
         <div className="flex items-center justify-between py-3 lg:py-4">
           <div className="flex items-center gap-10">
-            <Link href="/" className="inline-flex items-baseline gap-2 group">
-              <span className="text-xl lg:text-[22px] font-black text-foreground tracking-tight leading-none">
-                샵대장
-              </span>
-              <span className="hidden lg:inline text-[10px] text-muted tracking-wide">
-                마사지샵 직거래
+            <Link href="/" className="inline-flex items-center gap-2 group" aria-label="샵대장 홈">
+              <Image
+                src="/logo.png"
+                alt="샵대장"
+                width={40}
+                height={40}
+                priority
+                className="w-9 h-9 lg:w-10 lg:h-10 object-contain"
+              />
+              <span className="hidden sm:inline-flex flex-col leading-tight">
+                <span className="text-base lg:text-lg font-black text-foreground tracking-tight">
+                  샵대장
+                </span>
+                <span className="hidden lg:inline text-[10px] text-muted tracking-wide">
+                  마사지샵 직거래 플랫폼
+                </span>
               </span>
             </Link>
 

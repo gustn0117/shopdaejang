@@ -34,6 +34,18 @@ export const metadata: Metadata = {
     type: "website",
     locale: "ko_KR",
     siteName: "샵대장",
+    images: [
+      {
+        url: "/logo.png",
+        width: 720,
+        height: 720,
+        alt: "샵대장 로고",
+      },
+    ],
+  },
+  icons: {
+    icon: "/logo.png",
+    apple: "/logo.png",
   },
 };
 
