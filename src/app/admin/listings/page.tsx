@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { TierBadge } from "@/components/TierBadge";
 import { formatRelativeDate } from "@/lib/format";
 import { RowActions } from "./RowActions";
+import { TierSelect } from "./TierSelect";
 import { STRIPED_BG } from "@/lib/placeholder";
 import { createAdminClient } from "@/lib/supabase/server";
 
@@ -150,7 +150,7 @@ export default async function AdminListingsPage({ searchParams }: { searchParams
                   <input type="checkbox" className="accent-foreground" />
                 </div>
                 <div className="hidden lg:block">
-                  <TierBadge tier={l.tier} size="xs" />
+                  <TierSelect id={l.id} tier={l.tier} />
                 </div>
                 <div className="flex gap-2 items-center min-w-0">
                   <div
@@ -163,7 +163,7 @@ export default async function AdminListingsPage({ searchParams }: { searchParams
                   />
                   <div className="min-w-0 flex-1">
                     <div className="lg:hidden mb-1">
-                      <TierBadge tier={l.tier} size="xs" />
+                      <TierSelect id={l.id} tier={l.tier} />
                     </div>
                     <p className="text-xs font-bold line-clamp-1">{l.title}</p>
                     <p className="text-[11px] text-muted">

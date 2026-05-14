@@ -27,6 +27,22 @@ export async function rejectListing(id: number) {
   revalidatePath("/admin/listings");
 }
 
+export async function changeListingTier(
+  id: number,
+  tier: "urgent" | "premium" | "normal" | "free"
+) {
+  await assertAdmin();
+  const admin = createAdminClient();
+  const { error } = await admin
+    .from("listings")
+    .update({ tier, bumped_at: new Date().toISOString() })
+    .eq("id", id);
+  if (error) throw new Error(error.message);
+  revalidatePath("/admin/listings");
+  revalidatePath(`/listings/${id}`);
+  revalidatePath("/");
+}
+
 export async function deleteNotice(id: number) {
   await assertAdmin();
   const admin = createAdminClient();
