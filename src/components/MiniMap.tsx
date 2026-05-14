@@ -18,12 +18,20 @@ const Inner = dynamic(() => import("./MapView/MiniMapInner"), {
 
 type Layer = "map" | "satellite";
 
-export function MiniMap({ sido, sigungu }: { sido: string; sigungu?: string }) {
+export function MiniMap({
+  sido,
+  sigungu,
+  dong,
+}: {
+  sido: string;
+  sigungu?: string;
+  dong?: string;
+}) {
   const [layer, setLayer] = useState<Layer>("map");
 
   return (
     <div className="relative aspect-video bg-zinc-100 rounded overflow-hidden border border-border min-h-72 lg:min-h-96">
-      <Inner sido={sido} sigungu={sigungu} layer={layer} />
+      <Inner sido={sido} sigungu={sigungu} dong={dong} layer={layer} />
       <div className="absolute top-3 right-3 z-400 surface-card p-1 flex gap-1 shadow-sm">
         <button
           type="button"

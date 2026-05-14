@@ -148,8 +148,8 @@ export function KakaoLocation({
   if (!KEY || loadError) {
     return (
       <div className="space-y-2">
-        <div className="relative aspect-video bg-zinc-100 rounded overflow-hidden border border-border">
-          <MiniMapInner sido={sido} sigungu={sigungu} />
+        <div className="relative aspect-video bg-zinc-100 rounded overflow-hidden border border-border min-h-72 lg:min-h-96">
+          <MiniMapInner sido={sido} sigungu={sigungu} dong={dong} />
         </div>
         <p className="text-[11px] text-muted leading-relaxed">
           표시된 위치는 등록 시 입력한 주소를 기반으로 보여지며 정확한 위치와 차이가 있을 수 있습니다.
