@@ -7,7 +7,7 @@ import { formatKRW, formatRelativeDate } from "@/lib/format";
 import { UrgentCard } from "@/components/ListingCard";
 import { Icon } from "@/components/Icon";
 import { Thumbnail } from "@/components/Thumbnail";
-import { MiniMap } from "@/components/MiniMap";
+import { KakaoLocation } from "@/components/KakaoLocation";
 import { FavoriteButton } from "@/components/FavoriteButton";
 import { MobileCtaBar } from "@/components/MobileCtaBar";
 import { ViewTracker } from "@/components/ViewTracker";
@@ -194,30 +194,17 @@ export default async function ListingDetailPage({
             </div>
           </div>
 
-          {/* 상세정보 */}
           <div className="bg-white rounded-md border border-border p-4 lg:p-6 mb-4">
             <h2 className="text-base font-bold mb-3 flex items-center gap-2">
               <span className="w-1 h-4 bg-foreground rounded-sm" />
-              샵 구조
-            </h2>
-            <p className="text-sm text-foreground/80 leading-relaxed whitespace-pre-line mb-4">
-              {listing.shopStructure || "등록된 정보가 없습니다."}
-            </p>
-
-            <h2 className="text-base font-bold mb-3 mt-6 flex items-center gap-2">
-              <span className="w-1 h-4 bg-foreground rounded-sm" />
-              상권
-            </h2>
-            <p className="text-sm text-foreground/80 leading-relaxed whitespace-pre-line mb-4">
-              {listing.commercialArea || "등록된 정보가 없습니다."}
-            </p>
-
-            <h2 className="text-base font-bold mb-3 mt-6 flex items-center gap-2">
-              <span className="w-1 h-4 bg-foreground rounded-sm" />
-              기타사항
+              상세 정보
             </h2>
             <p className="text-sm text-foreground/80 leading-relaxed whitespace-pre-line">
-              {listing.etcInfo || "등록된 정보가 없습니다."}
+              {listing.description ||
+                listing.shopStructure ||
+                listing.commercialArea ||
+                listing.etcInfo ||
+                "등록된 정보가 없습니다."}
             </p>
 
             {listing.features && listing.features.length > 0 && (
@@ -248,33 +235,12 @@ export default async function ListingDetailPage({
             </h2>
             {listing.isAddressPublic ? (
               <>
-                <p className="text-sm text-foreground mb-3">
-                  {listing.region}
-                </p>
-                <MiniMap sido={listing.sido} sigungu={listing.sigungu} />
-                <p className="text-[11px] text-muted mt-2 leading-relaxed">
-                  표시된 위치는 등록 시 입력한 주소를 기반으로 보여지며, 정확한 위치와 차이가 있을 수 있습니다.
-                </p>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  <a
-                    href={`https://map.kakao.com/?q=${encodeURIComponent(`${listing.sido} ${listing.sigungu}${listing.dong ? " " + listing.dong : ""}`)}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold border border-border rounded hover:border-foreground"
-                  >
-                    <Icon.Map size={12} />
-                    카카오 지도에서 보기
-                  </a>
-                  <a
-                    href={`https://map.kakao.com/link/roadview/${encodeURIComponent(`${listing.sido} ${listing.sigungu}${listing.dong ? " " + listing.dong : ""}`)}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold border border-border rounded hover:border-foreground"
-                  >
-                    <Icon.MapPin size={12} />
-                    로드뷰 보기
-                  </a>
-                </div>
+                <p className="text-sm text-foreground mb-3">{listing.region}</p>
+                <KakaoLocation
+                  sido={listing.sido}
+                  sigungu={listing.sigungu}
+                  dong={listing.dong}
+                />
               </>
             ) : (
               <div className="aspect-video bg-zinc-50 rounded flex flex-col items-center justify-center text-muted text-sm gap-2 border border-dashed border-border">

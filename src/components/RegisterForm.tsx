@@ -34,9 +34,7 @@ export function RegisterForm({
   const [deposit, setDeposit] = useState("");
   const [monthlyRent, setMonthlyRent] = useState("");
   const [premium, setPremium] = useState("");
-  const [shopStructure, setShopStructure] = useState("");
-  const [commercial, setCommercial] = useState("");
-  const [etc, setEtc] = useState("");
+  const [details, setDetails] = useState("");
   const [phone, setPhone] = useState("");
   const [useSecretNumber, setUseSecretNumber] = useState(true);
   const [images, setImages] = useState<File[]>([]);
@@ -146,10 +144,7 @@ export function RegisterForm({
 
       const result = await createListing({
         title: title.trim(),
-        description: shopStructure || undefined,
-        shop_structure: shopStructure || undefined,
-        commercial: commercial || undefined,
-        etc: etc || undefined,
+        description: details || undefined,
         sido,
         sigungu,
         dong: dong || undefined,
@@ -375,29 +370,13 @@ export function RegisterForm({
           </Field>
 
           <Field label="상세정보">
-            <div className="space-y-2">
-              <textarea
-                value={shopStructure}
-                onChange={(e) => setShopStructure(e.target.value)}
-                placeholder="샵 구조 — 베드 수, 룸 구성, 시설 등을 자유롭게 작성해주세요"
-                rows={3}
-                className="w-full px-3 py-3 text-sm border border-border rounded focus:outline-none focus:border-foreground"
-              />
-              <textarea
-                value={commercial}
-                onChange={(e) => setCommercial(e.target.value)}
-                placeholder="상권 — 위치 특성, 유동인구, 주변 환경 등"
-                rows={3}
-                className="w-full px-3 py-3 text-sm border border-border rounded focus:outline-none focus:border-foreground"
-              />
-              <textarea
-                value={etc}
-                onChange={(e) => setEtc(e.target.value)}
-                placeholder="기타사항 — 권리금 협의 여부, 매매 사유 등"
-                rows={3}
-                className="w-full px-3 py-3 text-sm border border-border rounded focus:outline-none focus:border-foreground"
-              />
-            </div>
+            <textarea
+              value={details}
+              onChange={(e) => setDetails(e.target.value)}
+              placeholder="샵 구조, 상권, 권리금 협의 여부, 매매 사유 등 매물에 대한 정보를 자유롭게 작성해주세요."
+              rows={10}
+              className="w-full px-3 py-3 text-sm border border-border rounded focus:outline-none focus:border-foreground"
+            />
           </Field>
 
           <Field label="매물 특징" subtitle="선택 사항 · 해당하는 항목을 모두 선택">

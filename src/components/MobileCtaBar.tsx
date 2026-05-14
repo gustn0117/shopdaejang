@@ -36,13 +36,13 @@ export function MobileCtaBar({
             </span>
           )}
         </a>
-        <button
-          type="button"
-          className="flex-1 inline-flex items-center justify-center gap-1.5 py-3 bg-[#FEE500] text-black font-bold rounded text-sm"
+        <a
+          href={`sms:${phone}`}
+          className="flex-1 inline-flex items-center justify-center gap-1.5 py-3 bg-white border border-foreground text-foreground font-bold rounded text-sm"
         >
           <Icon.Chat size={14} strokeWidth={2.2} />
-          카톡상담
-        </button>
+          문자
+        </a>
       </div>
     </div>
   );

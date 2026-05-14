@@ -18,23 +18,45 @@ const pinIcon = L.divIcon({
   iconAnchor: [9, 9],
 });
 
-export default function MiniMapInner({ sido }: { sido: string; sigungu?: string }) {
+const TILE_BY_LAYER = {
+  map: {
+    url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    attribution: "&copy; OpenStreetMap",
+  },
+  satellite: {
+    url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    attribution: "&copy; Esri World Imagery",
+  },
+} as const;
+
+type Layer = keyof typeof TILE_BY_LAYER;
+
+export default function MiniMapInner({
+  sido,
+  layer = "map",
+}: {
+  sido: string;
+  sigungu?: string;
+  layer?: Layer;
+}) {
   const coord = SIDO_COORDS[sido] ?? [36.5, 127.8];
+  const tile = TILE_BY_LAYER[layer];
   return (
     <MapContainer
       center={coord}
-      zoom={12}
+      zoom={13}
       scrollWheelZoom={false}
       dragging
       doubleClickZoom
-      zoomControl={false}
+      zoomControl
       className="h-full w-full"
       style={{ background: "#fafaf8" }}
     >
       <TileLayer
-        attribution='&copy; OpenStreetMap'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        maxZoom={18}
+        key={layer}
+        attribution={tile.attribution}
+        url={tile.url}
+        maxZoom={19}
       />
       <Marker position={coord} icon={pinIcon} />
     </MapContainer>
