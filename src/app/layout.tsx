@@ -14,6 +14,7 @@ const notoSansKR = Noto_Sans_KR({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://shopdaejang.hsweb.pics"),
   title: {
     default: "샵대장 - 마사지샵 직거래 전문 사이트",
     template: "%s | 샵대장",
