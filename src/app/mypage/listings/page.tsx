@@ -126,9 +126,12 @@ export default async function MyListingsPage({ searchParams }: { searchParams: S
                 <Link href={`/listings/${l.id}`} className="flex-1 sm:flex-none px-2 py-1.5 text-xs text-center border border-border rounded font-semibold hover:border-foreground">
                   미리보기
                 </Link>
-                <button type="button" className="flex-1 sm:flex-none px-2 py-1.5 text-xs border border-border rounded font-semibold hover:border-foreground">
+                <Link
+                  href={`/mypage/listings/${l.id}/edit`}
+                  className="flex-1 sm:flex-none px-2 py-1.5 text-xs text-center border border-border rounded font-semibold hover:border-foreground"
+                >
                   수정
-                </button>
+                </Link>
               </div>
             </div>
           );
