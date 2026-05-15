@@ -12,7 +12,7 @@ export default function AboutPage() {
       <ul className="mt-4 space-y-1.5 text-sm">
         <li>· 사업자명 : 샵대장 (주)</li>
         <li>· 대표이사 : 홍길동</li>
-        <li>· 사업자등록번호 : 000-00-00000</li>
+        <li>· 사업자등록번호 : 405-07-65148</li>
         <li>· 주소 : 서울특별시 강남구 테헤란로 000</li>
         <li>· 통신판매업신고 : 2026-서울강남-00000</li>
         <li>· 고객센터 : 1588-0000 / help@shopdaejang.com</li>

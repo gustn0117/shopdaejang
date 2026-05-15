@@ -41,7 +41,7 @@ export function Footer() {
 
         <div className="pt-8 border-t border-border text-[11px] text-muted leading-relaxed space-y-1">
           <p className="font-semibold text-foreground/80 mb-1.5">샵대장 (주)</p>
-          <p>대표이사 홍길동 · 사업자등록번호 000-00-00000 · 통신판매업신고 2026-서울강남-00000</p>
+          <p>사업자등록번호 405-07-65148 · 통신판매업신고 2026-서울강남-00000</p>
           <p>서울특별시 강남구 테헤란로 000 · help@shopdaejang.com · 1588-0000</p>
           <p className="pt-3 max-w-2xl">
             샵대장은 마사지샵 양도양수 광고 플랫폼이며, 매물 정보의 정확성과 거래 결과에 대해 책임을 지지 않습니다.
