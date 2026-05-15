@@ -19,7 +19,7 @@ export function UrgentCard({ listing }: { listing: Listing }) {
           className="object-cover group-hover:scale-[1.03] transition-transform duration-500"
         />
         <div className="absolute top-2 left-2">
-          <TierBadge tier="urgent" />
+          <TierBadge tier={listing.tier} />
         </div>
       </div>
       <div className="p-3.5">
@@ -61,7 +61,7 @@ export function PremiumCard({ listing }: { listing: Listing }) {
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1 mb-1">
-          <TierBadge tier="premium" size="xs" />
+          <TierBadge tier={listing.tier} size="xs" />
           <span className="text-[11px] text-muted">{listing.category} · {listing.area}평</span>
         </div>
         <h3 className="font-semibold text-[14px] lg:text-[15px] line-clamp-1 mb-1 group-hover:text-foreground/70">
