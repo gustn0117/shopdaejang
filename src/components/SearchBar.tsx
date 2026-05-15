@@ -15,14 +15,38 @@ export function SearchBar() {
   const sidoList = Object.keys(REGIONS) as (keyof typeof REGIONS)[];
   const sigunguList = sido ? REGIONS[sido as keyof typeof REGIONS] : [];
 
+  function navigate(next: { sido?: string; sigungu?: string; category?: string; keyword?: string }) {
+    const params = new URLSearchParams();
+    const _sido = next.sido !== undefined ? next.sido : sido;
+    const _sigungu = next.sigungu !== undefined ? next.sigungu : sigungu;
+    const _category = next.category !== undefined ? next.category : category;
+    const _keyword = next.keyword !== undefined ? next.keyword : keyword;
+    if (_sido) params.set("sido", _sido);
+    if (_sigungu) params.set("sigungu", _sigungu);
+    if (_category) params.set("category", _category);
+    if (_keyword) params.set("q", _keyword);
+    router.push(`/listings?${params.toString()}`);
+  }
+
+  function onSidoChange(v: string) {
+    setSido(v);
+    setSigungu("");
+    if (v) navigate({ sido: v, sigungu: "" });
+  }
+
+  function onSigunguChange(v: string) {
+    setSigungu(v);
+    if (v) navigate({ sigungu: v });
+  }
+
+  function onCategoryChange(v: string) {
+    setCategory(v);
+    if (v) navigate({ category: v });
+  }
+
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const params = new URLSearchParams();
-    if (sido) params.set("sido", sido);
-    if (sigungu) params.set("sigungu", sigungu);
-    if (category) params.set("category", category);
-    if (keyword) params.set("q", keyword);
-    router.push(`/listings?${params.toString()}`);
+    navigate({});
   }
 
   return (
@@ -34,16 +58,13 @@ export function SearchBar() {
         <FieldDivider />
         <Select
           value={sido}
-          onChange={(v) => {
-            setSido(v);
-            setSigungu("");
-          }}
+          onChange={onSidoChange}
           options={[{ value: "", label: "지역" }, ...sidoList.map((s) => ({ value: s, label: s }))]}
         />
         <FieldDivider />
         <Select
           value={sigungu}
-          onChange={setSigungu}
+          onChange={onSigunguChange}
           disabled={!sido}
           options={[{ value: "", label: "구·군" }, ...sigunguList.map((s) => ({ value: s, label: s }))]}
         />
@@ -51,7 +72,7 @@ export function SearchBar() {
       <FieldDivider />
       <Select
         value={category}
-        onChange={setCategory}
+        onChange={onCategoryChange}
         options={[{ value: "", label: "업종" }, ...CATEGORIES.map((c) => ({ value: c, label: c }))]}
         className="lg:flex-1"
       />
@@ -60,12 +81,13 @@ export function SearchBar() {
         type="text"
         value={keyword}
         onChange={(e) => setKeyword(e.target.value)}
-        placeholder="키워드"
+        placeholder="키워드 (Enter 입력)"
         className="lg:flex-[1.3] px-4 py-3 text-sm bg-transparent focus:outline-none placeholder:text-muted/70"
       />
       <button
         type="submit"
         className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-foreground hover:bg-foreground-soft text-white font-semibold text-sm rounded-md transition-colors"
+        aria-label="검색"
       >
         <Icon.Search size={15} strokeWidth={2.4} />
         검색

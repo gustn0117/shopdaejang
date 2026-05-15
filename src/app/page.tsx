@@ -102,7 +102,15 @@ export default async function HomePage() {
         </Link>
       </section>
 
-      <SearchBar />
+      <section>
+        <div className="flex items-end justify-between mb-3">
+          <h2 className="text-base lg:text-lg font-bold text-foreground tracking-tight">
+            빠른검색
+          </h2>
+          <span className="text-[11px] text-muted">지역·구·업종을 선택하면 바로 결과로 이동합니다</span>
+        </div>
+        <SearchBar />
+      </section>
 
       <section>
         <div className="flex items-end justify-between mb-4">
