@@ -41,25 +41,17 @@ export async function Header() {
           )}
         </div>
 
-        <div className="flex items-center justify-between py-3 lg:py-4">
-          <div className="flex items-center gap-10">
-            <Link href="/" className="inline-flex items-center gap-2 group" aria-label="샵대장 홈">
+        <div className="flex items-center justify-between py-2 lg:py-2">
+          <div className="flex items-center gap-8">
+            <Link href="/" className="inline-flex items-center" aria-label="샵대장 홈">
               <Image
                 src="/logo.png"
                 alt="샵대장"
-                width={40}
-                height={40}
+                width={120}
+                height={120}
                 priority
-                className="w-9 h-9 lg:w-10 lg:h-10 object-contain"
+                className="w-14 h-14 lg:w-16 lg:h-16 object-contain"
               />
-              <span className="hidden sm:inline-flex flex-col leading-tight">
-                <span className="text-base lg:text-lg font-black text-foreground tracking-tight">
-                  샵대장
-                </span>
-                <span className="hidden lg:inline text-[10px] text-muted tracking-wide">
-                  마사지샵 직거래 플랫폼
-                </span>
-              </span>
             </Link>
 
             <nav className="hidden lg:flex items-center">
