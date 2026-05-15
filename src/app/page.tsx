@@ -8,7 +8,7 @@ import { SectionHeader } from "@/components/SectionHeader";
 import { Icon } from "@/components/Icon";
 import type { Listing } from "@/lib/types";
 
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
 
 async function fetchRecentlyViewed(): Promise<Listing[]> {
   const jar = await cookies();
@@ -26,7 +26,22 @@ async function fetchRecentlyViewed(): Promise<Listing[]> {
   return ids.map((id) => byId.get(id)).filter((l): l is Listing => Boolean(l));
 }
 
-export default async function HomePage() {
+type SP = Promise<{
+  sido?: string;
+  sigungu?: string;
+  category?: string;
+  q?: string;
+  tier?: string;
+}>;
+
+export default async function HomePage({ searchParams }: { searchParams: SP }) {
+  const sp = await searchParams;
+  const hasFilter = !!(sp.sido || sp.sigungu || sp.category || sp.q || sp.tier);
+
+  if (hasFilter) {
+    return <FilteredHome sp={sp} />;
+  }
+
   const [urgent, premium, normal, free, notices, recent] = await Promise.all([
     fetchListings({ tier: "urgent", limit: 8 }),
     fetchListings({ tier: "premium", limit: 6 }),
@@ -271,6 +286,104 @@ export default async function HomePage() {
             ))}
           </ul>
         </aside>
+      </section>
+    </div>
+  );
+}
+
+async function FilteredHome({ sp }: { sp: Awaited<SP> }) {
+  const filtered = await fetchListings({
+    sido: sp.sido,
+    sigungu: sp.sigungu,
+    category: sp.category,
+    q: sp.q,
+    tier: (sp.tier as Listing["tier"]) ?? undefined,
+    limit: 60,
+  });
+
+  const labelChips: { key: string; label: string }[] = [];
+  if (sp.sido) labelChips.push({ key: "sido", label: sp.sido });
+  if (sp.sigungu) labelChips.push({ key: "sigungu", label: sp.sigungu });
+  if (sp.category) labelChips.push({ key: "category", label: sp.category });
+  if (sp.q) labelChips.push({ key: "q", label: `"${sp.q}"` });
+  if (sp.tier) {
+    const tierLabel: Record<string, string> = {
+      urgent: "긴급매물",
+      premium: "프리미엄",
+      normal: "일반",
+      free: "무료",
+    };
+    labelChips.push({ key: "tier", label: tierLabel[sp.tier] ?? sp.tier });
+  }
+
+  return (
+    <div className="container-custom py-6 lg:py-10 space-y-6">
+      <section>
+        <div className="flex items-end justify-between mb-3">
+          <h2 className="text-base lg:text-lg font-bold text-foreground tracking-tight">
+            빠른검색
+          </h2>
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1 text-[12px] text-muted hover:text-foreground"
+          >
+            <Icon.X size={11} strokeWidth={2.4} />
+            검색 초기화
+          </Link>
+        </div>
+        <SearchBar initial={sp} />
+      </section>
+
+      <section>
+        <div className="flex flex-wrap items-end justify-between gap-3 mb-4">
+          <div>
+            <p className="text-[11px] font-semibold text-muted tracking-[0.18em] uppercase mb-1.5">
+              Results
+            </p>
+            <h2 className="text-lg lg:text-xl font-black tracking-tight">
+              검색 결과 <span className="tabular text-muted-strong">{filtered.length}</span>건
+            </h2>
+            {labelChips.length > 0 && (
+              <div className="flex flex-wrap items-center gap-1.5 mt-3">
+                {labelChips.map((c) => (
+                  <span
+                    key={c.key}
+                    className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-semibold bg-foreground text-white rounded-full"
+                  >
+                    {c.label}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+          <Link
+            href={`/listings?${new URLSearchParams(sp as Record<string, string>).toString()}`}
+            className="inline-flex items-center gap-1 px-4 py-2 text-sm border border-border rounded-md hover:border-foreground"
+          >
+            상세 검색
+            <Icon.ArrowRight size={12} strokeWidth={2.2} />
+          </Link>
+        </div>
+
+        {filtered.length === 0 ? (
+          <div className="surface-card p-16 text-center">
+            <Icon.Search size={32} className="mx-auto mb-4 text-muted" />
+            <p className="font-semibold text-foreground">검색 결과가 없습니다</p>
+            <p className="text-sm text-muted mt-1">다른 조건으로 다시 검색해주세요.</p>
+            <Link
+              href="/"
+              className="inline-flex items-center gap-1.5 mt-5 px-4 py-2 bg-foreground text-white text-sm font-semibold rounded-md"
+            >
+              전체 매물 보기
+            </Link>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 lg:gap-4">
+            {filtered.map((l) => (
+              <UrgentCard key={l.id} listing={l} />
+            ))}
+          </div>
+        )}
       </section>
     </div>
   );

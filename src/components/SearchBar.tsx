@@ -5,12 +5,21 @@ import { useState } from "react";
 import { CATEGORIES, REGIONS } from "@/lib/data";
 import { Icon } from "./Icon";
 
-export function SearchBar() {
+export function SearchBar({
+  initial,
+}: {
+  initial?: {
+    sido?: string;
+    sigungu?: string;
+    category?: string;
+    q?: string;
+  };
+}) {
   const router = useRouter();
-  const [sido, setSido] = useState("");
-  const [sigungu, setSigungu] = useState("");
-  const [category, setCategory] = useState("");
-  const [keyword, setKeyword] = useState("");
+  const [sido, setSido] = useState(initial?.sido ?? "");
+  const [sigungu, setSigungu] = useState(initial?.sigungu ?? "");
+  const [category, setCategory] = useState(initial?.category ?? "");
+  const [keyword, setKeyword] = useState(initial?.q ?? "");
 
   const sidoList = Object.keys(REGIONS) as (keyof typeof REGIONS)[];
   const sigunguList = sido ? REGIONS[sido as keyof typeof REGIONS] : [];
@@ -25,23 +34,24 @@ export function SearchBar() {
     if (_sigungu) params.set("sigungu", _sigungu);
     if (_category) params.set("category", _category);
     if (_keyword) params.set("q", _keyword);
-    router.push(`/listings?${params.toString()}`);
+    const qs = params.toString();
+    router.push(qs ? `/?${qs}` : "/");
   }
 
   function onSidoChange(v: string) {
     setSido(v);
     setSigungu("");
-    if (v) navigate({ sido: v, sigungu: "" });
+    navigate({ sido: v, sigungu: "" });
   }
 
   function onSigunguChange(v: string) {
     setSigungu(v);
-    if (v) navigate({ sigungu: v });
+    navigate({ sigungu: v });
   }
 
   function onCategoryChange(v: string) {
     setCategory(v);
-    if (v) navigate({ category: v });
+    navigate({ category: v });
   }
 
   function handleSubmit(e: React.FormEvent) {
