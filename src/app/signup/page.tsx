@@ -12,7 +12,7 @@ export default async function SignupPage({ searchParams }: { searchParams: SP })
     <div className="container-custom py-10 lg:py-20 max-w-md">
       <div className="text-center mb-8">
         <Link href="/" className="inline-flex items-center justify-center" aria-label="샵대장 홈">
-          <Image src="/logo.png" alt="샵대장" width={160} height={160} priority className="w-24 h-24 object-contain" />
+          <Image src="/logo.png" alt="샵대장" width={256} height={256} priority className="w-40 h-40 object-contain" />
         </Link>
         <h1 className="text-lg font-bold mt-6 tracking-tight">회원가입</h1>
         <p className="text-sm text-muted mt-1">가입 후 마이페이지에서 매물을 등록할 수 있습니다.</p>

@@ -47,10 +47,10 @@ export async function Header() {
               <Image
                 src="/logo.png"
                 alt="샵대장"
-                width={120}
-                height={120}
+                width={200}
+                height={200}
                 priority
-                className="w-14 h-14 lg:w-16 lg:h-16 object-contain"
+                className="w-20 h-20 lg:w-24 lg:h-24 object-contain"
               />
             </Link>
 
