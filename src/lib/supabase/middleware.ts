@@ -53,5 +53,32 @@ export async function updateSession(request: NextRequest) {
     }
   }
 
+  // 소셜 가입 후 휴대폰 번호 미입력 사용자는 /onboarding 으로 강제 이동
+  if (user && !isPublicPath(request.nextUrl.pathname)) {
+    const meta = (user.user_metadata ?? {}) as Record<string, unknown>;
+    const phone =
+      (typeof meta.phone === "string" && meta.phone) ||
+      (typeof user.phone === "string" && user.phone) ||
+      "";
+    if (!phone) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/onboarding";
+      url.searchParams.set("redirect", request.nextUrl.pathname);
+      return NextResponse.redirect(url);
+    }
+  }
+
   return supabaseResponse;
+}
+
+function isPublicPath(pathname: string): boolean {
+  if (pathname === "/onboarding") return true;
+  if (pathname.startsWith("/auth/")) return true;
+  if (pathname.startsWith("/api/")) return true;
+  if (pathname.startsWith("/login")) return true;
+  if (pathname.startsWith("/signup")) return true;
+  if (pathname.startsWith("/find-account")) return true;
+  if (pathname.startsWith("/logout")) return true;
+  if (pathname.startsWith("/admin")) return true;
+  return false;
 }

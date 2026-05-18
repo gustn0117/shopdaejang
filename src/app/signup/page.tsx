@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { signUpWithPassword } from "../login/actions";
+import { SocialLoginButtons } from "@/components/SocialLoginButtons";
 
 export const metadata = { title: "회원가입" };
 
@@ -39,6 +40,9 @@ export default async function SignupPage({ searchParams }: { searchParams: SP })
           회원가입하기
         </button>
       </form>
+
+      <SocialLoginButtons redirect="/mypage" />
+
       <p className="text-center text-xs text-muted mt-6">
         이미 계정이 있으신가요?{" "}
         <Link href="/login" className="text-foreground font-semibold hover:underline">

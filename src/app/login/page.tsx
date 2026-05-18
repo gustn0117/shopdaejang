@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { signInWithPassword } from "./actions";
+import { SocialLoginButtons } from "@/components/SocialLoginButtons";
 
 export const metadata = {
   title: "로그인",
@@ -35,6 +36,8 @@ export default async function LoginPage({ searchParams }: { searchParams: SP }) 
           로그인
         </button>
       </form>
+
+      <SocialLoginButtons redirect={sp.redirect ?? "/"} />
 
       <div className="flex items-center justify-between text-xs text-muted mt-6">
         <Link href="/signup" className="hover:text-foreground">이메일 회원가입</Link>
