@@ -18,7 +18,7 @@ export function MobileCtaBar({
 }) {
   return (
     <div className="lg:hidden fixed bottom-16 left-0 right-0 z-30 bg-white border-t border-border safe-bottom">
-      <div className="container-custom py-2.5 flex items-center gap-2">
+      <div className="container-custom py-2 flex items-center gap-2">
         <FavoriteButton
           listingId={listingId}
           initialFavorited={initialFavorited}
@@ -26,19 +26,22 @@ export function MobileCtaBar({
         />
         <a
           href={`tel:${phone}`}
-          className="flex-1 inline-flex items-center justify-center gap-1.5 py-3 bg-foreground text-white font-bold rounded text-sm"
+          className="flex-1 inline-flex flex-col items-center justify-center py-1.5 bg-foreground text-white font-bold rounded text-sm leading-tight"
         >
-          <Icon.Phone size={14} strokeWidth={2.4} />
-          전화하기
-          {useSecretNumber && (
-            <span className="text-[10px] border border-white/30 px-1.5 py-0.5 rounded ml-1">
-              안심
-            </span>
-          )}
+          <span className="inline-flex items-center gap-1">
+            <Icon.Phone size={12} strokeWidth={2.4} />
+            전화하기
+            {useSecretNumber && (
+              <span className="text-[9px] border border-white/30 px-1 py-px rounded">
+                안심
+              </span>
+            )}
+          </span>
+          <span className="text-[11px] font-black tabular tracking-tight">{phone}</span>
         </a>
         <a
           href={`sms:${phone}`}
-          className="flex-1 inline-flex items-center justify-center gap-1.5 py-3 bg-white border border-foreground text-foreground font-bold rounded text-sm"
+          className="inline-flex items-center justify-center gap-1.5 px-4 py-3 bg-white border border-foreground text-foreground font-bold rounded text-sm"
         >
           <Icon.Chat size={14} strokeWidth={2.2} />
           문자

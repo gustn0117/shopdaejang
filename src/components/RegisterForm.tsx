@@ -34,6 +34,7 @@ export function RegisterForm({
   const [deposit, setDeposit] = useState("");
   const [monthlyRent, setMonthlyRent] = useState("");
   const [premium, setPremium] = useState("");
+  const [noPremium, setNoPremium] = useState(false);
   const [details, setDetails] = useState("");
   const [phone, setPhone] = useState("");
   const [useSecretNumber, setUseSecretNumber] = useState(true);
@@ -363,8 +364,29 @@ export function RegisterForm({
                 <input type="number" value={monthlyRent} onChange={(e) => setMonthlyRent(e.target.value)} placeholder="200" className="w-full px-3 py-3 text-sm border border-border rounded" />
               </div>
               <div>
-                <label className="text-[11px] text-muted mb-1 block">권리금</label>
-                <input type="number" value={premium} onChange={(e) => setPremium(e.target.value)} placeholder="5000" className="w-full px-3 py-3 text-sm border border-border rounded" />
+                <div className="flex items-center justify-between mb-1">
+                  <label className="text-[11px] text-muted">권리금</label>
+                  <label className="inline-flex items-center gap-1 text-[11px] font-semibold cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={noPremium}
+                      onChange={(e) => {
+                        setNoPremium(e.target.checked);
+                        if (e.target.checked) setPremium("0");
+                      }}
+                      className="accent-foreground"
+                    />
+                    무권리
+                  </label>
+                </div>
+                <input
+                  type="number"
+                  value={noPremium ? "0" : premium}
+                  onChange={(e) => setPremium(e.target.value)}
+                  placeholder={noPremium ? "" : "5000"}
+                  disabled={noPremium}
+                  className="w-full px-3 py-3 text-sm border border-border rounded disabled:bg-zinc-50 disabled:text-muted"
+                />
               </div>
             </div>
           </Field>
@@ -566,7 +588,7 @@ export function RegisterForm({
             <Row label="지역" value={`${sido} ${sigungu} ${dong}`} />
             <Row label="업종" value={category} />
             <Row label="면적" value={`${area}평`} />
-            <Row label="보증금/월세/권리금" value={`${deposit || 0}만 / ${monthlyRent || 0}만 / ${premium || 0}만`} />
+            <Row label="보증금/월세/권리금" value={`${deposit || 0}만 / ${monthlyRent || 0}만 / ${noPremium ? "무권리" : `${premium || 0}만`}`} />
             <Row label="연락처" value={`${phone} ${useSecretNumber ? "(안심번호)" : ""}`} />
             <Row label="사진" value={`${images.length}장 등록`} />
             <Row label="광고 상품" value={`${selectedTier?.label} - ${period}`} />

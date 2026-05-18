@@ -269,6 +269,17 @@ export default async function ListingDetailPage({
             <p className="text-[12px] text-muted mb-3 leading-relaxed">
               매도자에게 직접 연락하세요. 샵대장은 광고 플랫폼이며 거래에 개입하지 않습니다.
             </p>
+            <div className="mb-2 px-3 py-2.5 bg-zinc-50 border border-border rounded flex items-center justify-between">
+              <span className="text-[11px] text-muted">
+                {listing.useSecretNumber ? "안심번호" : "판매자 연락처"}
+              </span>
+              <a
+                href={`tel:${listing.phone}`}
+                className="text-sm font-black tabular text-foreground tracking-tight hover:underline"
+              >
+                {listing.phone}
+              </a>
+            </div>
             <div className="space-y-2">
               <a
                 href={`tel:${listing.phone}`}

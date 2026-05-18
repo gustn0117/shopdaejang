@@ -45,7 +45,7 @@ export default async function EditListingPage({
         매물 수정
       </h1>
       <p className="text-sm text-muted mb-6">
-        등록 정보를 수정합니다. 수정 후에는 관리자 재심사가 진행됩니다.
+        등록 정보를 수정합니다. 저장 즉시 반영됩니다.
       </p>
 
       <div className="max-w-3xl">

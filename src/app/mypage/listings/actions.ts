@@ -52,7 +52,6 @@ export async function updateListing(
     .from("listings")
     .update({
       ...payload,
-      status: "pending", // 수정 시 재심사
       updated_at: new Date().toISOString(),
     })
     .eq("id", id)
@@ -63,6 +62,56 @@ export async function updateListing(
   revalidatePath(`/listings/${id}`);
   revalidatePath("/mypage/listings");
   revalidatePath(`/mypage/listings/${id}/edit`);
+  return { ok: true };
+}
+
+export async function renewListing(
+  id: number,
+  payload: { tier: "urgent" | "premium" | "normal" | "free"; period: string; months: number }
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    return { ok: false, error: "로그인이 필요합니다." };
+  }
+
+  const { data: existing, error: fetchErr } = await supabase
+    .from("listings")
+    .select("user_id, ad_expires_at")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (fetchErr) return { ok: false, error: fetchErr.message };
+  if (!existing) return { ok: false, error: "매물을 찾을 수 없습니다." };
+  if (existing.user_id !== user.id) {
+    return { ok: false, error: "본인 매물만 연장할 수 있습니다." };
+  }
+
+  const now = Date.now();
+  const baseTs = existing.ad_expires_at
+    ? Math.max(now, new Date(existing.ad_expires_at as string).getTime())
+    : now;
+  const monthsMs = payload.months * 30 * 24 * 60 * 60 * 1000;
+  const newExpiresAt = new Date(baseTs + monthsMs).toISOString();
+
+  const { error } = await supabase
+    .from("listings")
+    .update({
+      tier: payload.tier,
+      ad_period: payload.period,
+      ad_expires_at: newExpiresAt,
+      status: "approved",
+      bumped_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", id)
+    .eq("user_id", user.id);
+
+  if (error) return { ok: false, error: error.message };
+
+  revalidatePath(`/listings/${id}`);
+  revalidatePath("/mypage/listings");
+  revalidatePath("/");
   return { ok: true };
 }
 

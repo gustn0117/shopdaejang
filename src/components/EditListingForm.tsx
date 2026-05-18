@@ -58,6 +58,7 @@ export function EditListingForm({
   const [deposit, setDeposit] = useState(String(initial.deposit));
   const [monthlyRent, setMonthlyRent] = useState(String(initial.monthlyRent));
   const [premium, setPremium] = useState(String(initial.premium));
+  const [noPremium, setNoPremium] = useState(Number(initial.premium) === 0);
   const [features, setFeatures] = useState<string[]>(initial.features);
   const [phone, setPhone] = useState(initial.phone);
   const [useSecretNumber, setUseSecretNumber] = useState(initial.useSecretNumber);
@@ -159,7 +160,7 @@ export function EditListingForm({
         toast.error(result.error);
         return;
       }
-      toast.success("수정 완료. 관리자 재심사 후 노출됩니다.");
+      toast.success("수정이 저장되었습니다.");
       router.push("/mypage/listings");
       router.refresh();
     });
@@ -311,13 +312,28 @@ export function EditListingForm({
               />
             </div>
             <div>
-              <label className="text-[11px] text-muted mb-1 block">권리금</label>
+              <div className="flex items-center justify-between mb-1">
+                <label className="text-[11px] text-muted">권리금</label>
+                <label className="inline-flex items-center gap-1 text-[11px] font-semibold cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={noPremium}
+                    onChange={(e) => {
+                      setNoPremium(e.target.checked);
+                      if (e.target.checked) setPremium("0");
+                    }}
+                    className="accent-foreground"
+                  />
+                  무권리
+                </label>
+              </div>
               <input
                 type="number"
                 min={0}
-                value={premium}
+                value={noPremium ? "0" : premium}
                 onChange={(e) => setPremium(e.target.value)}
-                className="w-full px-3 py-3 text-sm border border-border rounded"
+                disabled={noPremium}
+                className="w-full px-3 py-3 text-sm border border-border rounded disabled:bg-zinc-50 disabled:text-muted"
               />
             </div>
           </div>
@@ -469,7 +485,7 @@ export function EditListingForm({
       </div>
 
       <div className="bg-zinc-50 border border-border rounded p-3 text-[12px] text-muted leading-relaxed">
-        <strong className="text-foreground">참고:</strong> 매물 수정 시 광고 상태가 <strong>승인 대기</strong>로 변경되어 관리자 재심사를 거칩니다.
+        <strong className="text-foreground">참고:</strong> 매물 수정은 별도의 재심사 없이 저장 즉시 반영됩니다.
       </div>
 
       <div className="flex flex-wrap gap-2">
