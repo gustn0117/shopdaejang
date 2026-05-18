@@ -6,6 +6,7 @@ import type { ShopCategory, AdTier, AdPricing } from "@/lib/types";
 import { Icon } from "./Icon";
 import { createClient } from "@/lib/supabase/client";
 import { createListing } from "@/app/mypage/register/actions";
+import { createListingOrder } from "@/app/payments/actions";
 import { LISTING_FEATURES } from "@/lib/features";
 
 type Step = 1 | 2 | 3 | 4;
@@ -143,7 +144,7 @@ export function RegisterForm({
         uploaded.push(pub.publicUrl);
       }
 
-      const result = await createListing({
+      const draft = {
         title: title.trim(),
         description: details || undefined,
         sido,
@@ -164,14 +165,30 @@ export function RegisterForm({
         phone,
         use_secret_number: useSecretNumber,
         is_public: isPublic,
-      });
+      };
 
-      if (!result.ok) {
-        setSubmitError(result.error);
+      const priceAmount = selectedPeriod?.price ?? 0;
+
+      // 무료 상품: 기존 즉시 등록 흐름
+      if (priceAmount === 0) {
+        const result = await createListing(draft);
+        if (!result.ok) {
+          setSubmitError(result.error);
+          setSubmitting(false);
+          return;
+        }
+        setSubmitted(true);
+        return;
+      }
+
+      // 유료 상품: 토스 결제 흐름으로 이동
+      const order = await createListingOrder(draft);
+      if (!order.ok) {
+        setSubmitError(order.error);
         setSubmitting(false);
         return;
       }
-      setSubmitted(true);
+      router.push(`/payments/checkout/${order.orderId}`);
     } catch (err) {
       setSubmitError(err instanceof Error ? err.message : "알 수 없는 오류");
       setSubmitting(false);
@@ -603,24 +620,9 @@ export function RegisterForm({
             </div>
             {selectedPeriod && selectedPeriod.price > 0 && (
               <p className="text-xs text-white/70">
-                결제 완료 후 관리자 승인을 거쳐 노출됩니다.
+                결제 완료 즉시 매물이 노출됩니다. 다음 화면에서 결제수단을 선택하세요.
               </p>
             )}
-          </div>
-
-          <div>
-            <h3 className="text-sm font-bold mb-2">결제 수단</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-              {["신용카드", "계좌이체", "카카오페이", "네이버페이"].map((m) => (
-                <button
-                  key={m}
-                  type="button"
-                  className="py-3 border border-border rounded text-xs font-semibold hover:border-foreground hover:bg-zinc-50"
-                >
-                  {m}
-                </button>
-              ))}
-            </div>
           </div>
 
           <label className="flex items-start gap-2 cursor-pointer text-sm">
@@ -674,7 +676,7 @@ export function RegisterForm({
             disabled={!agreement || submitting}
             className="flex-1 px-6 py-3 bg-foreground text-white font-bold rounded hover:bg-foreground/90 disabled:bg-zinc-300 disabled:cursor-not-allowed"
           >
-            {submitting ? "등록 중..." : selectedPeriod?.price === 0 ? "무료 등록 완료" : "결제하고 등록하기"}
+            {submitting ? "처리 중..." : selectedPeriod?.price === 0 ? "무료 등록 완료" : "결제 진행하기"}
           </button>
         )}
       </div>

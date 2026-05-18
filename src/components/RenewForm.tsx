@@ -7,6 +7,7 @@ import { Icon } from "./Icon";
 import { TierBadge } from "./TierBadge";
 import { Thumbnail } from "./Thumbnail";
 import { renewListing } from "@/app/mypage/listings/actions";
+import { createRenewOrder } from "@/app/payments/actions";
 import { useToast } from "./Toast";
 
 type RenewListing = {
@@ -95,19 +96,33 @@ export function RenewForm({
       return;
     }
     start(async () => {
-      const months = periodToMonths(period);
-      const result = await renewListing(listing.id, { tier, period, months });
-      if (!result.ok) {
-        toast.error(result.error);
+      const priceValue = selectedPrice?.price ?? 0;
+
+      // 무료 재연장: 토스 우회, 즉시 처리
+      if (priceValue === 0) {
+        const months = periodToMonths(period);
+        const result = await renewListing(listing.id, { tier, period, months });
+        if (!result.ok) {
+          toast.error(result.error);
+          return;
+        }
+        toast.success("무료 연장이 완료되었습니다.");
+        router.push("/mypage/listings");
+        router.refresh();
         return;
       }
-      toast.success(
-        selectedPrice && selectedPrice.price === 0
-          ? "무료 연장이 완료되었습니다."
-          : "결제 후 광고가 연장되었습니다."
-      );
-      router.push("/mypage/listings");
-      router.refresh();
+
+      // 유료: 토스 결제 페이지로 이동
+      const order = await createRenewOrder({
+        listing_id: listing.id,
+        tier,
+        period,
+      });
+      if (!order.ok) {
+        toast.error(order.error);
+        return;
+      }
+      router.push(`/payments/checkout/${order.orderId}`);
     });
   }
 
@@ -268,7 +283,7 @@ export function RenewForm({
             ) : (
               <>
                 <Icon.Check size={14} strokeWidth={2.5} />
-                결제하고 연장
+                결제 진행
               </>
             )}
           </button>
