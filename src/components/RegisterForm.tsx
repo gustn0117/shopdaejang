@@ -2,23 +2,20 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import type { ShopCategory, AdTier, AdPricing } from "@/lib/types";
+import type { ShopCategory } from "@/lib/types";
 import { Icon } from "./Icon";
 import { createClient } from "@/lib/supabase/client";
 import { createListing } from "@/app/mypage/register/actions";
-import { createListingOrder } from "@/app/payments/actions";
 import { LISTING_FEATURES } from "@/lib/features";
 
-type Step = 1 | 2 | 3 | 4;
+type Step = 1 | 2 | 3;
 
 export function RegisterForm({
   categories,
   regions,
-  adPricing,
 }: {
   categories: ShopCategory[];
   regions: Record<string, string[]>;
-  adPricing: AdPricing[];
 }) {
   const router = useRouter();
   const [step, setStep] = useState<Step>(1);
@@ -41,11 +38,10 @@ export function RegisterForm({
   const [useSecretNumber, setUseSecretNumber] = useState(true);
   const [images, setImages] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
-  const [tier, setTier] = useState<AdTier | "">("");
-  const [period, setPeriod] = useState("");
   const [isPublic, setIsPublic] = useState(true);
   const [agreement, setAgreement] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [submittedId, setSubmittedId] = useState<number | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [stepError, setStepError] = useState<string | null>(null);
@@ -86,7 +82,6 @@ export function RegisterForm({
   const validStep1 =
     title.trim().length > 3 && sido && sigungu && category && area;
   const validStep2 = phone.length >= 9;
-  const validStep3 = tier && period;
 
   function next() {
     if (step === 1 && !validStep1) {
@@ -97,12 +92,8 @@ export function RegisterForm({
       setStepError("연락처를 정확히 입력해주세요.");
       return;
     }
-    if (step === 3 && !validStep3) {
-      setStepError("광고 상품과 기간을 선택해주세요.");
-      return;
-    }
     setStepError(null);
-    setStep((s) => (Math.min(4, s + 1) as Step));
+    setStep((s) => (Math.min(3, s + 1) as Step));
     if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
   }
   function prev() {
@@ -156,8 +147,8 @@ export function RegisterForm({
         deposit: Number(deposit || 0),
         monthly_rent: Number(monthlyRent || 0),
         premium: Number(premium || 0),
-        tier: tier as AdTier,
-        ad_period: period,
+        tier: "free" as const,
+        ad_period: "10일",
         thumbnail: uploaded[0],
         images: uploaded,
         features,
@@ -166,36 +157,19 @@ export function RegisterForm({
         is_public: isPublic,
       };
 
-      const priceAmount = selectedPeriod?.price ?? 0;
-
-      // 무료 상품: 기존 즉시 등록 흐름
-      if (priceAmount === 0) {
-        const result = await createListing(draft);
-        if (!result.ok) {
-          setSubmitError(result.error);
-          setSubmitting(false);
-          return;
-        }
-        setSubmitted(true);
-        return;
-      }
-
-      // 유료 상품: 토스 결제 흐름으로 이동
-      const order = await createListingOrder(draft);
-      if (!order.ok) {
-        setSubmitError(order.error);
+      const result = await createListing(draft);
+      if (!result.ok) {
+        setSubmitError(result.error);
         setSubmitting(false);
         return;
       }
-      router.push(`/payments/checkout/${order.orderId}`);
+      setSubmittedId(result.id);
+      setSubmitted(true);
     } catch (err) {
       setSubmitError(err instanceof Error ? err.message : "알 수 없는 오류");
       setSubmitting(false);
     }
   }
-
-  const selectedTier = adPricing.find((p) => p.tier === tier);
-  const selectedPeriod = selectedTier?.prices.find((p) => p.period === period);
 
   if (submitted) {
     return (
@@ -204,28 +178,47 @@ export function RegisterForm({
           <Icon.Check size={28} strokeWidth={2.5} />
         </div>
         <h2 className="text-2xl font-black mb-2">매물 등록 완료</h2>
-        <p className="text-sm text-muted mb-6">
-          매물이 정상적으로 접수되었습니다. 관리자 승인 후 노출되며,
+        <p className="text-sm text-muted mb-6 leading-relaxed">
+          매물이 정상적으로 접수되었습니다.
           <br />
-          평균 영업일 기준 2~6시간 이내 검토됩니다.
+          관리자 승인 후 <strong className="text-foreground">무료 10일</strong> 노출이 시작됩니다.
         </p>
-        <div className="bg-zinc-50 border border-border rounded p-4 mb-6 text-left max-w-md mx-auto text-sm space-y-1">
-          <div className="flex justify-between"><span className="text-muted">광고 상품</span><span className="font-bold">{selectedTier?.label}</span></div>
-          <div className="flex justify-between"><span className="text-muted">기간</span><span className="font-bold">{selectedPeriod?.period}</span></div>
-          <div className="flex justify-between"><span className="text-muted">결제 금액</span><span className="font-bold">{selectedPeriod?.price === 0 ? "무료" : `${selectedPeriod?.price.toLocaleString()}원`}</span></div>
+
+        <div className="bg-primary-soft border border-border rounded-md p-5 mb-6 text-left max-w-md mx-auto">
+          <p className="text-[11px] font-bold text-foreground tracking-[0.15em] uppercase mb-1.5">
+            Promote Your Listing
+          </p>
+          <h3 className="text-base font-black mb-2 tracking-tight">
+            더 빠른 거래를 원하시면 유료 광고로 업그레이드하세요
+          </h3>
+          <p className="text-xs text-muted mb-4 leading-relaxed">
+            긴급 · 프리미엄 · 일반 광고는 매물관리 페이지에서 언제든 결제하여 활성화할 수 있습니다.
+            (1시간마다 자동 점프, 최상단 노출 등)
+          </p>
+          {submittedId ? (
+            <button
+              type="button"
+              onClick={() => router.push(`/mypage/listings/${submittedId}/renew`)}
+              className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-foreground text-white font-bold rounded text-sm"
+            >
+              <Icon.Plus size={12} strokeWidth={2.5} />
+              유료 광고 구매하기
+            </button>
+          ) : null}
         </div>
+
         <div className="flex gap-2 justify-center">
           <button
             type="button"
             onClick={() => router.push("/mypage/listings")}
-            className="px-5 py-2.5 bg-foreground text-white font-bold rounded"
+            className="px-5 py-2.5 border border-border font-bold rounded text-sm"
           >
             내 매물 보기
           </button>
           <button
             type="button"
             onClick={() => router.push("/")}
-            className="px-5 py-2.5 border border-border font-bold rounded"
+            className="px-5 py-2.5 border border-border font-bold rounded text-sm"
           >
             홈으로
           </button>
@@ -238,7 +231,7 @@ export function RegisterForm({
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="bg-white rounded-md border border-border p-3">
         <div className="flex items-center gap-1">
-          {([1, 2, 3, 4] as const).map((n, i) => (
+          {([1, 2, 3] as const).map((n, i) => (
             <div key={n} className="flex items-center flex-1">
               <div
                 className={`flex items-center justify-center w-8 h-8 rounded-full text-xs font-bold ${
@@ -248,9 +241,9 @@ export function RegisterForm({
                 {step > n ? <Icon.Check size={14} strokeWidth={2.5} /> : n}
               </div>
               <div className="flex-1 ml-1 mr-1 hidden sm:block">
-                <div className="text-[11px] font-semibold">{["기본정보", "연락/사진", "광고선택", "확인"][i]}</div>
+                <div className="text-[11px] font-semibold">{["기본정보", "연락/사진", "약관/등록"][i]}</div>
               </div>
-              {n < 4 && <div className={`flex-1 h-0.5 ${step > n ? "bg-foreground" : "bg-zinc-200"}`} />}
+              {n < 3 && <div className={`flex-1 h-0.5 ${step > n ? "bg-foreground" : "bg-zinc-200"}`} />}
             </div>
           ))}
         </div>
@@ -517,66 +510,20 @@ export function RegisterForm({
         </div>
       )}
 
-      {/* Step 3: 광고 선택 */}
+      {/* Step 3: 확인 + 약관 */}
       {step === 3 && (
         <div className="bg-white rounded-md border border-border p-4 lg:p-6 space-y-4 animate-fade-up">
-          <h2 className="text-base font-bold">3. 광고 상품 선택</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {adPricing.map((p) => (
-              <button
-                key={p.tier}
-                type="button"
-                onClick={() => { setTier(p.tier); setPeriod(""); }}
-                className={`text-left p-3 rounded border ${
-                  tier === p.tier
-                    ? "border-foreground bg-zinc-50"
-                    : "border-border hover:border-foreground/50"
-                }`}
-              >
-                <div className="flex items-center gap-1 mb-1">
-                  <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                    p.tier === "urgent" ? "badge-urgent" : p.tier === "premium" ? "badge-premium" : p.tier === "normal" ? "badge-normal" : "badge-free"
-                  }`}>{p.label}</span>
-                  <span className="text-xs text-muted">{p.description}</span>
-                </div>
-                <div className="text-lg font-black mt-1">
-                  {p.prices[0].price === 0 ? "무료" : `${(p.prices[0].price / 10000).toFixed(0)}만원~`}
-                </div>
-              </button>
-            ))}
-          </div>
+          <h2 className="text-base font-bold">3. 등록 정보 확인</h2>
 
-          {selectedTier && (
-            <div className="bg-zinc-50 border border-border rounded p-4">
-              <h3 className="text-sm font-bold mb-2">{selectedTier.label} 기간 선택</h3>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
-                {selectedTier.prices.map((p) => (
-                  <button
-                    key={p.period}
-                    type="button"
-                    onClick={() => setPeriod(p.period)}
-                    className={`p-3 rounded border text-center ${
-                      period === p.period
-                        ? "border-foreground bg-white"
-                        : "border-border bg-white hover:border-foreground/50"
-                    }`}
-                  >
-                    {p.isFeatured && <span className="block text-[10px] font-bold text-foreground mb-0.5">추천</span>}
-                    <div className="text-xs font-bold">{p.period}</div>
-                    <div className="text-sm font-black mt-1">
-                      {p.price === 0 ? "무료" : `${(p.price / 10000).toFixed(0)}만원`}
-                    </div>
-                  </button>
-                ))}
-              </div>
-              <div className="bg-white border border-border rounded p-3 text-xs space-y-1">
-                <p className="font-bold mb-1">{selectedTier.label} 상품 혜택</p>
-                {selectedTier.benefits.map((b) => (
-                  <p key={b} className="text-foreground/70">· {b}</p>
-                ))}
-              </div>
-            </div>
-          )}
+          <div className="bg-zinc-50 border border-border rounded p-4 text-sm space-y-2">
+            <Row label="제목" value={title} />
+            <Row label="지역" value={`${sido} ${sigungu} ${dong}`} />
+            <Row label="업종" value={category} />
+            <Row label="면적" value={`${area}평`} />
+            <Row label="보증금/월세/권리금" value={`${deposit || 0}만 / ${monthlyRent || 0}만 / ${noPremium ? "무권리" : `${premium || 0}만`}`} />
+            <Row label="연락처" value={`${phone} ${useSecretNumber ? "(안심번호)" : ""}`} />
+            <Row label="사진" value={`${images.length}장 등록`} />
+          </div>
 
           <div className="bg-zinc-50 border border-border rounded p-4">
             <h3 className="text-sm font-bold mb-2">매물 공개 여부</h3>
@@ -591,37 +538,16 @@ export function RegisterForm({
               </label>
             </div>
           </div>
-        </div>
-      )}
 
-      {/* Step 4: 확인 + 결제 */}
-      {step === 4 && (
-        <div className="bg-white rounded-md border border-border p-4 lg:p-6 space-y-4 animate-fade-up">
-          <h2 className="text-base font-bold">4. 등록 정보 확인 및 결제</h2>
-
-          <div className="bg-zinc-50 border border-border rounded p-4 text-sm space-y-2">
-            <Row label="제목" value={title} />
-            <Row label="지역" value={`${sido} ${sigungu} ${dong}`} />
-            <Row label="업종" value={category} />
-            <Row label="면적" value={`${area}평`} />
-            <Row label="보증금/월세/권리금" value={`${deposit || 0}만 / ${monthlyRent || 0}만 / ${noPremium ? "무권리" : `${premium || 0}만`}`} />
-            <Row label="연락처" value={`${phone} ${useSecretNumber ? "(안심번호)" : ""}`} />
-            <Row label="사진" value={`${images.length}장 등록`} />
-            <Row label="광고 상품" value={`${selectedTier?.label} - ${period}`} />
-          </div>
-
-          <div className="bg-foreground text-white rounded p-4">
-            <div className="flex items-center justify-between mb-1">
-              <span className="text-sm font-bold">결제 금액</span>
-              <span className="text-2xl font-black">
-                {selectedPeriod?.price === 0 ? "무료" : `${selectedPeriod?.price.toLocaleString()}원`}
-              </span>
-            </div>
-            {selectedPeriod && selectedPeriod.price > 0 && (
-              <p className="text-xs text-white/70">
-                결제 완료 즉시 매물이 노출됩니다. 다음 화면에서 결제수단을 선택하세요.
-              </p>
-            )}
+          <div className="bg-primary-soft border border-border rounded p-4 text-[12px] leading-relaxed">
+            <p className="font-bold text-foreground mb-1.5 flex items-center gap-1.5">
+              <Icon.Info size={13} className="text-foreground" />
+              무료 10일 노출로 시작합니다
+            </p>
+            <p className="text-foreground/80">
+              매물은 등록 즉시 무료 노출되며, 더 빠른 거래를 원하시면 등록 완료 후
+              매물관리에서 <strong>유료 광고(긴급·프리미엄·일반)</strong>를 결제하여 활성화할 수 있습니다.
+            </p>
           </div>
 
           <label className="flex items-start gap-2 cursor-pointer text-sm">
@@ -660,7 +586,7 @@ export function RegisterForm({
             이전
           </button>
         )}
-        {step < 4 ? (
+        {step < 3 ? (
           <button
             type="button"
             onClick={next}
@@ -675,7 +601,7 @@ export function RegisterForm({
             disabled={!agreement || submitting}
             className="flex-1 px-6 py-3 bg-foreground text-white font-bold rounded hover:bg-foreground/90 disabled:bg-zinc-300 disabled:cursor-not-allowed"
           >
-            {submitting ? "처리 중..." : selectedPeriod?.price === 0 ? "무료 등록 완료" : "결제 진행하기"}
+            {submitting ? "등록 중..." : "매물 등록하기"}
           </button>
         )}
       </div>
