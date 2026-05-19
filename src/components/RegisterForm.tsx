@@ -123,8 +123,7 @@ export function RegisterForm({
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        setSubmitError("로그인이 필요합니다.");
-        setSubmitting(false);
+        router.push("/login?redirect=/mypage/register");
         return;
       }
 

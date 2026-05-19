@@ -78,7 +78,7 @@ export default function AdInfoPage() {
 
             <div className="border-t border-border pt-4 mt-auto">
               <p className="text-[11px] font-bold mb-2 text-muted tracking-wide">상품 혜택</p>
-              <ul className="space-y-1.5">
+              <ul className="space-y-1.5 mb-4">
                 {p.benefits.map((b) => (
                   <li key={b} className="text-[12px] text-foreground/80 flex items-start gap-1.5">
                     <Icon.Check size={12} strokeWidth={2.5} className="text-foreground shrink-0 mt-0.5" />
@@ -86,6 +86,17 @@ export default function AdInfoPage() {
                   </li>
                 ))}
               </ul>
+              <Link
+                href="/mypage/register"
+                className={`flex items-center justify-center gap-1 w-full py-2.5 text-xs font-bold rounded transition-colors ${
+                  p.tier === "free"
+                    ? "bg-white border border-foreground text-foreground hover:bg-zinc-50"
+                    : "bg-foreground text-white hover:bg-foreground-soft"
+                }`}
+              >
+                {p.tier === "free" ? "무료로 등록하기" : "이 상품으로 구매"}
+                <Icon.ArrowRight size={11} strokeWidth={2.4} />
+              </Link>
             </div>
           </div>
         ))}

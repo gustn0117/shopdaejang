@@ -67,13 +67,25 @@ export function HeaderMobile({
                   <Link
                     href="/signup"
                     onClick={() => setOpen(false)}
-                    className="px-3 py-3 text-sm text-center font-medium text-white bg-foreground rounded"
+                    className="px-3 py-3 text-sm text-center font-medium text-foreground border border-border rounded"
                   >
                     회원가입
                   </Link>
                 </>
               )}
             </div>
+            {!isAuthenticated && (
+              <div className="mt-1">
+                <Link
+                  href="/mypage/register"
+                  onClick={() => setOpen(false)}
+                  className="flex items-center justify-center gap-1.5 px-3 py-3 text-sm font-semibold text-white bg-foreground rounded"
+                >
+                  <Icon.Plus size={14} strokeWidth={2.4} />
+                  광고 등록하기
+                </Link>
+              </div>
+            )}
           </nav>
         </div>
       )}
