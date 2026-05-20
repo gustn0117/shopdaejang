@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { createClient, createAdminClient } from "@/lib/supabase/server";
 import { TossPaymentWidget } from "@/components/TossPaymentWidget";
@@ -88,6 +89,13 @@ export default async function CheckoutPage({
             </dl>
             <p className="text-[11px] text-muted mt-3 leading-relaxed">
               결제 완료 즉시 매물이 노출되며, 영수증은 마이페이지 결제내역에서 확인할 수 있습니다.
+            </p>
+            <p className="text-[11px] text-muted mt-2 pt-2 border-t border-border leading-relaxed">
+              결제를 진행하면{" "}
+              <Link href="/terms" className="underline hover:text-foreground">이용약관</Link>{" "}
+              및{" "}
+              <Link href="/refund" className="underline hover:text-foreground">취소·환불 정책</Link>
+              에 동의하는 것으로 간주됩니다.
             </p>
           </div>
         </aside>

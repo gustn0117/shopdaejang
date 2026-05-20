@@ -12,6 +12,7 @@ export function Footer() {
               <li><Link href="/ad-info" className="hover:text-foreground">광고안내</Link></li>
               <li><Link href="/terms" className="hover:text-foreground">이용약관</Link></li>
               <li><Link href="/privacy" className="hover:text-foreground">개인정보처리방침</Link></li>
+              <li><Link href="/refund" className="hover:text-foreground">취소·환불 정책</Link></li>
             </ul>
           </div>
           <div>
@@ -40,9 +41,10 @@ export function Footer() {
         </div>
 
         <div className="pt-8 border-t border-border text-[11px] text-muted leading-relaxed space-y-1">
-          <p className="font-semibold text-foreground/80 mb-1.5">샵대장 (주)</p>
-          <p>사업자등록번호 405-07-65148 · 통신판매업신고 2022-서울송파-2707</p>
-          <p>서울특별시 강남구 테헤란로 000 · help@shopdaejang.com · 1588-0000</p>
+          <p className="font-semibold text-foreground/80 mb-1.5">샵대장 · 상호 샵커넥트</p>
+          <p>대표 정서우 · 사업자등록번호 405-07-65148 · 통신판매업신고 2022-서울송파-2707</p>
+          <p>서울특별시 송파구 위례성대로2길 8, 422호 (방이동, 새천년잠실헤리츠오피스텔)</p>
+          <p>help@shopdaejang.com · 1588-0000</p>
           <p className="pt-3 max-w-2xl">
             샵대장은 마사지샵 양도양수 광고 플랫폼이며, 매물 정보의 정확성과 거래 결과에 대해 책임을 지지 않습니다.
             거래 전 반드시 직접 확인하시기 바랍니다.
