@@ -28,6 +28,7 @@ export type Listing = {
   sido: string;
   sigungu: string;
   dong?: string;
+  detailAddress?: string;
   area: number;
   deposit: number;
   monthlyRent: number;

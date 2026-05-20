@@ -240,6 +240,7 @@ export default async function ListingDetailPage({
                   sido={listing.sido}
                   sigungu={listing.sigungu}
                   dong={listing.dong}
+                  detailAddress={listing.detailAddress}
                 />
               </>
             ) : (

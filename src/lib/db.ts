@@ -11,6 +11,7 @@ type ListingRow = {
   sido: string;
   sigungu: string;
   dong: string | null;
+  detail_address: string | null;
   is_address_public: boolean;
   category: string;
   area: number;
@@ -41,6 +42,7 @@ function rowToListing(r: ListingRow): Listing {
     sido: r.sido,
     sigungu: r.sigungu,
     dong: r.dong ?? undefined,
+    detailAddress: r.detail_address ?? undefined,
     area: Number(r.area),
     deposit: Number(r.deposit),
     monthlyRent: Number(r.monthly_rent),

@@ -21,10 +21,14 @@ type KakaoNS = {
   maps: {
     load: (cb: () => void) => void;
     LatLng: new (lat: number, lng: number) => unknown;
-    Map: new (el: HTMLElement, opts: { center: unknown; level: number }) => unknown;
+    Map: new (el: HTMLElement, opts: { center: unknown; level: number }) => {
+      relayout: () => void;
+      setCenter: (pos: unknown) => void;
+    };
     Marker: new (opts: { position: unknown; map: unknown }) => unknown;
     Roadview: new (el: HTMLElement) => {
       setPanoId: (panoId: number, position: unknown) => void;
+      relayout: () => void;
     };
     RoadviewClient: new () => {
       getNearestPanoId: (
@@ -85,6 +89,9 @@ export function KakaoLocation({
 }) {
   const mapRef = useRef<HTMLDivElement>(null);
   const rvRef = useRef<HTMLDivElement>(null);
+  const mapInstance = useRef<{ relayout: () => void; setCenter: (p: unknown) => void } | null>(null);
+  const rvInstance = useRef<{ relayout: () => void } | null>(null);
+  const [tab, setTab] = useState<"map" | "roadview">("map");
   const [hasRoadview, setHasRoadview] = useState<boolean | null>(null);
   const [loadError, setLoadError] = useState(false);
   const KEY = process.env.NEXT_PUBLIC_KAKAO_MAP_KEY;
@@ -121,10 +128,12 @@ export function KakaoLocation({
           const coords = new kakao.maps.LatLng(lat, lng);
           const map = new kakao.maps.Map(mapRef.current, { center: coords, level: 3 });
           new kakao.maps.Marker({ position: coords, map });
+          mapInstance.current = map;
 
           const rv = new kakao.maps.Roadview(rvRef.current);
+          rvInstance.current = rv;
           const rvClient = new kakao.maps.RoadviewClient();
-          rvClient.getNearestPanoId(coords, 50, (panoId) => {
+          rvClient.getNearestPanoId(coords, 100, (panoId) => {
             if (cancelled) return;
             if (panoId) {
               rv.setPanoId(panoId, coords);
@@ -144,11 +153,20 @@ export function KakaoLocation({
     };
   }, [KEY, sido, sigungu, dong, detailAddress]);
 
-  // Kakao 키 없을 때 → OSM 폴백
+  // 탭 전환 시 카카오 위젯 relayout (숨겨졌다 보일 때 크기 보정)
+  useEffect(() => {
+    const t = setTimeout(() => {
+      if (tab === "map") mapInstance.current?.relayout();
+      else rvInstance.current?.relayout();
+    }, 60);
+    return () => clearTimeout(t);
+  }, [tab]);
+
+  // Kakao 키 없을 때 → OSM 폴백 (로드뷰 미지원)
   if (!KEY || loadError) {
     return (
       <div className="space-y-2">
-        <div className="relative aspect-video bg-zinc-100 rounded overflow-hidden border border-border min-h-72 lg:min-h-96">
+        <div className="relative h-72 lg:h-96 bg-zinc-100 rounded overflow-hidden border border-border">
           <MiniMapInner sido={sido} sigungu={sigungu} dong={dong} />
         </div>
         <p className="text-[11px] text-muted leading-relaxed">
@@ -160,31 +178,65 @@ export function KakaoLocation({
 
   return (
     <div className="space-y-2">
-      <div className="grid lg:grid-cols-2 gap-2">
-        <div className="relative aspect-video bg-zinc-100 rounded overflow-hidden border border-border">
-          <div ref={mapRef} className="absolute inset-0" />
-          <div className="absolute top-2 left-2 inline-flex items-center gap-1 px-2 py-0.5 bg-white border border-border rounded text-[10px] font-bold text-foreground">
-            <Icon.Map size={10} />
-            지도
-          </div>
-        </div>
-        <div className="relative aspect-video bg-zinc-100 rounded overflow-hidden border border-border">
-          <div ref={rvRef} className="absolute inset-0" />
-          <div className="absolute top-2 left-2 inline-flex items-center gap-1 px-2 py-0.5 bg-white border border-border rounded text-[10px] font-bold text-foreground z-10">
-            로드뷰
-          </div>
+      <div className="inline-flex rounded-md border border-border overflow-hidden">
+        <button
+          type="button"
+          onClick={() => setTab("map")}
+          className={`inline-flex items-center gap-1 px-4 py-1.5 text-xs font-bold transition-colors ${
+            tab === "map" ? "bg-foreground text-white" : "bg-white text-muted hover:text-foreground"
+          }`}
+        >
+          <Icon.Map size={12} strokeWidth={2.2} />
+          지도
+        </button>
+        <button
+          type="button"
+          onClick={() => setTab("roadview")}
+          className={`inline-flex items-center gap-1 px-4 py-1.5 text-xs font-bold border-l border-border transition-colors ${
+            tab === "roadview" ? "bg-foreground text-white" : "bg-white text-muted hover:text-foreground"
+          }`}
+        >
+          <Icon.MapPin size={12} strokeWidth={2.2} />
+          로드뷰
           {hasRoadview === false && (
-            <div className="absolute inset-0 flex items-center justify-center bg-zinc-50 text-[12px] text-muted text-center px-4">
-              이 위치 주변에는<br />로드뷰가 제공되지 않습니다.
-            </div>
+            <span className="text-[9px] font-medium opacity-70">미제공</span>
           )}
-          {hasRoadview === null && (
-            <div className="absolute inset-0 flex items-center justify-center text-[12px] text-muted">
-              로드뷰 불러오는 중…
-            </div>
-          )}
-        </div>
+        </button>
       </div>
+
+      <div className="relative h-72 lg:h-110 bg-zinc-100 rounded overflow-hidden border border-border">
+        {/* 지도 레이어 */}
+        <div
+          ref={mapRef}
+          className={`absolute inset-0 transition-opacity ${
+            tab === "map" ? "opacity-100 z-20" : "opacity-0 z-0 pointer-events-none"
+          }`}
+        />
+        {/* 로드뷰 레이어 */}
+        <div
+          ref={rvRef}
+          className={`absolute inset-0 transition-opacity ${
+            tab === "roadview" ? "opacity-100 z-20" : "opacity-0 z-0 pointer-events-none"
+          }`}
+        />
+
+        {/* 로드뷰 미제공 안내 */}
+        {tab === "roadview" && hasRoadview === false && (
+          <div className="absolute inset-0 z-30 flex flex-col items-center justify-center gap-1.5 bg-zinc-50 text-center px-4">
+            <Icon.MapPin size={26} className="text-muted" />
+            <p className="text-[13px] font-semibold">이 위치는 로드뷰가 제공되지 않습니다</p>
+            <p className="text-[11px] text-muted">지도 탭에서 위치를 확인하세요.</p>
+          </div>
+        )}
+
+        {/* 로딩 */}
+        {tab === "roadview" && hasRoadview === null && (
+          <div className="absolute inset-0 z-30 flex items-center justify-center text-[12px] text-muted bg-zinc-50">
+            로드뷰 불러오는 중…
+          </div>
+        )}
+      </div>
+
       <p className="text-[11px] text-muted leading-relaxed">
         표시된 위치는 등록 시 입력한 주소를 기반으로 보여지며 정확한 위치와 차이가 있을 수 있습니다.
       </p>
