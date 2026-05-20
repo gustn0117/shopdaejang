@@ -63,7 +63,7 @@ export default function PrivacyPage() {
       <h2 className="font-bold mb-2 mt-5">7. 개인정보 보호책임자</h2>
       <ul className="space-y-1">
         <li>· 책임자 : 정서우 (샵커넥트 대표)</li>
-        <li>· 연락처 : 1588-0000 / help@shopdaejang.com</li>
+        <li>· 연락처 : 010-7902-5670 / shopdaejang@naver.com</li>
       </ul>
 
       <p className="mt-6 text-xs text-muted">본 방침은 2026년 5월 20일부터 시행됩니다.</p>

@@ -16,7 +16,8 @@ export default function AboutPage() {
         <li>· 사업자등록번호 : 405-07-65148</li>
         <li>· 주소 : 서울특별시 송파구 위례성대로2길 8, 422호 (방이동, 새천년잠실헤리츠오피스텔)</li>
         <li>· 통신판매업신고 : 2022-서울송파-2707</li>
-        <li>· 고객센터 : 1588-0000 / help@shopdaejang.com</li>
+        <li>· 고객센터 : 010-7902-5670 / shopdaejang@naver.com</li>
+        <li>· 운영시간 : 월~토 10:00 ~ 19:00 (점심 12:00 ~ 13:00, 일요일 휴무)</li>
       </ul>
     </SimplePage>
   );

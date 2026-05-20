@@ -86,9 +86,9 @@ export default function RefundPage() {
 
       <h2 className="font-bold mb-2 mt-5">제7조 (취소·환불 문의)</h2>
       <ul className="space-y-1">
-        <li>· 고객센터 : 1588-0000</li>
-        <li>· 이메일 : help@shopdaejang.com</li>
-        <li>· 운영시간 : 평일 09:00 ~ 18:00 (점심 12:00 ~ 13:00, 주말·공휴일 휴무)</li>
+        <li>· 고객센터 : 010-7902-5670</li>
+        <li>· 이메일 : shopdaejang@naver.com</li>
+        <li>· 운영시간 : 월~토 10:00 ~ 19:00 (점심 12:00 ~ 13:00, 일요일 휴무)</li>
       </ul>
 
       <p className="mt-6 text-xs text-muted">본 정책은 2026년 5월 20일부터 시행됩니다.</p>

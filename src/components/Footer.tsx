@@ -33,10 +33,27 @@ export function Footer() {
             </ul>
           </div>
           <div>
-            <h3 className="font-semibold text-[13px] mb-3 tracking-tight">고객 상담</h3>
-            <p className="text-2xl font-black text-foreground tabular tracking-tight">1588-0000</p>
-            <p className="text-[12px] text-muted mt-1">평일 09:00 — 18:00</p>
-            <p className="text-[12px] text-muted">점심 12:00 — 13:00</p>
+            <h3 className="font-semibold text-[13px] mb-3 tracking-tight">고객지원</h3>
+            <p className="text-[12px] text-muted">월~토 10:00 — 19:00</p>
+            <p className="text-[12px] text-muted mb-2">점심 12:00 — 13:00</p>
+            <dl className="space-y-1 text-[12px]">
+              <div className="flex gap-1.5">
+                <dt className="text-muted shrink-0">고객센터</dt>
+                <dd className="font-semibold text-foreground tabular">010-7902-5670</dd>
+              </div>
+              <div className="flex gap-1.5">
+                <dt className="text-muted shrink-0">카톡</dt>
+                <dd className="text-muted/60">준비중</dd>
+              </div>
+              <div className="flex gap-1.5">
+                <dt className="text-muted shrink-0">이메일</dt>
+                <dd className="font-medium text-foreground break-all">shopdaejang@naver.com</dd>
+              </div>
+              <div className="flex gap-1.5 pt-1">
+                <dt className="text-muted shrink-0">계좌안내</dt>
+                <dd className="text-muted/60">준비중</dd>
+              </div>
+            </dl>
           </div>
         </div>
 
@@ -44,7 +61,7 @@ export function Footer() {
           <p className="font-semibold text-foreground/80 mb-1.5">샵대장 · 상호 샵커넥트</p>
           <p>대표 정서우 · 사업자등록번호 405-07-65148 · 통신판매업신고 2022-서울송파-2707</p>
           <p>서울특별시 송파구 위례성대로2길 8, 422호 (방이동, 새천년잠실헤리츠오피스텔)</p>
-          <p>help@shopdaejang.com · 1588-0000</p>
+          <p>shopdaejang@naver.com · 010-7902-5670</p>
           <p className="pt-3 max-w-2xl">
             샵대장은 마사지샵 양도양수 광고 플랫폼이며, 매물 정보의 정확성과 거래 결과에 대해 책임을 지지 않습니다.
             거래 전 반드시 직접 확인하시기 바랍니다.
