@@ -14,7 +14,7 @@ export default function AboutPage() {
         <li>· 대표이사 : 홍길동</li>
         <li>· 사업자등록번호 : 405-07-65148</li>
         <li>· 주소 : 서울특별시 강남구 테헤란로 000</li>
-        <li>· 통신판매업신고 : 2026-서울강남-00000</li>
+        <li>· 통신판매업신고 : 2022-서울송파-2707</li>
         <li>· 고객센터 : 1588-0000 / help@shopdaejang.com</li>
       </ul>
     </SimplePage>
