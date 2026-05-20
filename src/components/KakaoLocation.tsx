@@ -76,6 +76,31 @@ function loadKakaoSdk(key: string): Promise<void> {
   return kakaoLoadingPromise;
 }
 
+// 무료 지오코딩(OpenStreetMap Nominatim) — API 키 불필요
+async function geocodeFree(
+  queries: string[]
+): Promise<{ lat: number; lng: number } | null> {
+  for (const q of queries) {
+    if (!q) continue;
+    try {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=kr&q=${encodeURIComponent(
+          q
+        )}`,
+        { headers: { "Accept-Language": "ko" } }
+      );
+      if (!res.ok) continue;
+      const data = (await res.json()) as Array<{ lat: string; lon: string }>;
+      if (data.length > 0) {
+        return { lat: Number(data[0].lat), lng: Number(data[0].lon) };
+      }
+    } catch {
+      // try next query
+    }
+  }
+  return null;
+}
+
 export function KakaoLocation({
   sido,
   sigungu,
@@ -94,11 +119,31 @@ export function KakaoLocation({
   const [tab, setTab] = useState<"map" | "roadview">("map");
   const [hasRoadview, setHasRoadview] = useState<boolean | null>(null);
   const [loadError, setLoadError] = useState(false);
+  const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
   const KEY = process.env.NEXT_PUBLIC_KAKAO_MAP_KEY;
 
-  // 키 유무와 무관하게 항상 동작하는 외부 로드뷰 링크 (카카오맵)
   const fullAddress = [sido, sigungu, dong, detailAddress].filter(Boolean).join(" ");
-  const kakaoMapUrl = `https://map.kakao.com/?q=${encodeURIComponent(fullAddress)}`;
+  // 외부 카카오맵 링크 — API 키 없이도 항상 동작
+  const kakaoSearchUrl = `https://map.kakao.com/?q=${encodeURIComponent(fullAddress)}`;
+  // 좌표를 알면 카카오 로드뷰로 바로 진입하는 딥링크
+  const roadviewUrl = coords
+    ? `https://map.kakao.com/link/roadview/${coords.lat},${coords.lng}`
+    : kakaoSearchUrl;
+
+  // 무료 지오코딩 — 외부 로드뷰 딥링크용 좌표 확보 (키 불필요)
+  useEffect(() => {
+    let cancelled = false;
+    geocodeFree([
+      fullAddress,
+      [sido, sigungu, dong].filter(Boolean).join(" "),
+      `${sido} ${sigungu}`,
+    ]).then((c) => {
+      if (!cancelled && c) setCoords(c);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [fullAddress, sido, sigungu, dong]);
 
   useEffect(() => {
     if (!KEY) return;
@@ -129,18 +174,19 @@ export function KakaoLocation({
 
         function renderAt(lat: number, lng: number) {
           if (cancelled || !mapRef.current || !rvRef.current) return;
-          const coords = new kakao.maps.LatLng(lat, lng);
-          const map = new kakao.maps.Map(mapRef.current, { center: coords, level: 3 });
-          new kakao.maps.Marker({ position: coords, map });
+          setCoords({ lat, lng });
+          const coordObj = new kakao.maps.LatLng(lat, lng);
+          const map = new kakao.maps.Map(mapRef.current, { center: coordObj, level: 3 });
+          new kakao.maps.Marker({ position: coordObj, map });
           mapInstance.current = map;
 
           const rv = new kakao.maps.Roadview(rvRef.current);
           rvInstance.current = rv;
           const rvClient = new kakao.maps.RoadviewClient();
-          rvClient.getNearestPanoId(coords, 100, (panoId) => {
+          rvClient.getNearestPanoId(coordObj, 100, (panoId) => {
             if (cancelled) return;
             if (panoId) {
-              rv.setPanoId(panoId, coords);
+              rv.setPanoId(panoId, coordObj);
               setHasRoadview(true);
             } else {
               setHasRoadview(false);
@@ -166,7 +212,7 @@ export function KakaoLocation({
     return () => clearTimeout(t);
   }, [tab]);
 
-  // Kakao 키 없을 때 → OSM 지도 + 외부 로드뷰 링크
+  // Kakao 키 없을 때 → OSM 지도 + 외부 로드뷰 딥링크
   if (!KEY || loadError) {
     return (
       <div className="space-y-2">
@@ -174,18 +220,18 @@ export function KakaoLocation({
           <MiniMapInner sido={sido} sigungu={sigungu} dong={dong} />
         </div>
         <a
-          href={kakaoMapUrl}
+          href={roadviewUrl}
           target="_blank"
           rel="noreferrer"
           className="flex items-center justify-center gap-1.5 w-full py-3 bg-foreground text-white text-sm font-bold rounded hover:bg-foreground/90"
         >
           <Icon.MapPin size={14} strokeWidth={2.4} />
-          카카오맵에서 로드뷰 보기
+          로드뷰 바로 보기
           <Icon.ArrowRight size={12} strokeWidth={2.4} />
         </a>
         <p className="text-[11px] text-muted leading-relaxed">
           표시된 위치는 등록 시 입력한 주소를 기반으로 보여지며 정확한 위치와 차이가 있을 수 있습니다.
-          로드뷰는 카카오맵 새 창에서 확인됩니다.
+          로드뷰는 카카오맵 새 창에서 열립니다.
         </p>
       </div>
     );
@@ -213,9 +259,6 @@ export function KakaoLocation({
         >
           <Icon.MapPin size={12} strokeWidth={2.2} />
           로드뷰
-          {hasRoadview === false && (
-            <span className="text-[9px] font-medium opacity-70">미제공</span>
-          )}
         </button>
       </div>
 
@@ -235,20 +278,20 @@ export function KakaoLocation({
           }`}
         />
 
-        {/* 로드뷰 미제공 안내 */}
+        {/* 로드뷰 미제공 안내 — 외부 로드뷰 딥링크 제공 */}
         {tab === "roadview" && hasRoadview === false && (
           <div className="absolute inset-0 z-30 flex flex-col items-center justify-center gap-2 bg-zinc-50 text-center px-4">
             <Icon.MapPin size={26} className="text-muted" />
             <p className="text-[13px] font-semibold">근처 로드뷰를 바로 불러오지 못했습니다</p>
             <p className="text-[11px] text-muted mb-1">카카오맵에서 로드뷰를 확인할 수 있습니다.</p>
             <a
-              href={kakaoMapUrl}
+              href={roadviewUrl}
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center gap-1.5 px-4 py-2 bg-foreground text-white text-xs font-bold rounded hover:bg-foreground/90"
             >
               <Icon.MapPin size={12} strokeWidth={2.4} />
-              카카오맵에서 로드뷰 보기
+              로드뷰 바로 보기
               <Icon.ArrowRight size={11} strokeWidth={2.4} />
             </a>
           </div>
@@ -267,7 +310,7 @@ export function KakaoLocation({
           표시된 위치는 등록 시 입력한 주소를 기반으로 보여지며 정확한 위치와 차이가 있을 수 있습니다.
         </p>
         <a
-          href={kakaoMapUrl}
+          href={kakaoSearchUrl}
           target="_blank"
           rel="noreferrer"
           className="shrink-0 inline-flex items-center gap-1 text-[11px] font-bold text-foreground hover:underline"
