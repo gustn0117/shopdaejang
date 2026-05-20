@@ -96,6 +96,10 @@ export function KakaoLocation({
   const [loadError, setLoadError] = useState(false);
   const KEY = process.env.NEXT_PUBLIC_KAKAO_MAP_KEY;
 
+  // 키 유무와 무관하게 항상 동작하는 외부 로드뷰 링크 (카카오맵)
+  const fullAddress = [sido, sigungu, dong, detailAddress].filter(Boolean).join(" ");
+  const kakaoMapUrl = `https://map.kakao.com/?q=${encodeURIComponent(fullAddress)}`;
+
   useEffect(() => {
     if (!KEY) return;
     if (!mapRef.current || !rvRef.current) return;
@@ -162,15 +166,26 @@ export function KakaoLocation({
     return () => clearTimeout(t);
   }, [tab]);
 
-  // Kakao 키 없을 때 → OSM 폴백 (로드뷰 미지원)
+  // Kakao 키 없을 때 → OSM 지도 + 외부 로드뷰 링크
   if (!KEY || loadError) {
     return (
       <div className="space-y-2">
         <div className="relative h-72 lg:h-96 bg-zinc-100 rounded overflow-hidden border border-border">
           <MiniMapInner sido={sido} sigungu={sigungu} dong={dong} />
         </div>
+        <a
+          href={kakaoMapUrl}
+          target="_blank"
+          rel="noreferrer"
+          className="flex items-center justify-center gap-1.5 w-full py-3 bg-foreground text-white text-sm font-bold rounded hover:bg-foreground/90"
+        >
+          <Icon.MapPin size={14} strokeWidth={2.4} />
+          카카오맵에서 로드뷰 보기
+          <Icon.ArrowRight size={12} strokeWidth={2.4} />
+        </a>
         <p className="text-[11px] text-muted leading-relaxed">
           표시된 위치는 등록 시 입력한 주소를 기반으로 보여지며 정확한 위치와 차이가 있을 수 있습니다.
+          로드뷰는 카카오맵 새 창에서 확인됩니다.
         </p>
       </div>
     );
@@ -222,10 +237,20 @@ export function KakaoLocation({
 
         {/* 로드뷰 미제공 안내 */}
         {tab === "roadview" && hasRoadview === false && (
-          <div className="absolute inset-0 z-30 flex flex-col items-center justify-center gap-1.5 bg-zinc-50 text-center px-4">
+          <div className="absolute inset-0 z-30 flex flex-col items-center justify-center gap-2 bg-zinc-50 text-center px-4">
             <Icon.MapPin size={26} className="text-muted" />
-            <p className="text-[13px] font-semibold">이 위치는 로드뷰가 제공되지 않습니다</p>
-            <p className="text-[11px] text-muted">지도 탭에서 위치를 확인하세요.</p>
+            <p className="text-[13px] font-semibold">근처 로드뷰를 바로 불러오지 못했습니다</p>
+            <p className="text-[11px] text-muted mb-1">카카오맵에서 로드뷰를 확인할 수 있습니다.</p>
+            <a
+              href={kakaoMapUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-1.5 px-4 py-2 bg-foreground text-white text-xs font-bold rounded hover:bg-foreground/90"
+            >
+              <Icon.MapPin size={12} strokeWidth={2.4} />
+              카카오맵에서 로드뷰 보기
+              <Icon.ArrowRight size={11} strokeWidth={2.4} />
+            </a>
           </div>
         )}
 
@@ -237,9 +262,20 @@ export function KakaoLocation({
         )}
       </div>
 
-      <p className="text-[11px] text-muted leading-relaxed">
-        표시된 위치는 등록 시 입력한 주소를 기반으로 보여지며 정확한 위치와 차이가 있을 수 있습니다.
-      </p>
+      <div className="flex items-center justify-between gap-2">
+        <p className="text-[11px] text-muted leading-relaxed">
+          표시된 위치는 등록 시 입력한 주소를 기반으로 보여지며 정확한 위치와 차이가 있을 수 있습니다.
+        </p>
+        <a
+          href={kakaoMapUrl}
+          target="_blank"
+          rel="noreferrer"
+          className="shrink-0 inline-flex items-center gap-1 text-[11px] font-bold text-foreground hover:underline"
+        >
+          카카오맵 크게 보기
+          <Icon.ArrowRight size={10} strokeWidth={2.4} />
+        </a>
+      </div>
     </div>
   );
 }
