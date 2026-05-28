@@ -1,18 +1,21 @@
 import { Icon } from "@/components/Icon";
 import { createAdminClient } from "@/lib/supabase/server";
 import { formatRelativeDate } from "@/lib/format";
+import { UserActions, type UserSummary } from "./UserActions";
 
 export const metadata = { title: "회원 관리", robots: "noindex" };
 export const dynamic = "force-dynamic";
 
-async function fetchUsers() {
+async function fetchUsers(): Promise<{ users: UserSummary[]; total: number }> {
   const admin = createAdminClient();
-  const [{ data: authData }, { data: profiles, count }] = await Promise.all([
-    admin.auth.admin.listUsers({ perPage: 100 }),
-    admin
-      .from("profiles")
-      .select("id, name, phone, member_grade, created_at", { count: "exact" }),
-  ]);
+  const [{ data: authData }, { data: profiles, count }, { data: listings }] =
+    await Promise.all([
+      admin.auth.admin.listUsers({ perPage: 100 }),
+      admin
+        .from("profiles")
+        .select("id, name, phone, member_grade, created_at", { count: "exact" }),
+      admin.from("listings").select("user_id"),
+    ]);
 
   const profileMap = new Map(
     ((profiles ?? []) as Array<{
@@ -24,15 +27,29 @@ async function fetchUsers() {
     }>).map((p) => [p.id, p])
   );
 
-  const users = (authData?.users ?? []).map((u) => ({
+  const listingsByUser = new Map<string, number>();
+  for (const l of (listings ?? []) as Array<{ user_id: string | null }>) {
+    if (!l.user_id) continue;
+    listingsByUser.set(l.user_id, (listingsByUser.get(l.user_id) ?? 0) + 1);
+  }
+
+  const users: UserSummary[] = (authData?.users ?? []).map((u) => ({
     id: u.id,
     email: u.email ?? "",
-    name: profileMap.get(u.id)?.name ?? u.user_metadata?.name ?? "—",
-    phone: profileMap.get(u.id)?.phone ?? u.user_metadata?.phone ?? "—",
+    name:
+      profileMap.get(u.id)?.name ??
+      (u.user_metadata?.name as string | undefined) ??
+      "—",
+    phone:
+      profileMap.get(u.id)?.phone ??
+      (u.user_metadata?.phone as string | undefined) ??
+      "—",
     grade: profileMap.get(u.id)?.member_grade ?? "normal",
-    provider: u.app_metadata?.provider ?? "email",
+    provider: (u.app_metadata?.provider as string | undefined) ?? "email",
     created_at: u.created_at,
     last_sign_in_at: u.last_sign_in_at ?? null,
+    banned_until: (u as { banned_until?: string | null }).banned_until ?? null,
+    listings_count: listingsByUser.get(u.id) ?? 0,
   }));
 
   return { users, total: count ?? users.length };
@@ -46,17 +63,6 @@ export default async function AdminUsersPage() {
       <div className="flex items-center justify-between">
         <h1 className="text-lg lg:text-xl font-black tracking-tight">회원 관리</h1>
         <span className="text-xs text-muted tabular">총 {total.toLocaleString()}명</span>
-      </div>
-
-      <div className="bg-white rounded-md border border-border p-3 flex flex-wrap gap-2">
-        <div className="relative flex-1 min-w-50">
-          <Icon.Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
-          <input
-            type="text"
-            placeholder="이름·이메일 검색"
-            className="w-full pl-9 pr-3 py-2 text-sm border border-border rounded focus:outline-none focus:border-foreground"
-          />
-        </div>
       </div>
 
       {users.length === 0 ? (
@@ -76,36 +82,37 @@ export default async function AdminUsersPage() {
             <div className="text-center">처리</div>
           </div>
           <ul className="divide-y divide-border">
-            {users.map((u) => (
-              <li
-                key={u.id}
-                className="grid grid-cols-1 md:grid-cols-[200px_1fr_100px_100px_100px_120px] gap-2 px-3 py-3 text-sm items-center"
-              >
-                <div className="text-xs font-medium truncate">{u.email}</div>
-                <div>
-                  <p className="text-sm font-semibold">{u.name}</p>
-                  <p className="text-[11px] text-muted">{u.phone}</p>
-                </div>
-                <div className="text-xs text-muted hidden md:block">{u.provider}</div>
-                <div className="text-xs text-muted hidden md:block">
-                  {formatRelativeDate(u.created_at)}
-                </div>
-                <div className="text-xs text-muted hidden md:block">
-                  {u.last_sign_in_at ? formatRelativeDate(u.last_sign_in_at) : "—"}
-                </div>
-                <div className="grid grid-cols-2 gap-1">
-                  <button type="button" className="py-1.5 text-xs font-bold border border-border rounded">
-                    상세
-                  </button>
-                  <button
-                    type="button"
-                    className="py-1.5 text-xs font-bold border border-urgent text-urgent rounded"
-                  >
-                    정지
-                  </button>
-                </div>
-              </li>
-            ))}
+            {users.map((u) => {
+              const banned =
+                !!(u.banned_until && new Date(u.banned_until).getTime() > Date.now());
+              return (
+                <li
+                  key={u.id}
+                  className="grid grid-cols-1 md:grid-cols-[200px_1fr_100px_100px_100px_120px] gap-2 px-3 py-3 text-sm items-center"
+                >
+                  <div className="text-xs font-medium truncate flex items-center gap-1.5 min-w-0">
+                    {banned && (
+                      <span className="px-1.5 py-0.5 text-[9px] font-bold border border-urgent text-urgent rounded shrink-0">
+                        정지
+                      </span>
+                    )}
+                    <span className="truncate">{u.email}</span>
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold">{u.name}</p>
+                    <p className="text-[11px] text-muted">{u.phone}</p>
+                  </div>
+                  <div className="text-xs text-muted hidden md:block">{u.provider}</div>
+                  <div className="text-xs text-muted hidden md:block">
+                    {formatRelativeDate(u.created_at)}
+                  </div>
+                  <div className="text-xs text-muted hidden md:block">
+                    {u.last_sign_in_at ? formatRelativeDate(u.last_sign_in_at) : "—"}
+                  </div>
+                  <UserActions user={u} />
+                </li>
+              );
+            })}
           </ul>
         </div>
       )}

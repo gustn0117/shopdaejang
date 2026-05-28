@@ -76,17 +76,25 @@ export default async function AdminListingsPage({ searchParams }: { searchParams
 
   return (
     <div className="space-y-3">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-3">
         <h1 className="text-lg lg:text-xl font-black tracking-tight">매물 승인 관리</h1>
-        <span className="text-xs text-muted tabular">
-          {status === "pending"
-            ? `검토 대기 ${counts.pending}건`
-            : status === "approved"
-            ? `노출중 ${counts.approved}건`
-            : status === "rejected"
-            ? `반려 ${counts.rejected}건`
-            : `전체 ${counts.all}건`}
-        </span>
+        <div className="flex items-center gap-3">
+          <span className="text-xs text-muted tabular">
+            {status === "pending"
+              ? `검토 대기 ${counts.pending}건`
+              : status === "approved"
+              ? `노출중 ${counts.approved}건`
+              : status === "rejected"
+              ? `반려 ${counts.rejected}건`
+              : `전체 ${counts.all}건`}
+          </span>
+          <Link
+            href="/admin/listings/new"
+            className="inline-flex items-center gap-1 px-3 py-1.5 bg-foreground text-white text-xs font-bold rounded hover:bg-foreground/90"
+          >
+            + 직접 등록
+          </Link>
+        </div>
       </div>
 
       <div className="bg-white rounded-md border border-border p-2 flex gap-1 overflow-x-auto no-scrollbar">
